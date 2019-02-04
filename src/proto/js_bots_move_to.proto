@@ -1,0 +1,7 @@
+package JSBotsProto;
+
+message MoveTo {
+  required float x = 1;
+  required float y = 2;
+  required float theta = 3;
+}

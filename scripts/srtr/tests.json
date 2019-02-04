@@ -1,0 +1,18 @@
+[{
+  "name": "Incorrect aim threshold",
+  "numScenarios": 3,
+  "perturbations": [{
+    "name": "aimThreshold",
+    "perturbedValue": 0.15
+  }]
+}, {
+  "name": "Degraded Interceptions",
+  "numScenarios": 3,
+  "perturbations": [{
+    "name": "aimThreshold",
+    "perturbedValue": 0.3
+  }, {
+    "name": "interceptStandoff",
+    "perturbedValue": 0.3
+  }]
+}]

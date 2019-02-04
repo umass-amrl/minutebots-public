@@ -1,0 +1,12 @@
+#!/bin/bash
+# (C) Kyle Vedder, 2018
+# Derived from script by Joydeep Biswas
+# A simple Bash script to profile a command and 
+# display the results on termination.
+# You'll need to install the following packages: valgrind, massif-visualizer
+if [ ! -d "mem_check_results" ]; then
+    mkdir mem_check_results
+fi
+echo Profiling \"$@\"
+valgrind --tool=massif   --massif-out-file="mem_check_results/massif.out.%p" $@
+massif-visualizer `ls -t1 mem_check_results/massif.out.*|head -n 1`

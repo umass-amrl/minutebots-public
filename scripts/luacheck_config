@@ -1,0 +1,88 @@
+max_line_length = 80
+
+-- We pass in some globals from the C code, mark them as okay
+-- These can be set and accessed
+globals = {}
+-- These can only be accessed
+read_globals = {"log"}
+
+-- Because luacheck doesn't yet support warning about non-JITable functions,
+-- I'm removing them from what it considers to be defined globals.
+-- Note that this still misses some operators,
+-- like concatenation ("..") and varargs ("...").
+
+not_globals = {
+  "pairs",
+  "next",
+  "dofile",
+  "error",
+  "getfenv",
+  "load",
+  "loadfile",
+  "loadstring",
+  "print",
+  "setfenv",
+  "unpack",
+
+  "string.dump",
+  "string.gmatch",
+  "string.gsub",
+  "string.match",
+
+  "table.foreach",
+  "table.maxn",
+  "table.pack",
+  "table.sort",
+  "table.unpack",
+
+  "math.fmod",
+  "math.frexp",
+  "math.randomseed",
+
+  "io.close",
+  "io.input",
+  "io.lines",
+  "io.open",
+  "io.output",
+  "io.popen",
+  "io.read",
+  "io.tmpfile",
+  "io.type",
+
+  -- Although ffi.cdef is not compiled, it is still
+  -- the fastest way to expose C functions
+  -- "ffi.cdef",
+  "ffi.load",
+  "ffi.metatype",
+
+  -- These are libraries in which nothing is compiled
+
+  "os",
+  "coroutine",
+  "debug",
+
+  -- The ones below have partial implementation but should probably be avoided entirely
+
+  "ffi.cast",
+  "ffi.errno",
+  "ffi.new",
+  "ffi.sizeof",
+  "ffi.typeof",
+
+  -- The ones below can be removed if we upgrade to LuaJIT 2.1
+
+  "string.char",
+  "string.find",
+  "string.format",
+  "string.lower",
+  "string.rep",
+  "string.reverse",
+  "string.upper",
+
+  "table.concat",
+  "table.foreachi",
+
+  "bit.tohex",
+
+  "ffi.gc",
+}

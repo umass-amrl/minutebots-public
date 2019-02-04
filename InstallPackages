@@ -1,0 +1,40 @@
+#!/bin/bash
+sudo apt-get install clang g++ qtbase5-dev cmake libpopt-dev \
+    libeigen3-dev libgoogle-perftools-dev kcachegrind valgrind libprotobuf-dev \
+    protobuf-compiler libsuitesparse-dev libgoogle-glog-dev python3-numpy \
+    python3-scipy python3-matplotlib python3-pip python-setuptools python-dev \
+    libblas-dev liblapack-dev libopenmpi-dev build-essential libboost-graph-dev \
+    qt4-default libiomp-dev clang-format whiptail cimg-dev imagemagick \
+    libcanberra-gtk-module libcanberra-gtk3-module massif-visualizer && \
+pushd third_party/ceres-solver-1.12.0 && mkdir -p build && cd build && cmake .. && \
+    make -j`nproc` && sudo make install || \
+    { echo 'Error: ceres failed' >&2; exit 1; }
+popd && \
+pushd third_party && \
+  git clone http://luajit.org/git/luajit-2.0.git && \
+  pushd luajit-2.0 && \
+    make -j`nproc` && sudo make install && \
+  popd && \
+  rm -rf luajit-2.0 && \
+  git clone https://code.googlesource.com/re2 && \
+  pushd re2 && \
+    make -j`nproc` test && sudo make install && \
+  popd && \
+  git clone https://github.com/Z3Prover/z3.git && \
+  pushd z3 && \
+    sudo python scripts/mk_make.py && \
+    pushd build && \
+      sudo make -j`nproc` && sudo make install && \
+    popd && \
+  popd && \
+popd && \
+pushd scripts && \
+  rm -rf luacheck && \
+  git clone --branch "0.19.1" https://github.com/mpeterv/luacheck.git && \
+  pushd luacheck && \
+    sudo luajit install.lua . && \
+  popd && \
+popd && \
+mkdir viewer_logs && \
+sudo pip3 install protobuf &&\
+scripts/setup_hooks.sh;

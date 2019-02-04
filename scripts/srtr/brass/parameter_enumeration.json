@@ -1,0 +1,155 @@
+[{
+  "name": "angle",
+  "nominalValue": 1.5,
+  "minorDegrdation": {
+    "min": 1.0,
+    "max": 2.0
+  },
+  "majorDegrdation": {
+    "min": 0.0,
+    "max": 5.0
+  }
+}, {
+  "name": "distance",
+  "nominalValue": 146,
+  "minorDegrdation": {
+    "min": 2.5,
+    "max": 5.5
+  },
+  "majorDegrdation": {
+    "min": 0,
+    "max": 9
+  }
+}, {
+  "name": "y_prime_vel",
+  "nominalValue": 200,
+  "minorDegrdation": {
+    "min": 2.5,
+    "max": 5.5
+  },
+  "majorDegrdation": {
+    "min": 0,
+    "max": 9
+  }
+}, {
+  "name": "relative_vel",
+  "nominalValue": 400,
+  "minorDegrdation": {
+    "min": 2.5,
+    "max": 5.5
+  },
+  "majorDegrdation": {
+    "min": 0,
+    "max": 9
+  }
+}, {
+  "name": "align",
+  "nominalValue": 18,
+  "minorDegrdation": {
+    "min": 2.5,
+    "max": 5.5
+  },
+  "majorDegrdation": {
+    "min": 0,
+    "max": 9
+  }
+}, {
+  "name": "angular_vel",
+  "nominalValue": 50,
+  "minorDegrdation": {
+    "min": 2.5,
+    "max": 5.5
+  },
+  "majorDegrdation": {
+    "min": 0,
+    "max": 9
+  }
+}, {
+  "name": "kick_timeout",
+  "nominalValue": 40,
+  "minorDegrdation": {
+    "min": 2.5,
+    "max": 5.5
+  },
+  "majorDegrdation": {
+    "min": 0,
+    "max": 9
+  }
+}, {
+  "name": "catch_velocity",
+  "nominalValue": 1500,
+  "minorDegrdation": {
+    "min": 2.5,
+    "max": 5.5
+  },
+  "majorDegrdation": {
+    "min": 0,
+    "max": 9
+  }
+}, {
+  "name": "could_score_speed",
+  "nominalValue": 1000,
+  "minorDegrdation": {
+    "min": 2.5,
+    "max": 5.5
+  },
+  "majorDegrdation": {
+    "min": 0,
+    "max": 9
+  }
+},  {
+  "name": "ball_velocity",
+  "nominalValue": 100,
+  "minorDegrdation": {
+    "min": 2.5,
+    "max": 5.5
+  },
+  "majorDegrdation": {
+    "min": 0,
+    "max": 9
+  }
+},  {
+  "name": "catch_radius",
+  "nominalValue": 540,
+  "minorDegrdation": {
+    "min": 2.5,
+    "max": 5.5
+  },
+  "majorDegrdation": {
+    "min": 0,
+    "max": 9
+  }
+},  {
+  "name": "kick_percent",
+  "nominalValue": 85,
+  "minorDegrdation": {
+    "min": 2.5,
+    "max": 5.5
+  },
+  "majorDegrdation": {
+    "min": 0,
+    "max": 9
+  }
+},  {
+  "name": "kick_speed",
+  "nominalValue": 1000,
+  "minorDegrdation": {
+    "min": 2.5,
+    "max": 5.5
+  },
+  "majorDegrdation": {
+    "min": 0,
+    "max": 9
+  }
+}, {
+  "name": "kick_follow_through",
+  "nominalValue": 10,
+  "minorDegrdation": {
+    "min": 11,
+    "max": 15
+  },
+  "majorDegrdation": {
+    "min": 20,
+    "max": 30
+  }
+}]

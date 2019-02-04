@@ -1,0 +1,16 @@
+#!/bin/bash
+sudo apt-get install clang g++ cmake \
+    libprotobuf-dev \
+    protobuf-compiler \
+    python3-pip python-setuptools python-dev && \
+pushd third_party && \
+  git clone https://github.com/Z3Prover/z3.git && \
+  pushd z3 && \
+  sudo python scripts/mk_make.py && \
+  pushd build && \
+  sudo make -j`nproc` && sudo make install && \
+  popd && \
+  popd && \
+popd && \
+sudo pip3 install protobuf;
+./scripts/setup_hooks.sh;

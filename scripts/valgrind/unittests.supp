@@ -1,0 +1,35 @@
+{
+   ignore_re2_errors_value8
+   Memcheck:Value8
+   obj:*/libre2.so.*
+}
+
+{
+   ignore_re2_errors_cond
+   Memcheck:Cond
+   obj:*/libre2.so.*
+}
+
+{
+   ignore_libluajit_errors_cond
+   Memcheck:Cond
+   obj:*/libluajit-5.1.so.*
+}
+
+{
+   ignore_tcmalloc_errors_startup
+   Memcheck:Param
+   msync(start)
+   fun:__msync_nocancel
+   obj:/usr/lib/x86_64-linux-gnu/libunwind.so.8.0.1
+   obj:/usr/lib/x86_64-linux-gnu/libunwind.so.8.0.1
+   obj:/usr/lib/x86_64-linux-gnu/libunwind.so.8.0.1
+   obj:/usr/lib/x86_64-linux-gnu/libunwind.so.8.0.1
+   fun:_ULx86_64_step
+   obj:/usr/lib/libtcmalloc.so.4.2.6
+   fun:_Z13GetStackTracePPvii
+   fun:_ZN8tcmalloc8PageHeap8GrowHeapEm
+   fun:_ZN8tcmalloc8PageHeap3NewEm
+   fun:_ZN8tcmalloc15CentralFreeList8PopulateEv
+   fun:_ZN8tcmalloc15CentralFreeList21FetchFromOneSpansSafeEiPPvS2_
+}

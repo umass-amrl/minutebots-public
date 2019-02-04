@@ -1,0 +1,8 @@
+{
+  "Nominal Successes": 20,
+  "Degraded Failures": 11,
+  "Successfully Repaired": 6,
+  "Added Failures": 1,
+  "Fix Percentage": 0.5454545454545454,
+  "Failure Percentage": 0.05
+}
