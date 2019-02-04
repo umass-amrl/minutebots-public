@@ -2,9 +2,9 @@
 
 Welcome to the UMass Minutebots repository!
 
-To get started, please follow the instructions to [setup our codebase.](wiki/Initial-Repository-Setup)
+To get started, please follow the instructions to [setup our codebase.](https://github.com/umass-amrl/minutebots-public/wiki/Initial-Repository-Setup)
 
-To setup and run the SRTR Challenge Problem for BRASS: [SRTR Challenge](wiki/BRASS---SRTR-Challenge-Problem)
+To setup and run the SRTR Challenge Problem for BRASS: [SRTR Challenge](https://github.com/umass-amrl/minutebots-public/wiki/BRASS---SRTR-Challenge-Problem)
 
 ## License 
 
