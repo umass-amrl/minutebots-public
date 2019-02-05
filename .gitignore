@@ -9,7 +9,9 @@ syntax: glob
 *~
 *.kate-swp
 profile_results
-/scripts/srtr/brass/results/
+scripts/srtr/brass/results/
+scripts/srtr/brass/archive/*
+/scripts/srtr/brass/archive/*
 /third_party/luajit-2.0/
 third_party/z3/
 third_party/re2/

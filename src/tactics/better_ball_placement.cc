@@ -104,10 +104,11 @@ BetterBallPlacement::BetterBallPlacement(const WorldState& world_state,
       direction_set_(false),
       place_start_(0, 0),
       target_(0, 0),
-      thresholds_ball_velocity_(100, "ball_velocity", this),
-      thresholds_distance_(kRotationRadius, "distance", this),
-      kThresholdsX_(90, "x", this),
-      kThresholdsY_(90, "y", this) {
+      thresholds_ball_velocity_(100, 0.0, 5000.0, "ball_velocity", this),
+      thresholds_distance_(kRotationRadius, 0.0, kFieldLength,
+                           "distance", this),
+      kThresholdsX_(90, 0.0, kFieldLength, "x", this),
+      kThresholdsY_(90, 0.0, kFieldLength, "y", this) {
   state_ = setup_;
 }
 

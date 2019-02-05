@@ -103,14 +103,19 @@ KickoffKicker::KickoffKicker(const string& machine_name,
       setup_(std::bind(&KickoffKicker::Setup, this), "Setup"),
       kick_(std::bind(&KickoffKicker::Kick, this), "Kick"),
       post_kick_(std::bind(&KickoffKicker::PostKick, this), "PostKick"),
-      thresholds_angle_(offense::kThreshAngle, "angle", this),
-      thresholds_distance_(offense::kThreshDistance, "distance", this),
-      thresholds_y_prime_vel_(offense::kThreshYVel, "y_prime_vel", this),
-      thresholds_relative_vel_(offense::kThreshRelVel, "relative_vel", this),
-      thresholds_align_(offense::kThreshAlign, "align", this),
-      thresholds_angular_vel_(offense::kAngularVel, "angular_vel", this),
-      thresholds_kick_timeout_(40, "kick_timeout", this),
-      thresholds_ball_velocity_(100, "ball_velocity", this) {
+      thresholds_angle_(offense::kThreshAngle, 0.0, 360.0, "angle", this),
+      thresholds_distance_(offense::kThreshDistance,
+                           0.0, 9000.0, "distance", this),
+      thresholds_y_prime_vel_(offense::kThreshYVel,
+                              0.0, 5000.0,  "y_prime_vel", this),
+      thresholds_relative_vel_(offense::kThreshRelVel,
+                               0.0, 5000.0, "relative_vel", this),
+      thresholds_align_(offense::kThreshAlign,
+                        0.0, 9000.0, "align", this),
+      thresholds_angular_vel_(offense::kAngularVel,
+                              0.0, 5000.0, "angular_vel", this),
+      thresholds_kick_timeout_(40, 0.0, 5000.0, "kick_timeout", this),
+      thresholds_ball_velocity_(100, 0.0, 5000.0, "ball_velocity", this) {
   state_ = preparation_;
 }
 

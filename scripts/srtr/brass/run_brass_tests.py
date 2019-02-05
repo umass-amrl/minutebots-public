@@ -99,7 +99,7 @@ def AnalyzeResults(name, result, nominal_result, degraded_result):
   text_file = open(filename, "w")
   json.dump(summary, text_file, indent=2)
   text_file.close()
-  return filtered_result
+  return reward / possible_fixes
 
 def RunSetupTests():
   # Grab nominal and degraded test lists
@@ -107,6 +107,7 @@ def RunSetupTests():
   degraded_file = 'scripts/srtr/brass/results/degraded_tests.json'
   nominal_json = ReadTestsFromFile(nominal_file)
   degraded_json = ReadTestsFromFile(degraded_file)
+  adapted = False
   # For each test scenario
   for i in range(len(nominal_json)):
     # Run the tests
@@ -114,24 +115,33 @@ def RunSetupTests():
 
     # Replace the attacker config with the nominal parameters.
     parameters = nominal_json[i]['parameters']
+
     with open('src/configs/attacker_config.json', 'w') as attacker_config:
       json.dump(parameters, attacker_config, indent=2)
     nominal_results = RunTestScenario('nominal_traces', nominal_json[i])
 
     # Replace the attacker config with the degraded parameters.
     parameters = degraded_json[i]['parameters']
-    with open('src/configs/attacker_config.json', 'w') as attacker_config:
-      json.dump(parameters, attacker_config, indent=2)
+    adaptation = "scripts/srtr/brass/results/adaptations/{}_adaptation.json".format(name)
+    if (os.path.isfile(adaptation)):
+      adapted = True
+      command = "cp {} src/configs/attacker_config.json".format(adaptation)
+      result = subprocess.call(command, shell=True)
+    else:
+      with open('src/configs/attacker_config.json', 'w') as attacker_config:
+        json.dump(parameters, attacker_config, indent=2)
     degraded_results = RunTestScenario('degraded_traces', degraded_json[i])
-
     # Save both end results to file
     save_to_file(nominal_results, 'nominal', name)
     save_to_file(degraded_results, 'degraded', name)
+    if (not adapted):
+      save_to_file(degraded_results, 'original_degraded', name)    
 
 def RunAdaptedTests(starved):
   # Grab the nominal json for the test list
   nominal_file = 'scripts/srtr/brass/results/nominal_tests.json'
   nominal_json = ReadTestsFromFile(nominal_file)
+  results = 0
   # For each test scenario
   for i in range(len(nominal_json)):
     # Run the tests
@@ -152,23 +162,21 @@ def RunAdaptedTests(starved):
 
     # Load the other results, trim nominal failures, and compare
     nominal_result = LoadResults('nominal', name)
-    degraded_result = LoadResults('degraded', name)
-    results = AnalyzeResults(analysis_name, adapted_result, nominal_result, degraded_result)
+    degraded_result = LoadResults('original_degraded', name)
+    results += AnalyzeResults(analysis_name, adapted_result, nominal_result, degraded_result)
     # Save the adapted results to file
     output_name = 'adapted'
     if (starved):
       output_name += '_starved'
-    save_to_file(results, output_name, name)
+    save_to_file(adapted_result, output_name, name)
+  return results
 
-
-# Input file
-if (len(sys.argv) != 2):
-  print("Expects 1 argument: setup, adapted, or starved")
-  raise SystemExit
-
-if (sys.argv[1] == "setup"):
-  RunSetupTests()
-elif(sys.argv[1] == "starved"):
-  RunAdaptedTests(True)
-else: 
-  RunAdaptedTests(False)
+def RunBrassTests(arg):
+  value = 0
+  if (arg == "setup"):
+   value = RunSetupTests()
+  elif(arg == "starved"):
+    value = RunAdaptedTests(True)
+  else: 
+    value  = RunAdaptedTests(False)
+  return value

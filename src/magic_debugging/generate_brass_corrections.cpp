@@ -53,16 +53,18 @@ bool FindDivergence(const string& nominal_filename,
   google::protobuf::TextFormat::Parse(&nominal_stream, &nominal_trace);
   google::protobuf::TextFormat::Parse(&degrade_stream, &degraded_trace);
 
-  for (int i = 0; i < nominal_trace.trace_elements_size(); ++i) {
+  for (int i = 1; i < nominal_trace.trace_elements_size(); ++i) {
      StateMachineData nominal_element = nominal_trace.trace_elements(i);
      StateMachineData* degraded_element =
+        degraded_trace.mutable_trace_elements(i);
+     StateMachineData* last_degraded =
         degraded_trace.mutable_trace_elements(i);
      // May need to dig down into the transitions instead
      // this may set the transition one frame too late.
      if (nominal_element.state() != degraded_element->state()) {
-       for (int j = 0; j < degraded_element->transitions_size(); ++j) {
+       for (int j = 0; j < last_degraded->transitions_size(); ++j) {
          PossibleTransition* transition =
-            degraded_element->mutable_transitions(j);
+            last_degraded->mutable_transitions(j);
          if (transition->potential_state() == nominal_element.state()) {
            transition->set_human_constraint(true);
            transition->set_should_transition(true);

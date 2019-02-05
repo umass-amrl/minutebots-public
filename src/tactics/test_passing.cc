@@ -81,7 +81,7 @@ namespace tactics {
       kick_(std::bind(&TestPassing::Kick, this), "Kick"),
       finish_(std::bind(&TestPassing::Finish, this),
              "Finish"),
-      thresholds_kick_timeout_(40, "kick_timeout", this),
+      thresholds_kick_timeout_(40, 0.0, 100.0, "kick_timeout", this),
       complete_(false),
       kick_count_(0),
       aim_count_(0) {

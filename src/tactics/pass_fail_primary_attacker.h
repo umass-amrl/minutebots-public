@@ -53,7 +53,6 @@ class PassFailPrimaryAttacker : public PrimaryAttacker {
         world_state_.GetBallPosition().filtered_position;
     const float square_dist = (ball_position - goal).squaredNorm();
     if (square_dist < Sq(500)) {
-      LOG(INFO) << "Success";
       throw TacticException("Attacker Success");
     }
   }
@@ -62,7 +61,6 @@ class PassFailPrimaryAttacker : public PrimaryAttacker {
     static constexpr int kMaxIterations = 250;
     static int count = 0;
     if (count > kMaxIterations) {
-      LOG(INFO) << "Failure!";
       throw TacticException("Attacker Failure");
     }
     ++count;

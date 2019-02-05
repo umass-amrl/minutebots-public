@@ -12,6 +12,8 @@ message TransitionClause {
 message MapFieldEntry {
   optional string key = 1;
   optional float value = 2;
+  optional float min = 3;
+  optional float max = 4;
 }
 
 message TransitionBlock {
@@ -23,7 +25,6 @@ message PossibleTransition {
   required string potential_state = 1;
   optional bool should_transition = 4;
   optional bool human_constraint = 5;
-//   repeated TransitionClause clauses = 6;
   repeated TransitionBlock blocks = 7;
   optional string start_state = 8;
 }

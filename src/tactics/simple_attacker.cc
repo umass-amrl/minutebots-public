@@ -131,20 +131,23 @@ SimpleAttacker::SimpleAttacker(const string& machine_name,
           "NavigateToIntercept"),
       receive_(std::bind(&SimpleAttacker::Receive, this), "Receive"),
       stox_pivot_(std::bind(&SimpleAttacker::STOXPivot, this), "STOXPivot"),
-      thresholds_angle_(1.5, "angle", this),
-      thresholds_distance_(kRotationRadius, "distance", this),
-      thresholds_y_prime_vel_(200, "y_prime_vel", this),
-      thresholds_relative_vel_(400, "relative_vel", this),
-      thresholds_align_(18, "align", this),
-      thresholds_angular_vel_(50, "angular_vel", this),
-      thresholds_kick_timeout_(40, "kick_timeout", this),
-      thresholds_lower_catch_velocity_(1500, "catch_velocity", this),
-      thresholds_could_score_speed_(1000, "could_score_speed", this),
-      thresholds_ball_velocity_(100, "ball_velocity", this),
-      thresholds_catch_radius_(6 * kRobotRadius, "catch_radius", this),
-      thresholds_kick_percent_(85, "kick_percent", this),
-      thresholds_kick_speed_(1000, "kick_speed", this),
-      thresholds_follow_through_(10, "kick_follow_through", this),
+      thresholds_angle_(1.5, 0.0, 360.0, "angle", this),
+      thresholds_distance_(kRotationRadius, 0.0, 9000.0,  "distance", this),
+      thresholds_y_prime_vel_(200, 0.0, 5000.0, "y_prime_vel", this),
+      thresholds_relative_vel_(400, 0.0, 5000.0, "relative_vel", this),
+      thresholds_align_(18, 0.0, 9000.0, "align", this),
+      thresholds_angular_vel_(50, 0.0, 5000.0, "angular_vel", this),
+      thresholds_kick_timeout_(40, 0.0, 5000.0, "kick_timeout", this),
+      thresholds_lower_catch_velocity_(1500, 0.0, 5000.0,
+                                       "catch_velocity", this),
+      thresholds_could_score_speed_(1000, 0.0, 5000.0,
+                                    "could_score_speed", this),
+      thresholds_ball_velocity_(100, 0.0, 5000.0, "ball_velocity", this),
+      thresholds_catch_radius_(6 * kRobotRadius, 0.0, 5000.0,
+                               "catch_radius", this),
+      thresholds_kick_percent_(85, 0, 100, "kick_percent", this),
+      thresholds_kick_speed_(1000, 0.0, 5000.0, "kick_speed", this),
+      thresholds_follow_through_(10, 0, 100, "kick_follow_through", this),
       kick_count_(0),
       prep_count_(0),
       last_target_score_(10.0),
@@ -1188,7 +1191,7 @@ void SimpleAttacker::Transition() {
   }
 
   // Special handling to break out of the receive state.
-/* 
+/*
   if (state_ == receive_) {
     class ::Receiver* controller = static_cast<class ::Receiver*>(
         (*tactic_list_)[TacticIndex::RECEIVER].get());

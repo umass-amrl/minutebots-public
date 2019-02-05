@@ -82,9 +82,9 @@ StateMachineExample::StateMachineExample(
                  "Rotate"),
       drive2_(std::bind(&StateMachineExample::Drive2, this), "Drive2"),
       finish_(std::bind(&StateMachineExample::Finish, this), "Finish"),
-      kThresholdsX_(5, "x", this),
-      kThresholdsY_(5, "y", this),
-      kThresholdsAngle_(DegToRad(0.5), "angle", this) {
+      kThresholdsX_(5, 0.0, 8000.0, "x", this),
+      kThresholdsY_(5, 0.0, 8000.0,  "y", this),
+      kThresholdsAngle_(DegToRad(0.5), 0.0, 3.14, "angle", this) {
   state_ = start_;
 }
 

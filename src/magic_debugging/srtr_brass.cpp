@@ -87,7 +87,7 @@ void TuneFromTraceFile(const string& filename,
   // The current version will output the adjustments to stdout.
   if (num_corrections > 0) {
     map<string, float> lowers;
-    map<string, float> base_parameters;
+    map<string, MapFieldEntry> base_parameters;
     nlohmann::json parameters = srtr::SolveWithBlocks(&c,
                                                       state_machines,
                                                       transitions,

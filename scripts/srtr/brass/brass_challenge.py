@@ -3,6 +3,7 @@
 import subprocess
 import sys
 import os
+from run_brass_tests import RunBrassTests
 
 directory_path = "scripts/srtr/brass/archive/"
 if (os.path.exists(directory_path)):
@@ -25,19 +26,31 @@ if (len(sys.argv) != 2):
 if (not os.path.exists("scripts/srtr/brass/results/")):
   os.mkdir("scripts/srtr/brass/results/")
 
-os.mkdir("scripts/srtr/brass/results/adapted_traces")
-os.mkdir("scripts/srtr/brass/results/adapted_traces_starved")
-os.mkdir("scripts/srtr/brass/results/nominal_traces")
-os.mkdir("scripts/srtr/brass/results/degraded_traces")
 os.mkdir("scripts/srtr/brass/results/adaptations")
+os.mkdir("scripts/srtr/brass/results/traces")
 
+fix_percentage = 0;
+iterations = 0;
+original_failures = 0;
 command = "scripts/srtr/brass/setup_brass_tests.py {}".format(sys.argv[1])
 result = subprocess.call(command, shell=True)
-command = "scripts/srtr/brass/run_brass_tests.py setup"
-result = subprocess.call(command, shell=True)
-command = "scripts/srtr/brass/get_all_corrections.py"
-result = subprocess.call(command, shell=True)
-command = "scripts/srtr/brass/run_brass_tests.py adapted"
-result = subprocess.call(command, shell=True)
-command = "scripts/srtr/brass/run_brass_tests.py starved"
-result = subprocess.call(command, shell=True)
+# Continue adapting until performance is sufficiently high or some cutoff
+while (fix_percentage < 1.8 and iterations < 5):
+  os.mkdir("scripts/srtr/brass/results/adapted_traces")
+  os.mkdir("scripts/srtr/brass/results/adapted_traces_starved")
+  os.mkdir("scripts/srtr/brass/results/nominal_traces")
+  os.mkdir("scripts/srtr/brass/results/degraded_traces")
+  # First run for nominal and degraded results
+  RunBrassTests("setup")
+  # Generate the corrections
+  command = "scripts/srtr/brass/get_all_corrections.py"
+  result = subprocess.call(command, shell=True)
+  # Get adapted results and starved adapted results
+  fix_percentage = RunBrassTests("adapted")
+  RunBrassTests("starved")
+  # Save the traces from the current iteration
+  folder = "scripts/srtr/brass/results/traces/trace_" + str(iterations) + "/"
+  os.mkdir(folder)
+  command = "mv scripts/srtr/brass/results/*_traces* " + folder
+  result = subprocess.call(command, shell=True)
+  iterations += 1

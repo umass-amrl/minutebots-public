@@ -78,8 +78,8 @@ PrimaryDefender::PrimaryDefender(const WorldState& world_state,
                          soccer_state),
       guard_(std::bind(&PrimaryDefender::Guard, this), "Guard"),
       intercept_(std::bind(&PrimaryDefender::Intercept, this), "Intercept"),
-      kMaxInterceptCount_(10, "InterceptCount", this),
-      kBallKickThreshold_(250.0f, "KickSpeedThreshold", this),
+      kMaxInterceptCount_(10, 0.0, 100.0, "InterceptCount", this),
+      kBallKickThreshold_(250.0f, 0.0, 5000.0, "KickSpeedThreshold", this),
       intercepting_(false) {
   state_ = guard_;
   guard_pose_ = pose_2d::Pose2Df(0, 0, 0);

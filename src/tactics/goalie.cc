@@ -97,11 +97,12 @@ Goalie::Goalie(const WorldState& world_state, TacticArray* tactic_list,
       set_ball_placement_target_(false),
       dive_counter_(0),
       intercept_counter_(0),
-      kMaxInterceptCount_(25, "InterceptCount", this),
-      kMaxDiveCount_(100, "DiveCount", this),
-      kBallKickThreshold_(250.0f, "KickSpeedThreshold", this),
-      kMoveBallThresholdX_(300.0f, "MoveBallThresholdX", this),
-      kClearThresholdSpeed_(100.0f, "kClearThresholdSpeed_", this) {
+      kMaxInterceptCount_(25, 0.0, 100.0, "InterceptCount", this),
+      kMaxDiveCount_(100, 0.0, 1000.0, "DiveCount", this),
+      kBallKickThreshold_(250.0f, 0.0, 5000.0, "KickSpeedThreshold", this),
+      kMoveBallThresholdX_(300.0f, 0.0, 5000.0, "MoveBallThresholdX", this),
+      kClearThresholdSpeed_(100.0f, 0.0, 5000.0,
+                            "kClearThresholdSpeed_", this) {
   state_ = guard_;
   previous_state_ = guard_;
 }

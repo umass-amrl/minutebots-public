@@ -109,7 +109,7 @@ void TuneMachine(const string& machine_name) {
   // Machine to tune is pulled out here, should make cli input
   ReadMachineData(machine_name, &logger, &state_machines, &data);
   map<string, float> lowers;
-  map<string, float> base_parameters;
+  map<string, MapFieldEntry> base_parameters;
   srtr::SolveWithBlocks(&c,
                   state_machines,
                   data,
