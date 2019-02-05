@@ -29,6 +29,266 @@ trace_elements {
     value: 1500
   }
   tuneable_params {
+    key: "ball_velocity"
+    value: 100
+  }
+  tuneable_params {
+    key: "ball_velocity"
+    value: 100
+  }
+  state: "Intercept"
+  transitions {
+    potential_state: "Kick"
+    should_transition: true
+    human_constraint: true
+    blocks {
+      and: true
+      clauses {
+        lhs: 1.00865
+        rhs: "angle"
+        comparator: "<"
+        and: true
+      }
+      clauses {
+        lhs: 42.660469
+        rhs: "angular_vel"
+        comparator: "<"
+        and: true
+      }
+      clauses {
+        lhs: 13.608596
+        rhs: "distance"
+        comparator: "<"
+        and: true
+      }
+      clauses {
+        lhs: 51.488525
+        rhs: "y_prime_vel"
+        comparator: "<"
+        and: true
+      }
+      clauses {
+        lhs: 85.567841
+        rhs: "relative_vel"
+        comparator: "<"
+        and: true
+      }
+      clauses {
+        lhs: 0.6671772
+        rhs: "align"
+        comparator: "<"
+        and: true
+      }
+    }
+    start_state: "Intercept"
+  }
+  transitions {
+    potential_state: "Receive"
+    should_transition: false
+    human_constraint: false
+    blocks {
+      and: true
+      clauses {
+        lhs: 994.90906
+        rhs: "catch_velocity"
+        comparator: ">"
+        and: true
+      }
+    }
+    start_state: "Intercept"
+  }
+  transitions {
+    potential_state: "Start"
+    should_transition: false
+    human_constraint: false
+    blocks {
+      and: true
+      clauses {
+        lhs: 994.90906
+        rhs: "ball_velocity"
+        comparator: "<"
+        and: true
+      }
+    }
+    start_state: "Intercept"
+  }
+  transitions {
+    potential_state: "Intercept"
+    should_transition: true
+    human_constraint: false
+    blocks {
+      and: true
+      clauses {
+        lhs: 958.34564
+        rhs: "ball_velocity"
+        comparator: ">"
+        and: true
+      }
+    }
+    start_state: "Intercept"
+  }
+}
+trace_elements {
+  machine_name: "PassFailPrimaryAttacker"
+  tuneable_params {
+    key: "angle"
+    value: 1
+  }
+  tuneable_params {
+    key: "angular_vel"
+    value: 50
+  }
+  tuneable_params {
+    key: "distance"
+    value: 146
+  }
+  tuneable_params {
+    key: "y_prime_vel"
+    value: 200
+  }
+  tuneable_params {
+    key: "relative_vel"
+    value: 400
+  }
+  tuneable_params {
+    key: "align"
+    value: 0
+  }
+  tuneable_params {
+    key: "catch_velocity"
+    value: 1500
+  }
+  tuneable_params {
+    key: "ball_velocity"
+    value: 100
+  }
+  tuneable_params {
+    key: "ball_velocity"
+    value: 100
+  }
+  state: "Intercept"
+  transitions {
+    potential_state: "Kick"
+    should_transition: true
+    human_constraint: true
+    blocks {
+      and: true
+      clauses {
+        lhs: 0.87885988
+        rhs: "angle"
+        comparator: "<"
+        and: true
+      }
+      clauses {
+        lhs: 20.318426
+        rhs: "angular_vel"
+        comparator: "<"
+        and: true
+      }
+      clauses {
+        lhs: 23.175188
+        rhs: "distance"
+        comparator: "<"
+        and: true
+      }
+      clauses {
+        lhs: 188.50995
+        rhs: "y_prime_vel"
+        comparator: "<"
+        and: true
+      }
+      clauses {
+        lhs: 297.39664
+        rhs: "relative_vel"
+        comparator: "<"
+        and: true
+      }
+      clauses {
+        lhs: 7.6079984
+        rhs: "align"
+        comparator: "<"
+        and: true
+      }
+    }
+    start_state: "Intercept"
+  }
+  transitions {
+    potential_state: "Receive"
+    should_transition: false
+    human_constraint: false
+    blocks {
+      and: true
+      clauses {
+        lhs: 954.79938
+        rhs: "catch_velocity"
+        comparator: ">"
+        and: true
+      }
+    }
+    start_state: "Intercept"
+  }
+  transitions {
+    potential_state: "Start"
+    should_transition: false
+    human_constraint: false
+    blocks {
+      and: true
+      clauses {
+        lhs: 954.79938
+        rhs: "ball_velocity"
+        comparator: "<"
+        and: true
+      }
+    }
+    start_state: "Intercept"
+  }
+  transitions {
+    potential_state: "Intercept"
+    should_transition: true
+    human_constraint: false
+    blocks {
+      and: true
+      clauses {
+        lhs: 911.10834
+        rhs: "ball_velocity"
+        comparator: ">"
+        and: true
+      }
+    }
+    start_state: "Intercept"
+  }
+}
+trace_elements {
+  machine_name: "PassFailPrimaryAttacker"
+  tuneable_params {
+    key: "angle"
+    value: 1
+  }
+  tuneable_params {
+    key: "angular_vel"
+    value: 50
+  }
+  tuneable_params {
+    key: "distance"
+    value: 146
+  }
+  tuneable_params {
+    key: "y_prime_vel"
+    value: 200
+  }
+  tuneable_params {
+    key: "relative_vel"
+    value: 400
+  }
+  tuneable_params {
+    key: "align"
+    value: 0
+  }
+  tuneable_params {
+    key: "catch_velocity"
+    value: 1500
+  }
+  tuneable_params {
     key: "catch_radius"
     value: 540
   }
@@ -48,37 +308,37 @@ trace_elements {
     blocks {
       and: true
       clauses {
-        lhs: 0.49709263
+        lhs: 0.14573318
         rhs: "angle"
         comparator: "<"
         and: true
       }
       clauses {
-        lhs: 6.8979344
+        lhs: 2.6916182
         rhs: "angular_vel"
         comparator: "<"
         and: true
       }
       clauses {
-        lhs: 38.197205
+        lhs: 58.75576
         rhs: "distance"
         comparator: "<"
         and: true
       }
       clauses {
-        lhs: 184.07425
+        lhs: 108.62799
         rhs: "y_prime_vel"
         comparator: "<"
         and: true
       }
       clauses {
-        lhs: 184.07568
+        lhs: 127.58067
         rhs: "relative_vel"
         comparator: "<"
         and: true
       }
       clauses {
-        lhs: 15.177616
+        lhs: 17.596846
         rhs: "align"
         comparator: "<"
         and: true
@@ -93,13 +353,13 @@ trace_elements {
     blocks {
       and: true
       clauses {
-        lhs: 937.62396
+        lhs: 926.17151
         rhs: "catch_velocity"
         comparator: ">"
         and: true
       }
       clauses {
-        lhs: 130.00723
+        lhs: 148.96556
         rhs: "catch_radius"
         comparator: "<"
         and: true
@@ -114,7 +374,7 @@ trace_elements {
     blocks {
       and: true
       clauses {
-        lhs: 937.62396
+        lhs: 926.17151
         rhs: "ball_velocity"
         comparator: "<"
         and: true
@@ -129,7 +389,7 @@ trace_elements {
     blocks {
       and: true
       clauses {
-        lhs: 844.41138
+        lhs: 831.56305
         rhs: "ball_velocity"
         comparator: ">"
         and: true
@@ -171,556 +431,6 @@ trace_elements {
   tuneable_params {
     key: "ball_velocity"
     value: 100
-  }
-  tuneable_params {
-    key: "ball_velocity"
-    value: 100
-  }
-  state: "Intercept"
-  transitions {
-    potential_state: "Kick"
-    should_transition: true
-    human_constraint: true
-    blocks {
-      and: true
-      clauses {
-        lhs: 0.68634695
-        rhs: "angle"
-        comparator: "<"
-        and: true
-      }
-      clauses {
-        lhs: 13.483381
-        rhs: "angular_vel"
-        comparator: "<"
-        and: true
-      }
-      clauses {
-        lhs: 8.88412
-        rhs: "distance"
-        comparator: "<"
-        and: true
-      }
-      clauses {
-        lhs: 196.04254
-        rhs: "y_prime_vel"
-        comparator: "<"
-        and: true
-      }
-      clauses {
-        lhs: 204.91664
-        rhs: "relative_vel"
-        comparator: "<"
-        and: true
-      }
-      clauses {
-        lhs: 4.7092772
-        rhs: "align"
-        comparator: "<"
-        and: true
-      }
-    }
-    start_state: "Intercept"
-  }
-  transitions {
-    potential_state: "Receive"
-    should_transition: false
-    human_constraint: false
-    blocks {
-      and: true
-      clauses {
-        lhs: 1051.8815
-        rhs: "catch_velocity"
-        comparator: ">"
-        and: true
-      }
-    }
-    start_state: "Intercept"
-  }
-  transitions {
-    potential_state: "Start"
-    should_transition: false
-    human_constraint: false
-    blocks {
-      and: true
-      clauses {
-        lhs: 1051.8815
-        rhs: "ball_velocity"
-        comparator: "<"
-        and: true
-      }
-    }
-    start_state: "Intercept"
-  }
-  transitions {
-    potential_state: "Intercept"
-    should_transition: true
-    human_constraint: false
-    blocks {
-      and: true
-      clauses {
-        lhs: 982.90369
-        rhs: "ball_velocity"
-        comparator: ">"
-        and: true
-      }
-    }
-    start_state: "Intercept"
-  }
-}
-trace_elements {
-  machine_name: "PassFailPrimaryAttacker"
-  tuneable_params {
-    key: "angle"
-    value: 1
-  }
-  tuneable_params {
-    key: "angular_vel"
-    value: 50
-  }
-  tuneable_params {
-    key: "distance"
-    value: 146
-  }
-  tuneable_params {
-    key: "y_prime_vel"
-    value: 200
-  }
-  tuneable_params {
-    key: "relative_vel"
-    value: 400
-  }
-  tuneable_params {
-    key: "align"
-    value: 0
-  }
-  tuneable_params {
-    key: "catch_velocity"
-    value: 1500
-  }
-  tuneable_params {
-    key: "catch_radius"
-    value: 540
-  }
-  tuneable_params {
-    key: "ball_velocity"
-    value: 100
-  }
-  tuneable_params {
-    key: "ball_velocity"
-    value: 100
-  }
-  state: "Intercept"
-  transitions {
-    potential_state: "Kick"
-    should_transition: true
-    human_constraint: true
-    blocks {
-      and: true
-      clauses {
-        lhs: 0.57462686
-        rhs: "angle"
-        comparator: "<"
-        and: true
-      }
-      clauses {
-        lhs: 24.546595
-        rhs: "angular_vel"
-        comparator: "<"
-        and: true
-      }
-      clauses {
-        lhs: 18.368412
-        rhs: "distance"
-        comparator: "<"
-        and: true
-      }
-      clauses {
-        lhs: 169.12549
-        rhs: "y_prime_vel"
-        comparator: "<"
-        and: true
-      }
-      clauses {
-        lhs: 174.83279
-        rhs: "relative_vel"
-        comparator: "<"
-        and: true
-      }
-      clauses {
-        lhs: 11.574802
-        rhs: "align"
-        comparator: "<"
-        and: true
-      }
-    }
-    start_state: "Intercept"
-  }
-  transitions {
-    potential_state: "Receive"
-    should_transition: false
-    human_constraint: false
-    blocks {
-      and: true
-      clauses {
-        lhs: 937.62482
-        rhs: "catch_velocity"
-        comparator: ">"
-        and: true
-      }
-      clauses {
-        lhs: 143.32649
-        rhs: "catch_radius"
-        comparator: "<"
-        and: true
-      }
-    }
-    start_state: "Intercept"
-  }
-  transitions {
-    potential_state: "Start"
-    should_transition: false
-    human_constraint: false
-    blocks {
-      and: true
-      clauses {
-        lhs: 937.62482
-        rhs: "ball_velocity"
-        comparator: "<"
-        and: true
-      }
-    }
-    start_state: "Intercept"
-  }
-  transitions {
-    potential_state: "Intercept"
-    should_transition: true
-    human_constraint: false
-    blocks {
-      and: true
-      clauses {
-        lhs: 894.2345
-        rhs: "ball_velocity"
-        comparator: ">"
-        and: true
-      }
-    }
-    start_state: "Intercept"
-  }
-}
-trace_elements {
-  machine_name: "PassFailPrimaryAttacker"
-  tuneable_params {
-    key: "angle"
-    value: 1
-  }
-  tuneable_params {
-    key: "angular_vel"
-    value: 50
-  }
-  tuneable_params {
-    key: "distance"
-    value: 146
-  }
-  tuneable_params {
-    key: "y_prime_vel"
-    value: 200
-  }
-  tuneable_params {
-    key: "relative_vel"
-    value: 400
-  }
-  tuneable_params {
-    key: "align"
-    value: 0
-  }
-  tuneable_params {
-    key: "catch_velocity"
-    value: 1500
-  }
-  tuneable_params {
-    key: "catch_radius"
-    value: 540
-  }
-  tuneable_params {
-    key: "ball_velocity"
-    value: 100
-  }
-  tuneable_params {
-    key: "ball_velocity"
-    value: 100
-  }
-  state: "Intercept"
-  transitions {
-    potential_state: "Kick"
-    should_transition: true
-    human_constraint: true
-    blocks {
-      and: true
-      clauses {
-        lhs: 0.12598114
-        rhs: "angle"
-        comparator: "<"
-        and: true
-      }
-      clauses {
-        lhs: 5.4591932
-        rhs: "angular_vel"
-        comparator: "<"
-        and: true
-      }
-      clauses {
-        lhs: 39.579063
-        rhs: "distance"
-        comparator: "<"
-        and: true
-      }
-      clauses {
-        lhs: 182.36911
-        rhs: "y_prime_vel"
-        comparator: "<"
-        and: true
-      }
-      clauses {
-        lhs: 204.86751
-        rhs: "relative_vel"
-        comparator: "<"
-        and: true
-      }
-      clauses {
-        lhs: 8.2764778
-        rhs: "align"
-        comparator: "<"
-        and: true
-      }
-    }
-    start_state: "Intercept"
-  }
-  transitions {
-    potential_state: "Receive"
-    should_transition: false
-    human_constraint: false
-    blocks {
-      and: true
-      clauses {
-        lhs: 868.88226
-        rhs: "catch_velocity"
-        comparator: ">"
-        and: true
-      }
-      clauses {
-        lhs: 142.33293
-        rhs: "catch_radius"
-        comparator: "<"
-        and: true
-      }
-    }
-    start_state: "Intercept"
-  }
-  transitions {
-    potential_state: "Start"
-    should_transition: false
-    human_constraint: false
-    blocks {
-      and: true
-      clauses {
-        lhs: 868.88226
-        rhs: "ball_velocity"
-        comparator: "<"
-        and: true
-      }
-    }
-    start_state: "Intercept"
-  }
-  transitions {
-    potential_state: "Intercept"
-    should_transition: true
-    human_constraint: false
-    blocks {
-      and: true
-      clauses {
-        lhs: 789.08917
-        rhs: "ball_velocity"
-        comparator: ">"
-        and: true
-      }
-    }
-    start_state: "Intercept"
-  }
-}
-trace_elements {
-  machine_name: "PassFailPrimaryAttacker"
-  tuneable_params {
-    key: "angle"
-    value: 1
-  }
-  tuneable_params {
-    key: "angular_vel"
-    value: 50
-  }
-  tuneable_params {
-    key: "distance"
-    value: 146
-  }
-  tuneable_params {
-    key: "y_prime_vel"
-    value: 200
-  }
-  tuneable_params {
-    key: "relative_vel"
-    value: 400
-  }
-  tuneable_params {
-    key: "align"
-    value: 0
-  }
-  tuneable_params {
-    key: "catch_velocity"
-    value: 1500
-  }
-  tuneable_params {
-    key: "catch_radius"
-    value: 540
-  }
-  tuneable_params {
-    key: "ball_velocity"
-    value: 100
-  }
-  tuneable_params {
-    key: "ball_velocity"
-    value: 100
-  }
-  state: "Intercept"
-  transitions {
-    potential_state: "Kick"
-    should_transition: true
-    human_constraint: true
-    blocks {
-      and: true
-      clauses {
-        lhs: 0.26969
-        rhs: "angle"
-        comparator: "<"
-        and: true
-      }
-      clauses {
-        lhs: 12.642589
-        rhs: "angular_vel"
-        comparator: "<"
-        and: true
-      }
-      clauses {
-        lhs: 32.087276
-        rhs: "distance"
-        comparator: "<"
-        and: true
-      }
-      clauses {
-        lhs: 178.4325
-        rhs: "y_prime_vel"
-        comparator: "<"
-        and: true
-      }
-      clauses {
-        lhs: 256.32657
-        rhs: "relative_vel"
-        comparator: "<"
-        and: true
-      }
-      clauses {
-        lhs: 14.815226
-        rhs: "align"
-        comparator: "<"
-        and: true
-      }
-    }
-    start_state: "Intercept"
-  }
-  transitions {
-    potential_state: "Receive"
-    should_transition: false
-    human_constraint: false
-    blocks {
-      and: true
-      clauses {
-        lhs: 1201.0643
-        rhs: "catch_velocity"
-        comparator: ">"
-        and: true
-      }
-      clauses {
-        lhs: 131.8522
-        rhs: "catch_radius"
-        comparator: "<"
-        and: true
-      }
-    }
-    start_state: "Intercept"
-  }
-  transitions {
-    potential_state: "Start"
-    should_transition: false
-    human_constraint: false
-    blocks {
-      and: true
-      clauses {
-        lhs: 1201.0643
-        rhs: "ball_velocity"
-        comparator: "<"
-        and: true
-      }
-    }
-    start_state: "Intercept"
-  }
-  transitions {
-    potential_state: "Intercept"
-    should_transition: true
-    human_constraint: false
-    blocks {
-      and: true
-      clauses {
-        lhs: 1148.8917
-        rhs: "ball_velocity"
-        comparator: ">"
-        and: true
-      }
-    }
-    start_state: "Intercept"
-  }
-}
-trace_elements {
-  machine_name: "PassFailPrimaryAttacker"
-  tuneable_params {
-    key: "angle"
-    value: 1
-  }
-  tuneable_params {
-    key: "angular_vel"
-    value: 50
-  }
-  tuneable_params {
-    key: "distance"
-    value: 146
-  }
-  tuneable_params {
-    key: "y_prime_vel"
-    value: 200
-  }
-  tuneable_params {
-    key: "relative_vel"
-    value: 400
-  }
-  tuneable_params {
-    key: "align"
-    value: 0
-  }
-  tuneable_params {
-    key: "catch_velocity"
-    value: 1500
-  }
-  tuneable_params {
-    key: "catch_radius"
-    value: 540
   }
   tuneable_params {
     key: "ball_velocity"
@@ -729,42 +439,42 @@ trace_elements {
   state: "NavigateToIntercept"
   transitions {
     potential_state: "Kick"
-    should_transition: true
-    human_constraint: true
+    should_transition: false
+    human_constraint: false
     blocks {
       and: true
       clauses {
-        lhs: 1.4196411
+        lhs: 4.4463487
         rhs: "angle"
         comparator: "<"
         and: true
       }
       clauses {
-        lhs: 10.879126
+        lhs: 8.6707439
         rhs: "angular_vel"
         comparator: "<"
         and: true
       }
       clauses {
-        lhs: 34.706676
+        lhs: 1575.1848
         rhs: "distance"
         comparator: "<"
         and: true
       }
       clauses {
-        lhs: 196.75308
+        lhs: 149.11348
         rhs: "y_prime_vel"
         comparator: "<"
         and: true
       }
       clauses {
-        lhs: 197.81711
+        lhs: 160.68152
         rhs: "relative_vel"
         comparator: "<"
         and: true
       }
       clauses {
-        lhs: 2.8502579
+        lhs: 208.15494
         rhs: "align"
         comparator: "<"
         and: true
@@ -779,19 +489,153 @@ trace_elements {
     blocks {
       and: true
       clauses {
-        lhs: 462.15036
+        lhs: 231.8512
         rhs: "catch_velocity"
         comparator: ">"
         and: true
       }
+    }
+    start_state: "NavigateToIntercept"
+  }
+  transitions {
+    potential_state: "Start"
+    should_transition: true
+    human_constraint: true
+    blocks {
+      and: true
       clauses {
-        lhs: 160.31123
-        rhs: "catch_radius"
+        lhs: 231.8512
+        rhs: "ball_velocity"
         comparator: "<"
         and: true
       }
     }
     start_state: "NavigateToIntercept"
+  }
+  transitions {
+    potential_state: "Intercept"
+    should_transition: false
+    human_constraint: false
+    blocks {
+      and: true
+      clauses {
+        lhs: 0
+        rhs: "ball_velocity"
+        comparator: ">"
+        and: true
+      }
+    }
+    start_state: "NavigateToIntercept"
+  }
+}
+trace_elements {
+  machine_name: "PassFailPrimaryAttacker"
+  tuneable_params {
+    key: "angle"
+    value: 1
+  }
+  tuneable_params {
+    key: "angular_vel"
+    value: 50
+  }
+  tuneable_params {
+    key: "distance"
+    value: 146
+  }
+  tuneable_params {
+    key: "y_prime_vel"
+    value: 200
+  }
+  tuneable_params {
+    key: "relative_vel"
+    value: 400
+  }
+  tuneable_params {
+    key: "align"
+    value: 0
+  }
+  tuneable_params {
+    key: "catch_velocity"
+    value: 1500
+  }
+  tuneable_params {
+    key: "catch_radius"
+    value: 540
+  }
+  tuneable_params {
+    key: "ball_velocity"
+    value: 100
+  }
+  tuneable_params {
+    key: "ball_velocity"
+    value: 100
+  }
+  state: "Intercept"
+  transitions {
+    potential_state: "Kick"
+    should_transition: true
+    human_constraint: true
+    blocks {
+      and: true
+      clauses {
+        lhs: 0.42455414
+        rhs: "angle"
+        comparator: "<"
+        and: true
+      }
+      clauses {
+        lhs: 10.114793
+        rhs: "angular_vel"
+        comparator: "<"
+        and: true
+      }
+      clauses {
+        lhs: 21.255873
+        rhs: "distance"
+        comparator: "<"
+        and: true
+      }
+      clauses {
+        lhs: 189.68744
+        rhs: "y_prime_vel"
+        comparator: "<"
+        and: true
+      }
+      clauses {
+        lhs: 235.10757
+        rhs: "relative_vel"
+        comparator: "<"
+        and: true
+      }
+      clauses {
+        lhs: 4.640873
+        rhs: "align"
+        comparator: "<"
+        and: true
+      }
+    }
+    start_state: "Intercept"
+  }
+  transitions {
+    potential_state: "Receive"
+    should_transition: false
+    human_constraint: false
+    blocks {
+      and: true
+      clauses {
+        lhs: 931.89862
+        rhs: "catch_velocity"
+        comparator: ">"
+        and: true
+      }
+      clauses {
+        lhs: 148.75883
+        rhs: "catch_radius"
+        comparator: "<"
+        and: true
+      }
+    }
+    start_state: "Intercept"
   }
   transitions {
     potential_state: "Start"
@@ -800,13 +644,448 @@ trace_elements {
     blocks {
       and: true
       clauses {
-        lhs: 462.15036
+        lhs: 931.89862
         rhs: "ball_velocity"
         comparator: "<"
         and: true
       }
     }
-    start_state: "NavigateToIntercept"
+    start_state: "Intercept"
+  }
+  transitions {
+    potential_state: "Intercept"
+    should_transition: true
+    human_constraint: false
+    blocks {
+      and: true
+      clauses {
+        lhs: 886.3172
+        rhs: "ball_velocity"
+        comparator: ">"
+        and: true
+      }
+    }
+    start_state: "Intercept"
+  }
+}
+trace_elements {
+  machine_name: "PassFailPrimaryAttacker"
+  tuneable_params {
+    key: "angle"
+    value: 1
+  }
+  tuneable_params {
+    key: "angular_vel"
+    value: 50
+  }
+  tuneable_params {
+    key: "distance"
+    value: 146
+  }
+  tuneable_params {
+    key: "y_prime_vel"
+    value: 200
+  }
+  tuneable_params {
+    key: "relative_vel"
+    value: 400
+  }
+  tuneable_params {
+    key: "align"
+    value: 0
+  }
+  tuneable_params {
+    key: "catch_velocity"
+    value: 1500
+  }
+  tuneable_params {
+    key: "catch_radius"
+    value: 540
+  }
+  tuneable_params {
+    key: "ball_velocity"
+    value: 100
+  }
+  tuneable_params {
+    key: "ball_velocity"
+    value: 100
+  }
+  state: "Intercept"
+  transitions {
+    potential_state: "Kick"
+    should_transition: true
+    human_constraint: true
+    blocks {
+      and: true
+      clauses {
+        lhs: 0.35247532
+        rhs: "angle"
+        comparator: "<"
+        and: true
+      }
+      clauses {
+        lhs: 12.853237
+        rhs: "angular_vel"
+        comparator: "<"
+        and: true
+      }
+      clauses {
+        lhs: 42.907822
+        rhs: "distance"
+        comparator: "<"
+        and: true
+      }
+      clauses {
+        lhs: 160.14984
+        rhs: "y_prime_vel"
+        comparator: "<"
+        and: true
+      }
+      clauses {
+        lhs: 337.11124
+        rhs: "relative_vel"
+        comparator: "<"
+        and: true
+      }
+      clauses {
+        lhs: 17.392441
+        rhs: "align"
+        comparator: "<"
+        and: true
+      }
+    }
+    start_state: "Intercept"
+  }
+  transitions {
+    potential_state: "Receive"
+    should_transition: false
+    human_constraint: false
+    blocks {
+      and: true
+      clauses {
+        lhs: 931.91187
+        rhs: "catch_velocity"
+        comparator: ">"
+        and: true
+      }
+      clauses {
+        lhs: 177.20174
+        rhs: "catch_radius"
+        comparator: "<"
+        and: true
+      }
+    }
+    start_state: "Intercept"
+  }
+  transitions {
+    potential_state: "Start"
+    should_transition: false
+    human_constraint: false
+    blocks {
+      and: true
+      clauses {
+        lhs: 931.91187
+        rhs: "ball_velocity"
+        comparator: "<"
+        and: true
+      }
+    }
+    start_state: "Intercept"
+  }
+  transitions {
+    potential_state: "Intercept"
+    should_transition: true
+    human_constraint: false
+    blocks {
+      and: true
+      clauses {
+        lhs: 871.47748
+        rhs: "ball_velocity"
+        comparator: ">"
+        and: true
+      }
+    }
+    start_state: "Intercept"
+  }
+}
+trace_elements {
+  machine_name: "PassFailPrimaryAttacker"
+  tuneable_params {
+    key: "angle"
+    value: 1
+  }
+  tuneable_params {
+    key: "angular_vel"
+    value: 50
+  }
+  tuneable_params {
+    key: "distance"
+    value: 146
+  }
+  tuneable_params {
+    key: "y_prime_vel"
+    value: 200
+  }
+  tuneable_params {
+    key: "relative_vel"
+    value: 400
+  }
+  tuneable_params {
+    key: "align"
+    value: 0
+  }
+  tuneable_params {
+    key: "catch_velocity"
+    value: 1500
+  }
+  tuneable_params {
+    key: "catch_radius"
+    value: 540
+  }
+  tuneable_params {
+    key: "ball_velocity"
+    value: 100
+  }
+  tuneable_params {
+    key: "ball_velocity"
+    value: 100
+  }
+  state: "Intercept"
+  transitions {
+    potential_state: "Kick"
+    should_transition: true
+    human_constraint: true
+    blocks {
+      and: true
+      clauses {
+        lhs: 0.43436715
+        rhs: "angle"
+        comparator: "<"
+        and: true
+      }
+      clauses {
+        lhs: 2.7856262
+        rhs: "angular_vel"
+        comparator: "<"
+        and: true
+      }
+      clauses {
+        lhs: 40.322453
+        rhs: "distance"
+        comparator: "<"
+        and: true
+      }
+      clauses {
+        lhs: 187.56104
+        rhs: "y_prime_vel"
+        comparator: "<"
+        and: true
+      }
+      clauses {
+        lhs: 370.48343
+        rhs: "relative_vel"
+        comparator: "<"
+        and: true
+      }
+      clauses {
+        lhs: 5.4011192
+        rhs: "align"
+        comparator: "<"
+        and: true
+      }
+    }
+    start_state: "Intercept"
+  }
+  transitions {
+    potential_state: "Receive"
+    should_transition: false
+    human_constraint: false
+    blocks {
+      and: true
+      clauses {
+        lhs: 949.07526
+        rhs: "catch_velocity"
+        comparator: ">"
+        and: true
+      }
+      clauses {
+        lhs: 160.21532
+        rhs: "catch_radius"
+        comparator: "<"
+        and: true
+      }
+    }
+    start_state: "Intercept"
+  }
+  transitions {
+    potential_state: "Start"
+    should_transition: false
+    human_constraint: false
+    blocks {
+      and: true
+      clauses {
+        lhs: 949.07526
+        rhs: "ball_velocity"
+        comparator: "<"
+        and: true
+      }
+    }
+    start_state: "Intercept"
+  }
+  transitions {
+    potential_state: "Intercept"
+    should_transition: true
+    human_constraint: false
+    blocks {
+      and: true
+      clauses {
+        lhs: 892.03296
+        rhs: "ball_velocity"
+        comparator: ">"
+        and: true
+      }
+    }
+    start_state: "Intercept"
+  }
+}
+trace_elements {
+  machine_name: "PassFailPrimaryAttacker"
+  tuneable_params {
+    key: "angle"
+    value: 1
+  }
+  tuneable_params {
+    key: "angular_vel"
+    value: 50
+  }
+  tuneable_params {
+    key: "distance"
+    value: 146
+  }
+  tuneable_params {
+    key: "y_prime_vel"
+    value: 200
+  }
+  tuneable_params {
+    key: "relative_vel"
+    value: 400
+  }
+  tuneable_params {
+    key: "align"
+    value: 0
+  }
+  tuneable_params {
+    key: "catch_velocity"
+    value: 1500
+  }
+  tuneable_params {
+    key: "catch_radius"
+    value: 540
+  }
+  tuneable_params {
+    key: "ball_velocity"
+    value: 100
+  }
+  tuneable_params {
+    key: "ball_velocity"
+    value: 100
+  }
+  state: "Intercept"
+  transitions {
+    potential_state: "Kick"
+    should_transition: true
+    human_constraint: true
+    blocks {
+      and: true
+      clauses {
+        lhs: 0.023318905
+        rhs: "angle"
+        comparator: "<"
+        and: true
+      }
+      clauses {
+        lhs: 8.5550814
+        rhs: "angular_vel"
+        comparator: "<"
+        and: true
+      }
+      clauses {
+        lhs: 26.963581
+        rhs: "distance"
+        comparator: "<"
+        and: true
+      }
+      clauses {
+        lhs: 181.27808
+        rhs: "y_prime_vel"
+        comparator: "<"
+        and: true
+      }
+      clauses {
+        lhs: 260.01279
+        rhs: "relative_vel"
+        comparator: "<"
+        and: true
+      }
+      clauses {
+        lhs: 7.5229578
+        rhs: "align"
+        comparator: "<"
+        and: true
+      }
+    }
+    start_state: "Intercept"
+  }
+  transitions {
+    potential_state: "Receive"
+    should_transition: false
+    human_constraint: false
+    blocks {
+      and: true
+      clauses {
+        lhs: 908.98761
+        rhs: "catch_velocity"
+        comparator: ">"
+        and: true
+      }
+      clauses {
+        lhs: 153.54129
+        rhs: "catch_radius"
+        comparator: "<"
+        and: true
+      }
+    }
+    start_state: "Intercept"
+  }
+  transitions {
+    potential_state: "Start"
+    should_transition: false
+    human_constraint: false
+    blocks {
+      and: true
+      clauses {
+        lhs: 908.98761
+        rhs: "ball_velocity"
+        comparator: "<"
+        and: true
+      }
+    }
+    start_state: "Intercept"
+  }
+  transitions {
+    potential_state: "Intercept"
+    should_transition: true
+    human_constraint: false
+    blocks {
+      and: true
+      clauses {
+        lhs: 861.93207
+        rhs: "ball_velocity"
+        comparator: ">"
+        and: true
+      }
+    }
+    start_state: "Intercept"
   }
 }
 trace_elements {
@@ -851,7 +1130,7 @@ trace_elements {
     blocks {
       and: true
       clauses {
-        lhs: 0.23401168
+        lhs: 1.0374178
         rhs: "angle"
         comparator: "<"
         and: true
@@ -863,25 +1142,25 @@ trace_elements {
         and: true
       }
       clauses {
-        lhs: 28.9629
+        lhs: 41.456139
         rhs: "distance"
         comparator: "<"
         and: true
       }
       clauses {
-        lhs: 198.28625
+        lhs: 172.12589
         rhs: "y_prime_vel"
         comparator: "<"
         and: true
       }
       clauses {
-        lhs: 198.45673
+        lhs: 172.6187
         rhs: "relative_vel"
         comparator: "<"
         and: true
       }
       clauses {
-        lhs: 9.511013
+        lhs: 13.669828
         rhs: "align"
         comparator: "<"
         and: true
@@ -958,469 +1237,45 @@ trace_elements {
     key: "ball_velocity"
     value: 100
   }
-  tuneable_params {
-    key: "ball_velocity"
-    value: 100
-  }
-  state: "Intercept"
-  transitions {
-    potential_state: "Kick"
-    should_transition: true
-    human_constraint: true
-    blocks {
-      and: true
-      clauses {
-        lhs: 0.53034538
-        rhs: "angle"
-        comparator: "<"
-        and: true
-      }
-      clauses {
-        lhs: 11.999413
-        rhs: "angular_vel"
-        comparator: "<"
-        and: true
-      }
-      clauses {
-        lhs: 37.400791
-        rhs: "distance"
-        comparator: "<"
-        and: true
-      }
-      clauses {
-        lhs: 122.84424
-        rhs: "y_prime_vel"
-        comparator: "<"
-        and: true
-      }
-      clauses {
-        lhs: 124.90531
-        rhs: "relative_vel"
-        comparator: "<"
-        and: true
-      }
-      clauses {
-        lhs: 15.756899
-        rhs: "align"
-        comparator: "<"
-        and: true
-      }
-    }
-    start_state: "Intercept"
-  }
-  transitions {
-    potential_state: "Receive"
-    should_transition: false
-    human_constraint: false
-    blocks {
-      and: true
-      clauses {
-        lhs: 788.88403
-        rhs: "catch_velocity"
-        comparator: ">"
-        and: true
-      }
-      clauses {
-        lhs: 154.33597
-        rhs: "catch_radius"
-        comparator: "<"
-        and: true
-      }
-    }
-    start_state: "Intercept"
-  }
-  transitions {
-    potential_state: "Start"
-    should_transition: false
-    human_constraint: false
-    blocks {
-      and: true
-      clauses {
-        lhs: 788.88403
-        rhs: "ball_velocity"
-        comparator: "<"
-        and: true
-      }
-    }
-    start_state: "Intercept"
-  }
-  transitions {
-    potential_state: "Intercept"
-    should_transition: true
-    human_constraint: false
-    blocks {
-      and: true
-      clauses {
-        lhs: 714.32758
-        rhs: "ball_velocity"
-        comparator: ">"
-        and: true
-      }
-    }
-    start_state: "Intercept"
-  }
-}
-trace_elements {
-  machine_name: "PassFailPrimaryAttacker"
-  tuneable_params {
-    key: "angle"
-    value: 1
-  }
-  tuneable_params {
-    key: "angular_vel"
-    value: 50
-  }
-  tuneable_params {
-    key: "distance"
-    value: 146
-  }
-  tuneable_params {
-    key: "y_prime_vel"
-    value: 200
-  }
-  tuneable_params {
-    key: "relative_vel"
-    value: 400
-  }
-  tuneable_params {
-    key: "align"
-    value: 0
-  }
-  tuneable_params {
-    key: "catch_velocity"
-    value: 1500
-  }
-  tuneable_params {
-    key: "catch_radius"
-    value: 540
-  }
-  tuneable_params {
-    key: "ball_velocity"
-    value: 100
-  }
-  tuneable_params {
-    key: "ball_velocity"
-    value: 100
-  }
-  state: "Intercept"
-  transitions {
-    potential_state: "Kick"
-    should_transition: true
-    human_constraint: true
-    blocks {
-      and: true
-      clauses {
-        lhs: 0.082944214
-        rhs: "angle"
-        comparator: "<"
-        and: true
-      }
-      clauses {
-        lhs: 6.8957
-        rhs: "angular_vel"
-        comparator: "<"
-        and: true
-      }
-      clauses {
-        lhs: 36.419373
-        rhs: "distance"
-        comparator: "<"
-        and: true
-      }
-      clauses {
-        lhs: 101.96394
-        rhs: "y_prime_vel"
-        comparator: "<"
-        and: true
-      }
-      clauses {
-        lhs: 181.22252
-        rhs: "relative_vel"
-        comparator: "<"
-        and: true
-      }
-      clauses {
-        lhs: 17.438896
-        rhs: "align"
-        comparator: "<"
-        and: true
-      }
-    }
-    start_state: "Intercept"
-  }
-  transitions {
-    potential_state: "Receive"
-    should_transition: false
-    human_constraint: false
-    blocks {
-      and: true
-      clauses {
-        lhs: 215.83125
-        rhs: "catch_velocity"
-        comparator: ">"
-        and: true
-      }
-      clauses {
-        lhs: 117.09387
-        rhs: "catch_radius"
-        comparator: "<"
-        and: true
-      }
-    }
-    start_state: "Intercept"
-  }
-  transitions {
-    potential_state: "Start"
-    should_transition: false
-    human_constraint: false
-    blocks {
-      and: true
-      clauses {
-        lhs: 215.83125
-        rhs: "ball_velocity"
-        comparator: "<"
-        and: true
-      }
-    }
-    start_state: "Intercept"
-  }
-  transitions {
-    potential_state: "Intercept"
-    should_transition: true
-    human_constraint: false
-    blocks {
-      and: true
-      clauses {
-        lhs: 155.93147
-        rhs: "ball_velocity"
-        comparator: ">"
-        and: true
-      }
-    }
-    start_state: "Intercept"
-  }
-}
-trace_elements {
-  machine_name: "PassFailPrimaryAttacker"
-  tuneable_params {
-    key: "angle"
-    value: 1
-  }
-  tuneable_params {
-    key: "angular_vel"
-    value: 50
-  }
-  tuneable_params {
-    key: "distance"
-    value: 146
-  }
-  tuneable_params {
-    key: "y_prime_vel"
-    value: 200
-  }
-  tuneable_params {
-    key: "relative_vel"
-    value: 400
-  }
-  tuneable_params {
-    key: "align"
-    value: 0
-  }
-  tuneable_params {
-    key: "catch_velocity"
-    value: 1500
-  }
-  tuneable_params {
-    key: "catch_radius"
-    value: 540
-  }
-  tuneable_params {
-    key: "ball_velocity"
-    value: 100
-  }
-  tuneable_params {
-    key: "ball_velocity"
-    value: 100
-  }
-  state: "Intercept"
-  transitions {
-    potential_state: "Kick"
-    should_transition: true
-    human_constraint: true
-    blocks {
-      and: true
-      clauses {
-        lhs: 0.39872468
-        rhs: "angle"
-        comparator: "<"
-        and: true
-      }
-      clauses {
-        lhs: 0.76658541
-        rhs: "angular_vel"
-        comparator: "<"
-        and: true
-      }
-      clauses {
-        lhs: 15.028587
-        rhs: "distance"
-        comparator: "<"
-        and: true
-      }
-      clauses {
-        lhs: 176.36224
-        rhs: "y_prime_vel"
-        comparator: "<"
-        and: true
-      }
-      clauses {
-        lhs: 184.74152
-        rhs: "relative_vel"
-        comparator: "<"
-        and: true
-      }
-      clauses {
-        lhs: 9.6575623
-        rhs: "align"
-        comparator: "<"
-        and: true
-      }
-    }
-    start_state: "Intercept"
-  }
-  transitions {
-    potential_state: "Receive"
-    should_transition: false
-    human_constraint: false
-    blocks {
-      and: true
-      clauses {
-        lhs: 616.81488
-        rhs: "catch_velocity"
-        comparator: ">"
-        and: true
-      }
-      clauses {
-        lhs: 148.04138
-        rhs: "catch_radius"
-        comparator: "<"
-        and: true
-      }
-    }
-    start_state: "Intercept"
-  }
-  transitions {
-    potential_state: "Start"
-    should_transition: false
-    human_constraint: false
-    blocks {
-      and: true
-      clauses {
-        lhs: 616.81488
-        rhs: "ball_velocity"
-        comparator: "<"
-        and: true
-      }
-    }
-    start_state: "Intercept"
-  }
-  transitions {
-    potential_state: "Intercept"
-    should_transition: true
-    human_constraint: false
-    blocks {
-      and: true
-      clauses {
-        lhs: 565.23907
-        rhs: "ball_velocity"
-        comparator: ">"
-        and: true
-      }
-    }
-    start_state: "Intercept"
-  }
-}
-trace_elements {
-  machine_name: "PassFailPrimaryAttacker"
-  tuneable_params {
-    key: "angle"
-    value: 1
-  }
-  tuneable_params {
-    key: "angular_vel"
-    value: 50
-  }
-  tuneable_params {
-    key: "distance"
-    value: 146
-  }
-  tuneable_params {
-    key: "y_prime_vel"
-    value: 200
-  }
-  tuneable_params {
-    key: "relative_vel"
-    value: 400
-  }
-  tuneable_params {
-    key: "align"
-    value: 0
-  }
-  tuneable_params {
-    key: "catch_velocity"
-    value: 1500
-  }
-  tuneable_params {
-    key: "catch_radius"
-    value: 540
-  }
-  tuneable_params {
-    key: "could_score_speed"
-    value: 1000
-  }
-  tuneable_params {
-    key: "ball_velocity"
-    value: 100
-  }
   state: "NavigateToIntercept"
   transitions {
     potential_state: "Kick"
-    should_transition: false
-    human_constraint: false
+    should_transition: true
+    human_constraint: true
     blocks {
       and: true
       clauses {
-        lhs: 73.666634
+        lhs: 0.082467705
         rhs: "angle"
         comparator: "<"
         and: true
       }
       clauses {
-        lhs: 34.55827
+        lhs: 3.2794213
         rhs: "angular_vel"
         comparator: "<"
         and: true
       }
       clauses {
-        lhs: 4706.5664
+        lhs: 25.485956
         rhs: "distance"
         comparator: "<"
         and: true
       }
       clauses {
-        lhs: 122.3869
+        lhs: 168.80896
         rhs: "y_prime_vel"
         comparator: "<"
         and: true
       }
       clauses {
-        lhs: 291.4585
+        lhs: 175.24142
         rhs: "relative_vel"
         comparator: "<"
         and: true
       }
       clauses {
-        lhs: 2245.6128
+        lhs: 14.923618
         rhs: "align"
         comparator: "<"
         and: true
@@ -1435,144 +1290,13 @@ trace_elements {
     blocks {
       and: true
       clauses {
-        lhs: 231.85136
+        lhs: 1088.5131
         rhs: "catch_velocity"
         comparator: ">"
         and: true
       }
       clauses {
-        lhs: 4629.438
-        rhs: "catch_radius"
-        comparator: "<"
-        and: true
-      }
-      clauses {
-        lhs: 231.85136
-        rhs: "could_score_speed"
-        comparator: ">"
-        and: true
-      }
-    }
-    start_state: "NavigateToIntercept"
-  }
-  transitions {
-    potential_state: "Start"
-    should_transition: true
-    human_constraint: true
-    blocks {
-      and: true
-      clauses {
-        lhs: 231.85136
-        rhs: "ball_velocity"
-        comparator: "<"
-        and: true
-      }
-    }
-    start_state: "NavigateToIntercept"
-  }
-}
-trace_elements {
-  machine_name: "PassFailPrimaryAttacker"
-  tuneable_params {
-    key: "angle"
-    value: 1
-  }
-  tuneable_params {
-    key: "angular_vel"
-    value: 50
-  }
-  tuneable_params {
-    key: "distance"
-    value: 146
-  }
-  tuneable_params {
-    key: "y_prime_vel"
-    value: 200
-  }
-  tuneable_params {
-    key: "relative_vel"
-    value: 400
-  }
-  tuneable_params {
-    key: "align"
-    value: 0
-  }
-  tuneable_params {
-    key: "catch_velocity"
-    value: 1500
-  }
-  tuneable_params {
-    key: "catch_radius"
-    value: 540
-  }
-  tuneable_params {
-    key: "ball_velocity"
-    value: 100
-  }
-  tuneable_params {
-    key: "ball_velocity"
-    value: 100
-  }
-  state: "NavigateToIntercept"
-  transitions {
-    potential_state: "Kick"
-    should_transition: false
-    human_constraint: false
-    blocks {
-      and: true
-      clauses {
-        lhs: 32.184776
-        rhs: "angle"
-        comparator: "<"
-        and: true
-      }
-      clauses {
-        lhs: 23.038845
-        rhs: "angular_vel"
-        comparator: "<"
-        and: true
-      }
-      clauses {
-        lhs: 2680.1438
-        rhs: "distance"
-        comparator: "<"
-        and: true
-      }
-      clauses {
-        lhs: 507.68045
-        rhs: "y_prime_vel"
-        comparator: "<"
-        and: true
-      }
-      clauses {
-        lhs: 682.84869
-        rhs: "relative_vel"
-        comparator: "<"
-        and: true
-      }
-      clauses {
-        lhs: 2550.1482
-        rhs: "align"
-        comparator: "<"
-        and: true
-      }
-    }
-    start_state: "NavigateToIntercept"
-  }
-  transitions {
-    potential_state: "Receive"
-    should_transition: false
-    human_constraint: false
-    blocks {
-      and: true
-      clauses {
-        lhs: 694.3819
-        rhs: "catch_velocity"
-        comparator: ">"
-        and: true
-      }
-      clauses {
-        lhs: 1436.2241
+        lhs: 139.10754
         rhs: "catch_radius"
         comparator: "<"
         and: true
@@ -1587,164 +1311,9 @@ trace_elements {
     blocks {
       and: true
       clauses {
-        lhs: 694.3819
+        lhs: 1088.5131
         rhs: "ball_velocity"
         comparator: "<"
-        and: true
-      }
-    }
-    start_state: "NavigateToIntercept"
-  }
-  transitions {
-    potential_state: "Intercept"
-    should_transition: true
-    human_constraint: true
-    blocks {
-      and: true
-      clauses {
-        lhs: 111.90923
-        rhs: "ball_velocity"
-        comparator: ">"
-        and: true
-      }
-    }
-    start_state: "NavigateToIntercept"
-  }
-}
-trace_elements {
-  machine_name: "PassFailPrimaryAttacker"
-  tuneable_params {
-    key: "angle"
-    value: 1
-  }
-  tuneable_params {
-    key: "angular_vel"
-    value: 50
-  }
-  tuneable_params {
-    key: "distance"
-    value: 146
-  }
-  tuneable_params {
-    key: "y_prime_vel"
-    value: 200
-  }
-  tuneable_params {
-    key: "relative_vel"
-    value: 400
-  }
-  tuneable_params {
-    key: "align"
-    value: 0
-  }
-  tuneable_params {
-    key: "catch_velocity"
-    value: 1500
-  }
-  tuneable_params {
-    key: "catch_radius"
-    value: 540
-  }
-  tuneable_params {
-    key: "ball_velocity"
-    value: 100
-  }
-  tuneable_params {
-    key: "ball_velocity"
-    value: 100
-  }
-  state: "NavigateToIntercept"
-  transitions {
-    potential_state: "Kick"
-    should_transition: false
-    human_constraint: false
-    blocks {
-      and: true
-      clauses {
-        lhs: 18.536116
-        rhs: "angle"
-        comparator: "<"
-        and: true
-      }
-      clauses {
-        lhs: 21.98955
-        rhs: "angular_vel"
-        comparator: "<"
-        and: true
-      }
-      clauses {
-        lhs: 2343.4873
-        rhs: "distance"
-        comparator: "<"
-        and: true
-      }
-      clauses {
-        lhs: 864.27588
-        rhs: "y_prime_vel"
-        comparator: "<"
-        and: true
-      }
-      clauses {
-        lhs: 997.3501
-        rhs: "relative_vel"
-        comparator: "<"
-        and: true
-      }
-      clauses {
-        lhs: 2264.3894
-        rhs: "align"
-        comparator: "<"
-        and: true
-      }
-    }
-    start_state: "NavigateToIntercept"
-  }
-  transitions {
-    potential_state: "Receive"
-    should_transition: false
-    human_constraint: false
-    blocks {
-      and: true
-      clauses {
-        lhs: 697.10046
-        rhs: "catch_velocity"
-        comparator: ">"
-        and: true
-      }
-      clauses {
-        lhs: 1335.4536
-        rhs: "catch_radius"
-        comparator: "<"
-        and: true
-      }
-    }
-    start_state: "NavigateToIntercept"
-  }
-  transitions {
-    potential_state: "Start"
-    should_transition: false
-    human_constraint: false
-    blocks {
-      and: true
-      clauses {
-        lhs: 697.10046
-        rhs: "ball_velocity"
-        comparator: "<"
-        and: true
-      }
-    }
-    start_state: "NavigateToIntercept"
-  }
-  transitions {
-    potential_state: "Intercept"
-    should_transition: true
-    human_constraint: true
-    blocks {
-      and: true
-      clauses {
-        lhs: 181.51674
-        rhs: "ball_velocity"
-        comparator: ">"
         and: true
       }
     }
@@ -1801,37 +1370,37 @@ trace_elements {
     blocks {
       and: true
       clauses {
-        lhs: 1.4876152
+        lhs: 0.4408409
         rhs: "angle"
         comparator: "<"
         and: true
       }
       clauses {
-        lhs: 17.949518
+        lhs: 20.904036
         rhs: "angular_vel"
         comparator: "<"
         and: true
       }
       clauses {
-        lhs: 37.091663
+        lhs: 20.001619
         rhs: "distance"
         comparator: "<"
         and: true
       }
       clauses {
-        lhs: 28.128235
+        lhs: 197.46167
         rhs: "y_prime_vel"
         comparator: "<"
         and: true
       }
       clauses {
-        lhs: 50.022308
+        lhs: 207.24608
         rhs: "relative_vel"
         comparator: "<"
         and: true
       }
       clauses {
-        lhs: 9.9412041
+        lhs: 7.0688553
         rhs: "align"
         comparator: "<"
         and: true
@@ -1846,13 +1415,13 @@ trace_elements {
     blocks {
       and: true
       clauses {
-        lhs: 908.98889
+        lhs: 972.36987
         rhs: "catch_velocity"
         comparator: ">"
         and: true
       }
       clauses {
-        lhs: 149.98303
+        lhs: 153.56142
         rhs: "catch_radius"
         comparator: "<"
         and: true
@@ -1867,7 +1436,7 @@ trace_elements {
     blocks {
       and: true
       clauses {
-        lhs: 908.98889
+        lhs: 972.36987
         rhs: "ball_velocity"
         comparator: "<"
         and: true
@@ -1882,7 +1451,677 @@ trace_elements {
     blocks {
       and: true
       clauses {
-        lhs: 828.81232
+        lhs: 920.50085
+        rhs: "ball_velocity"
+        comparator: ">"
+        and: true
+      }
+    }
+    start_state: "Intercept"
+  }
+}
+trace_elements {
+  machine_name: "PassFailPrimaryAttacker"
+  tuneable_params {
+    key: "angle"
+    value: 1
+  }
+  tuneable_params {
+    key: "angular_vel"
+    value: 50
+  }
+  tuneable_params {
+    key: "distance"
+    value: 146
+  }
+  tuneable_params {
+    key: "y_prime_vel"
+    value: 200
+  }
+  tuneable_params {
+    key: "relative_vel"
+    value: 400
+  }
+  tuneable_params {
+    key: "align"
+    value: 0
+  }
+  tuneable_params {
+    key: "catch_velocity"
+    value: 1500
+  }
+  tuneable_params {
+    key: "catch_radius"
+    value: 540
+  }
+  tuneable_params {
+    key: "ball_velocity"
+    value: 100
+  }
+  tuneable_params {
+    key: "ball_velocity"
+    value: 100
+  }
+  state: "Intercept"
+  transitions {
+    potential_state: "Kick"
+    should_transition: true
+    human_constraint: true
+    blocks {
+      and: true
+      clauses {
+        lhs: 0.34413481
+        rhs: "angle"
+        comparator: "<"
+        and: true
+      }
+      clauses {
+        lhs: 7.7266154
+        rhs: "angular_vel"
+        comparator: "<"
+        and: true
+      }
+      clauses {
+        lhs: 41.724121
+        rhs: "distance"
+        comparator: "<"
+        and: true
+      }
+      clauses {
+        lhs: 196.57205
+        rhs: "y_prime_vel"
+        comparator: "<"
+        and: true
+      }
+      clauses {
+        lhs: 223.38341
+        rhs: "relative_vel"
+        comparator: "<"
+        and: true
+      }
+      clauses {
+        lhs: 10.986774
+        rhs: "align"
+        comparator: "<"
+        and: true
+      }
+    }
+    start_state: "Intercept"
+  }
+  transitions {
+    potential_state: "Receive"
+    should_transition: false
+    human_constraint: false
+    blocks {
+      and: true
+      clauses {
+        lhs: 857.42151
+        rhs: "catch_velocity"
+        comparator: ">"
+        and: true
+      }
+      clauses {
+        lhs: 134.16447
+        rhs: "catch_radius"
+        comparator: "<"
+        and: true
+      }
+    }
+    start_state: "Intercept"
+  }
+  transitions {
+    potential_state: "Start"
+    should_transition: false
+    human_constraint: false
+    blocks {
+      and: true
+      clauses {
+        lhs: 857.42151
+        rhs: "ball_velocity"
+        comparator: "<"
+        and: true
+      }
+    }
+    start_state: "Intercept"
+  }
+  transitions {
+    potential_state: "Intercept"
+    should_transition: true
+    human_constraint: false
+    blocks {
+      and: true
+      clauses {
+        lhs: 772.96906
+        rhs: "ball_velocity"
+        comparator: ">"
+        and: true
+      }
+    }
+    start_state: "Intercept"
+  }
+}
+trace_elements {
+  machine_name: "PassFailPrimaryAttacker"
+  tuneable_params {
+    key: "angle"
+    value: 1
+  }
+  tuneable_params {
+    key: "angular_vel"
+    value: 50
+  }
+  tuneable_params {
+    key: "distance"
+    value: 146
+  }
+  tuneable_params {
+    key: "y_prime_vel"
+    value: 200
+  }
+  tuneable_params {
+    key: "relative_vel"
+    value: 400
+  }
+  tuneable_params {
+    key: "align"
+    value: 0
+  }
+  tuneable_params {
+    key: "catch_velocity"
+    value: 1500
+  }
+  tuneable_params {
+    key: "catch_radius"
+    value: 540
+  }
+  tuneable_params {
+    key: "ball_velocity"
+    value: 100
+  }
+  tuneable_params {
+    key: "ball_velocity"
+    value: 100
+  }
+  state: "Intercept"
+  transitions {
+    potential_state: "Kick"
+    should_transition: true
+    human_constraint: true
+    blocks {
+      and: true
+      clauses {
+        lhs: 0.57934219
+        rhs: "angle"
+        comparator: "<"
+        and: true
+      }
+      clauses {
+        lhs: 7.4778218
+        rhs: "angular_vel"
+        comparator: "<"
+        and: true
+      }
+      clauses {
+        lhs: 57.716225
+        rhs: "distance"
+        comparator: "<"
+        and: true
+      }
+      clauses {
+        lhs: 184.66147
+        rhs: "y_prime_vel"
+        comparator: "<"
+        and: true
+      }
+      clauses {
+        lhs: 192.09714
+        rhs: "relative_vel"
+        comparator: "<"
+        and: true
+      }
+      clauses {
+        lhs: 17.535486
+        rhs: "align"
+        comparator: "<"
+        and: true
+      }
+    }
+    start_state: "Intercept"
+  }
+  transitions {
+    potential_state: "Receive"
+    should_transition: false
+    human_constraint: false
+    blocks {
+      and: true
+      clauses {
+        lhs: 1160.6077
+        rhs: "catch_velocity"
+        comparator: ">"
+        and: true
+      }
+      clauses {
+        lhs: 113.16435
+        rhs: "catch_radius"
+        comparator: "<"
+        and: true
+      }
+    }
+    start_state: "Intercept"
+  }
+  transitions {
+    potential_state: "Start"
+    should_transition: false
+    human_constraint: false
+    blocks {
+      and: true
+      clauses {
+        lhs: 1160.6077
+        rhs: "ball_velocity"
+        comparator: "<"
+        and: true
+      }
+    }
+    start_state: "Intercept"
+  }
+  transitions {
+    potential_state: "Intercept"
+    should_transition: true
+    human_constraint: false
+    blocks {
+      and: true
+      clauses {
+        lhs: 1046.0568
+        rhs: "ball_velocity"
+        comparator: ">"
+        and: true
+      }
+    }
+    start_state: "Intercept"
+  }
+}
+trace_elements {
+  machine_name: "PassFailPrimaryAttacker"
+  tuneable_params {
+    key: "angle"
+    value: 1
+  }
+  tuneable_params {
+    key: "angular_vel"
+    value: 50
+  }
+  tuneable_params {
+    key: "distance"
+    value: 146
+  }
+  tuneable_params {
+    key: "y_prime_vel"
+    value: 200
+  }
+  tuneable_params {
+    key: "relative_vel"
+    value: 400
+  }
+  tuneable_params {
+    key: "align"
+    value: 0
+  }
+  tuneable_params {
+    key: "catch_velocity"
+    value: 1500
+  }
+  tuneable_params {
+    key: "ball_velocity"
+    value: 100
+  }
+  tuneable_params {
+    key: "ball_velocity"
+    value: 100
+  }
+  state: "Intercept"
+  transitions {
+    potential_state: "Kick"
+    should_transition: true
+    human_constraint: true
+    blocks {
+      and: true
+      clauses {
+        lhs: 0.47168604
+        rhs: "angle"
+        comparator: "<"
+        and: true
+      }
+      clauses {
+        lhs: 13.380513
+        rhs: "angular_vel"
+        comparator: "<"
+        and: true
+      }
+      clauses {
+        lhs: 14.106231
+        rhs: "distance"
+        comparator: "<"
+        and: true
+      }
+      clauses {
+        lhs: 172.16071
+        rhs: "y_prime_vel"
+        comparator: "<"
+        and: true
+      }
+      clauses {
+        lhs: 175.0995
+        rhs: "relative_vel"
+        comparator: "<"
+        and: true
+      }
+      clauses {
+        lhs: 12.851509
+        rhs: "align"
+        comparator: "<"
+        and: true
+      }
+    }
+    start_state: "Intercept"
+  }
+  transitions {
+    potential_state: "Receive"
+    should_transition: false
+    human_constraint: false
+    blocks {
+      and: true
+      clauses {
+        lhs: 737.10742
+        rhs: "catch_velocity"
+        comparator: ">"
+        and: true
+      }
+    }
+    start_state: "Intercept"
+  }
+  transitions {
+    potential_state: "Start"
+    should_transition: false
+    human_constraint: false
+    blocks {
+      and: true
+      clauses {
+        lhs: 737.10742
+        rhs: "ball_velocity"
+        comparator: "<"
+        and: true
+      }
+    }
+    start_state: "Intercept"
+  }
+  transitions {
+    potential_state: "Intercept"
+    should_transition: true
+    human_constraint: false
+    blocks {
+      and: true
+      clauses {
+        lhs: 695.6546
+        rhs: "ball_velocity"
+        comparator: ">"
+        and: true
+      }
+    }
+    start_state: "Intercept"
+  }
+}
+trace_elements {
+  machine_name: "PassFailPrimaryAttacker"
+  tuneable_params {
+    key: "angle"
+    value: 1
+  }
+  tuneable_params {
+    key: "angular_vel"
+    value: 50
+  }
+  tuneable_params {
+    key: "distance"
+    value: 146
+  }
+  tuneable_params {
+    key: "y_prime_vel"
+    value: 200
+  }
+  tuneable_params {
+    key: "relative_vel"
+    value: 400
+  }
+  tuneable_params {
+    key: "align"
+    value: 0
+  }
+  tuneable_params {
+    key: "catch_velocity"
+    value: 1500
+  }
+  tuneable_params {
+    key: "ball_velocity"
+    value: 100
+  }
+  tuneable_params {
+    key: "ball_velocity"
+    value: 100
+  }
+  state: "Intercept"
+  transitions {
+    potential_state: "Kick"
+    should_transition: true
+    human_constraint: true
+    blocks {
+      and: true
+      clauses {
+        lhs: 0.048895616
+        rhs: "angle"
+        comparator: "<"
+        and: true
+      }
+      clauses {
+        lhs: 3.1623657
+        rhs: "angular_vel"
+        comparator: "<"
+        and: true
+      }
+      clauses {
+        lhs: 28.181919
+        rhs: "distance"
+        comparator: "<"
+        and: true
+      }
+      clauses {
+        lhs: 196.22253
+        rhs: "y_prime_vel"
+        comparator: "<"
+        and: true
+      }
+      clauses {
+        lhs: 349.49884
+        rhs: "relative_vel"
+        comparator: "<"
+        and: true
+      }
+      clauses {
+        lhs: 7.5563354
+        rhs: "align"
+        comparator: "<"
+        and: true
+      }
+    }
+    start_state: "Intercept"
+  }
+  transitions {
+    potential_state: "Receive"
+    should_transition: false
+    human_constraint: false
+    blocks {
+      and: true
+      clauses {
+        lhs: 1046.1843
+        rhs: "catch_velocity"
+        comparator: ">"
+        and: true
+      }
+    }
+    start_state: "Intercept"
+  }
+  transitions {
+    potential_state: "Start"
+    should_transition: false
+    human_constraint: false
+    blocks {
+      and: true
+      clauses {
+        lhs: 1046.1843
+        rhs: "ball_velocity"
+        comparator: "<"
+        and: true
+      }
+    }
+    start_state: "Intercept"
+  }
+  transitions {
+    potential_state: "Intercept"
+    should_transition: true
+    human_constraint: false
+    blocks {
+      and: true
+      clauses {
+        lhs: 994.95087
+        rhs: "ball_velocity"
+        comparator: ">"
+        and: true
+      }
+    }
+    start_state: "Intercept"
+  }
+}
+trace_elements {
+  machine_name: "PassFailPrimaryAttacker"
+  tuneable_params {
+    key: "angle"
+    value: 1
+  }
+  tuneable_params {
+    key: "angular_vel"
+    value: 50
+  }
+  tuneable_params {
+    key: "distance"
+    value: 146
+  }
+  tuneable_params {
+    key: "y_prime_vel"
+    value: 200
+  }
+  tuneable_params {
+    key: "relative_vel"
+    value: 400
+  }
+  tuneable_params {
+    key: "align"
+    value: 0
+  }
+  tuneable_params {
+    key: "catch_velocity"
+    value: 1500
+  }
+  tuneable_params {
+    key: "ball_velocity"
+    value: 100
+  }
+  tuneable_params {
+    key: "ball_velocity"
+    value: 100
+  }
+  state: "Intercept"
+  transitions {
+    potential_state: "Kick"
+    should_transition: true
+    human_constraint: true
+    blocks {
+      and: true
+      clauses {
+        lhs: 0.54151189
+        rhs: "angle"
+        comparator: "<"
+        and: true
+      }
+      clauses {
+        lhs: 12.015174
+        rhs: "angular_vel"
+        comparator: "<"
+        and: true
+      }
+      clauses {
+        lhs: 15.592443
+        rhs: "distance"
+        comparator: "<"
+        and: true
+      }
+      clauses {
+        lhs: 169.51953
+        rhs: "y_prime_vel"
+        comparator: "<"
+        and: true
+      }
+      clauses {
+        lhs: 178.79173
+        rhs: "relative_vel"
+        comparator: "<"
+        and: true
+      }
+      clauses {
+        lhs: 12.633146
+        rhs: "align"
+        comparator: "<"
+        and: true
+      }
+    }
+    start_state: "Intercept"
+  }
+  transitions {
+    potential_state: "Receive"
+    should_transition: false
+    human_constraint: false
+    blocks {
+      and: true
+      clauses {
+        lhs: 1040.7605
+        rhs: "catch_velocity"
+        comparator: ">"
+        and: true
+      }
+    }
+    start_state: "Intercept"
+  }
+  transitions {
+    potential_state: "Start"
+    should_transition: false
+    human_constraint: false
+    blocks {
+      and: true
+      clauses {
+        lhs: 1040.7605
+        rhs: "ball_velocity"
+        comparator: "<"
+        and: true
+      }
+    }
+    start_state: "Intercept"
+  }
+  transitions {
+    potential_state: "Intercept"
+    should_transition: true
+    human_constraint: false
+    blocks {
+      and: true
+      clauses {
+        lhs: 997.13879
         rhs: "ball_velocity"
         comparator: ">"
         and: true
