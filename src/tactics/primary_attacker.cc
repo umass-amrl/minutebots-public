@@ -307,10 +307,10 @@ bool PrimaryAttacker::ShouldCatch(logger::Logger* the_logger,
     robot_logger->AddCircle(intersect_point, kBallRadius, 1.0, 0, 0, 1.0);
     bool in_time =
         (catch_time - ball_time) < 2 || attacker_dist < 2 * kRobotRadius;
-    //     if (!in_time) {
-    //       robot_logger->LogPrint("Time Difference %f", catch_time -
-    //       ball_time);
-    //     }
+        if (!in_time) {
+          robot_logger->LogPrint("Time Difference %f", catch_time -
+          ball_time);
+        }
     // This disables the time check
     in_time = true;
     const bool could_score_check = !CouldBallScore(the_logger,
@@ -1216,7 +1216,7 @@ void PrimaryAttacker::Transition() {
       }
       state_ = intercept_;
     } else {
-      state_ = navigate_to_intercept_;
+      state_ = intercept_;
     }
   }
 

@@ -1,6 +1,6 @@
 [{
   "name": "angle",
-  "nominalValue": 1.5,
+  "nominalValue": 2.0,
   "minorDegrdation": {
     "min": 1.0,
     "max": 2.0
@@ -11,7 +11,7 @@
   }
 }, {
   "name": "distance",
-  "nominalValue": 146,
+  "nominalValue": 145.99998474121094,
   "minorDegrdation": {
     "min": 2.5,
     "max": 5.5
@@ -22,7 +22,7 @@
   }
 }, {
   "name": "y_prime_vel",
-  "nominalValue": 200,
+  "nominalValue": 10.0,
   "minorDegrdation": {
     "min": 2.5,
     "max": 5.5
@@ -33,7 +33,7 @@
   }
 }, {
   "name": "relative_vel",
-  "nominalValue": 400,
+  "nominalValue": 50,
   "minorDegrdation": {
     "min": 2.5,
     "max": 5.5
@@ -44,7 +44,7 @@
   }
 }, {
   "name": "align",
-  "nominalValue": 18,
+  "nominalValue": 89.67739868164063,
   "minorDegrdation": {
     "min": 2.5,
     "max": 5.5
@@ -55,7 +55,7 @@
   }
 }, {
   "name": "angular_vel",
-  "nominalValue": 50,
+  "nominalValue": 5.14187479019165,
   "minorDegrdation": {
     "min": 2.5,
     "max": 5.5
@@ -77,7 +77,7 @@
   }
 }, {
   "name": "catch_velocity",
-  "nominalValue": 1500,
+  "nominalValue": 868.8809204101563,
   "minorDegrdation": {
     "min": 2.5,
     "max": 5.5
@@ -110,7 +110,7 @@
   }
 },  {
   "name": "catch_radius",
-  "nominalValue": 540,
+  "nominalValue": 200.0,
   "minorDegrdation": {
     "min": 2.5,
     "max": 5.5

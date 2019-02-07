@@ -395,10 +395,9 @@ Vector2f Deflection::GetInterceptionPoint(Vector2f robot_current,
 }
 
 bool Deflection::BadTiming() {
-  Transition();
   logger::Logger* logger =
       soccer_state_->GetMutableRobotLoggerByOurRobotIndex(our_robot_index_);
-  if (state_ == setup_) {
+  if (state_ != kick_) {
     const Vector2f ball_velocity = world_state_.GetBallPosition().velocity;
     const Vector2f ball_pose = world_state_.GetBallPosition().position;
     const Pose2Df robot_pose =
@@ -409,7 +408,7 @@ bool Deflection::BadTiming() {
         ball_velocity.norm(), ball_pose, interception_point_actual_);
     float time_to_receive =
         offense::GetNtocTime(robot_pose, robot_vel, interception_point_actual_);
-    const float kReceiveThreshold = -.5;
+    const float kReceiveThreshold = 10.0;
     logger->LogPrint("Travel Time Difference %f",
                      ball_travel_time - time_to_receive);
     if (ball_travel_time - time_to_receive < kReceiveThreshold) {
