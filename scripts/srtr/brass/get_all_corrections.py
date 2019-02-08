@@ -40,8 +40,9 @@ for file in sorted(os.listdir(nominal_path)):
     CopyAndAdapt(test_scenario)
   test_scenario = current_scenario
   # Run the correction generation
-  command = "./bin/gen_corrections {} {}".format(nominal_file, 
-                                                 degraded_file)
-  result = subprocess.call(command, shell=True)
+  if (os.path.isfile(nominal_file) and os.path.isfile(degraded_file)):
+    command = "./bin/gen_corrections {} {}".format(nominal_file, 
+                                                   degraded_file)
+    result = subprocess.call(command, shell=True)
 # Finish the last test scenario
 CopyAndAdapt(test_scenario)

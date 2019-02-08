@@ -5,7 +5,7 @@ message TransitionClause {
   required string rhs = 2; // index into the tuneable parameters vector for this machine.
   required string comparator = 3;
   optional string potential_state = 4;
-  optional bool and = 5;
+  optional bool and_ = 5;
   // need to store the vector of rhs somewhere
 }
 
@@ -17,7 +17,7 @@ message MapFieldEntry {
 }
 
 message TransitionBlock {
-  required bool and = 1;
+  required bool and_ = 1;
   repeated TransitionClause clauses = 2;
 }
 

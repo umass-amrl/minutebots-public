@@ -15,12 +15,12 @@ from collections import OrderedDict
 kKickSpeed = 1.5
 
 def exec_soccer(args):
-    x, y, angle, file = args
+    x, y, angle, file, state = args
     vx, vy = speed_to_velocity(angle)
     file = file + "_" + str(x) + "_" + str(y) + "_" + str(angle) + ".txt"
     command = "./bin/soccer -S -b {},{},{},{} -dp -tb -py -T {}".format(x, y, vx, vy, file)
     result = subprocess.call(command, shell=True)
-    return (x, y, vx, vy, angle, (result == 0))
+    return (x, y, vx, vy, angle, file, state, (result == 0))
 
 def speed_to_velocity(angle_deg):
     assert(angle_deg >= 0)
@@ -29,12 +29,22 @@ def speed_to_velocity(angle_deg):
             np.sin(np.deg2rad(angle_deg)) * kKickSpeed)
 
 def merge_result(result_dict, result):
-    x, y, vx, vy, angle, success = result
-    existing = result_dict.get((x, y, angle), 0)
-    if success:
-        existing += 1
-    result_dict[str((x, y, angle))] = existing
-    return result_dict
+  x, y, vx, vy, angle, file, state, success = result
+  existing = result_dict.get((x, y, angle), 0)
+  if success:
+    existing += 1
+    # We remove successful degraded cases so that we
+    # don't correct working cases
+    if (state == 'degraded_traces'):
+      print("Removing: " + file)
+      os.remove(file)
+  else:
+    if (state == 'nominal_traces'):
+      # Remove failing nominal to not introduce bad corrections
+      # Failsafe, though nominal cases shouldn't fail
+      os.remove(file)
+  result_dict[str((x, y, angle))] = existing
+  return result_dict
 
 def save_to_file(result_dict, state_name, name):
     filename = 'scripts/srtr/brass/results/' + name + '_' + state_name
@@ -57,7 +67,8 @@ def RunTestScenario(state_name, scenario):
     tasks.append([test['ball_x'], 
                   test['ball_y'], 
                   test['ball_velocity_angle'], 
-                  filename])
+                  filename, 
+                  state_name])
   # Spawns two threads, so divide CPUs by two.
   count = mp.cpu_count() // 2
   pool = mp.Pool(processes=count)
