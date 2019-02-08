@@ -36,7 +36,6 @@ def merge_result(result_dict, result):
     # We remove successful degraded cases so that we
     # don't correct working cases
     if (state == 'degraded_traces'):
-      print("Removing: " + file)
       os.remove(file)
   else:
     if (state == 'nominal_traces'):
@@ -103,14 +102,17 @@ def AnalyzeResults(name, result, nominal_result, degraded_result):
   summary["Degraded Failures"] = possible_fixes
   summary["Successfully Repaired"] = reward
   summary["Added Failures"] = penalty
-  summary["Fix Percentage"] = reward / possible_fixes
+  percentage = 0
+  if (possible_fixes != 0):
+    percentage = reward / possible_fixes
+  summary["Fix Percentage"] = percentage
   summary["Failure Percentage"] = penalty / total
   # Output Summary json to file
   filename = 'scripts/srtr/brass/results/' + name + '_summary.json'
   text_file = open(filename, "w")
   json.dump(summary, text_file, indent=2)
   text_file.close()
-  return reward / possible_fixes
+  return percentage
 
 def RunSetupTests():
   # Grab nominal and degraded test lists

@@ -110,7 +110,7 @@
   }
 },  {
   "name": "catch_radius",
-  "nominalValue": 200.0,
+  "nominalValue": 100.0,
   "minorDegrdation": {
     "min": 2.5,
     "max": 5.5

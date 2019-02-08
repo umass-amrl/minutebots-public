@@ -58,7 +58,8 @@ std::ofstream num_file;
 void TuneFromTraceFile(const string& filename,
                        const string& machine_name,
                        const string& output_file,
-                       const int& max_corrections) {
+                       const int& max_corrections,
+                       const bool& starved) {
   Trace trace;
   // Read Text trace from file
   std::ifstream trace_file;
@@ -85,7 +86,7 @@ void TuneFromTraceFile(const string& filename,
   std::cout << "Calling SRTR" << std::endl;
   // Solve for the final adjustments.
   // The current version will output the adjustments to stdout.
-  if (num_corrections > 0) {
+  if ((num_corrections > 0 && starved) || num_corrections > 3) {
     map<string, float> lowers;
     map<string, MapFieldEntry> base_parameters;
     nlohmann::json parameters = srtr::SolveWithBlocks(&c,
@@ -111,12 +112,12 @@ int main(int argc, char** argv) {
   TuneFromTraceFile(file_name,
                     machine_name,
                     "brass_srtr.json",
-                    all_corrections);
+                    all_corrections, false);
   const int starved_corrections = 3;
   TuneFromTraceFile(file_name,
                     machine_name,
                     "brass_srtr_starved.json",
-                    starved_corrections);
+                    starved_corrections, true);
   const double end_time = GetWallTime();
   std::cout << "Solver Time: " << end_time - start_time << std::endl;
   data_file.close();
