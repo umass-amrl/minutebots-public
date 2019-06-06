@@ -1,18 +1,11 @@
 [{
   "name": "aim",
-  "numScenarios": 20,
+  "numScenarios": 5,
   "perturbations": [{
     "name": "align",
     "perturbedValue": 0.0
   }, {
     "name": "angle",
     "perturbedValue": 1.0
-  }]
-}, {
-  "name": "intercept",
-  "numScenarios": 20,
-  "perturbations": [{
-    "name": "ball_velocity",
-    "perturbedValue": 1000.0
   }]
 }]

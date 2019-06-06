@@ -1,11 +1,11 @@
 {
-    "align": 18.0,
-    "angle": 1.5,
-    "angular_vel": 50.0,
-    "ball_velocity": 454.06622314453125,
-    "catch_radius": 540.0,
-    "catch_velocity": 1500.0,
-    "distance": 146.0,
-    "relative_vel": 400.0,
-    "y_prime_vel": 200.0
+    "align": 0.0,
+    "angle": 1.0,
+    "angular_vel": 5.14187479019165,
+    "ball_velocity": 1011.3846435546875,
+    "catch_radius": 100.0,
+    "catch_velocity": 849.0432739257813,
+    "distance": 145.99998474121094,
+    "relative_vel": 50.0,
+    "y_prime_vel": 10.0
 }

@@ -86,7 +86,7 @@ void TuneFromTraceFile(const string& filename,
   std::cout << "Calling SRTR" << std::endl;
   // Solve for the final adjustments.
   // The current version will output the adjustments to stdout.
-  if ((num_corrections > 0 && starved) || num_corrections > 3) {
+  if ((num_corrections > 0 && starved) || num_corrections >= 1) {
     map<string, float> lowers;
     map<string, MapFieldEntry> base_parameters;
     nlohmann::json parameters = srtr::SolveWithBlocks(&c,

@@ -6,7 +6,7 @@ import json
 from collections import OrderedDict
 import sys
 import copy
-    
+
 def load_nominal_values(nominal_file):
   nominal_values = OrderedDict()
   with open(nominal_file) as nominal:

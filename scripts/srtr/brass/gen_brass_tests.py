@@ -6,7 +6,7 @@ import json
 from collections import OrderedDict
 import sys
 import copy
-    
+
 def load_nominal_values(nominal_file):
     nominal_values = OrderedDict()
     with open(nominal_file) as nominal:
@@ -43,7 +43,7 @@ ys = [e * (3000/40) for e in list(range(-40, 41))]
 angles = [e * 36 for e in list(range(10))]
 poses = list(itertools.product(xs, ys, angles))
 nominal = load_nominal_values('scripts/srtr/brass/parameter_enumeration.json')
-if (len(sys.argv) != 2):
+if (len(sys.argv) != 1):
     print(len(sys.argv))
     print("Expects 1 argument: path to input test generation json file.")
 with open(sys.argv[1]) as test_file:
