@@ -1,0 +1,57 @@
+[{
+  "name": "align-large",
+  "numScenarios": 1000,
+  "perturbations": [{
+    "name": "align",
+    "perturbedValue": 0.02
+  }]
+}, {
+  "name": "ballvelocity-large",
+  "numScenarios": 1000,
+  "perturbations": [{
+    "name": "ball_velocity",
+    "perturbedValue": 10000.0
+  }]
+}, {
+  "name": "angle-large",
+  "numScenarios": 1000,
+  "perturbations": [{
+    "name": "angle",
+    "perturbedValue": 0.02
+  }]
+}, {
+  "name": "distance-large",
+  "numScenarios": 1000,
+  "perturbations": [{
+    "name": "distance",
+    "perturbedValue": 10.0
+  }]
+}, {
+  "name": "yprimevel-large",
+  "numScenarios": 1000,
+  "perturbations": [{
+    "name": "y_prime_vel",
+    "perturbedValue": 1.0
+  }]
+}, {
+  "name": "relativevel-large",
+  "numScenarios": 1000,
+  "perturbations": [{
+    "name": "relative_vel",
+    "perturbedValue": 5.0
+  }]
+}, {
+  "name": "catchvel-large",
+  "numScenarios": 1000,
+  "perturbations": [{
+    "name": "catch_velocity",
+    "perturbedValue": 8000.0
+  }]
+}, {
+  "name": "catchradius-large",
+  "numScenarios": 1000,
+  "perturbations": [{
+    "name": "catch_radius",
+    "perturbedValue": 20.0
+  }]
+}]

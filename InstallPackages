@@ -22,7 +22,7 @@ pushd third_party && \
   popd && \
   git clone https://github.com/Z3Prover/z3.git && \
   pushd z3 && \
-    sudo python scripts/mk_make.py && \
+    sudo python scripts/mk_make.py --python && \
     pushd build && \
       sudo make -j`nproc` && sudo make install && \
     popd && \

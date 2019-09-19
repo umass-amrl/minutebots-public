@@ -516,8 +516,6 @@ std::vector<Pose2Df> ReadStartPositions(const std::string& file_path) {
     if (!(iss >> x >> y >> theta)) {
       break;
     }
-    LOG(INFO) << "Line: " << line << " x: " << x << " y: " << y
-              << " theta: " << theta;
 
     positions.push_back({DegToRad(theta), x, y});
   }

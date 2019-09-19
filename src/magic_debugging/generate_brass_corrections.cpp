@@ -68,7 +68,7 @@ bool FindDivergence(const string& nominal_filename,
          if (transition->potential_state() == nominal_element.state()) {
            transition->set_human_constraint(true);
            transition->set_should_transition(true);
-
+           std::cout << "Correction: " << "should " << nominal_element.state() << std::endl;
            *correction = *degraded_element;
            return true;
          }

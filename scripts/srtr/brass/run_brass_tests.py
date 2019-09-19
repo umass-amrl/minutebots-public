@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-
+from __future__ import division
 import numpy as np
 import subprocess
 import multiprocessing as mp
@@ -11,8 +11,7 @@ import json
 import sys
 import os
 from collections import OrderedDict
-
-kKickSpeed = 1.5
+kKickSpeed = 1.25
 
 def exec_soccer(args):
     x, y, angle, file, state = args
@@ -42,6 +41,7 @@ def merge_result(result_dict, result):
     if (state == 'nominal_traces'):
       # Remove failing nominal to not introduce bad corrections
       # Failsafe, though nominal cases shouldn't fail
+      print("Removing: " + file)
       os.remove(file)
   result_dict[str((x, y, angle))] = existing
   return result_dict
@@ -70,47 +70,88 @@ def RunTestScenario(state_name, scenario):
                   filename, 
                   state_name])
   # Spawns two threads, so divide CPUs by two.
-  count = mp.cpu_count() // 2
+  count = (mp.cpu_count() // 2) - 1
   pool = mp.Pool(processes=count)
   # Run the jobs in parallel!!!!
   exec_results = pool.map(exec_soccer, tasks)
+  pool.close()
   return reduce(merge_result, exec_results, {})
 
 def LoadResults(state_name, scenario):
   filename = "scripts/srtr/brass/results/{}_{}_results.json".format(scenario, state_name)
   return ReadTestsFromFile(filename)
 
+def UpdateSummary(entry):
+  summary_file = 'scripts/srtr/brass/results/SUMMARY.json'
+  summary_list = []
+  if not os.path.isfile(summary_file):
+    summary_list.append(entry)
+    with open(summary_file, mode='w') as f:
+      f.write(json.dumps(summary_list, indent=2))
+  else:
+    with open(summary_file) as summary_json:
+      summary = json.load(summary_json)
+    summary.append(entry)
+
+    with open(summary_file, mode='w') as f:
+      f.write(json.dumps(summary, indent=2))
+
 def AnalyzeResults(name, result, nominal_result, degraded_result):
   penalty = 0
   reward = 0
   possible_fixes = 0
   total = 0
+  adapted_success = 0
   filtered_result = {}
   for key in nominal_result:
     total += 1
     filtered_result[key] = result[key]
     adapted_score = result[key]
     degraded_score = degraded_result[key]
+    if (adapted_score == 1):
+      adapted_success += 1
     if (degraded_score == 0): # Degraded was broken
       possible_fixes += 1
       if (adapted_score == 1): # Either we fix it or not
         reward += 1
     elif (adapted_score == 0): # otherwise we could have broken it
       penalty += 1
+  fix_percentage = 0
+  if (possible_fixes > 0):
+    fix_percentage = reward / possible_fixes
+
   # Generate a short summary
-  summary = OrderedDict()
-  summary["Nominal Successes"] = total
-  summary["Degraded Failures"] = possible_fixes
-  summary["Successfully Repaired"] = reward
-  summary["Added Failures"] = penalty
-  summary["Fix Percentage"] = reward / possible_fixes
-  summary["Failure Percentage"] = penalty / total
+  entry = OrderedDict()
+  entry["Name"] = name
+  entry["Nominal Successes"] = total
+  entry["Degraded Failures"] = possible_fixes
+  entry["Successfully Repaired"] = reward
+  entry["Added Failures"] = penalty
+  entry["Fix Percentage"] = fix_percentage 
+  entry["Failure Percentage"] = penalty / total
+  entry["Adapted Success Rate"] = adapted_success / total
+  degraded_success_rate = (total - possible_fixes) / total
+  entry["Degraded Success Rate"] = degraded_success_rate
+  entry["Change in Success Rate"] = (adapted_success / total) - degraded_success_rate
   # Output Summary json to file
   filename = 'scripts/srtr/brass/results/' + name + '_summary.json'
   text_file = open(filename, "w")
-  json.dump(summary, text_file, indent=2)
+  json.dump(entry, text_file, indent=2)
   text_file.close()
-  return reward / possible_fixes
+  summary_file = 'scripts/srtr/brass/results/SUMMARY.json'
+  summary_list = []
+  if not os.path.isfile(summary_file):
+    summary_list.append(entry)
+    with open(summary_file, mode='w') as f:
+      f.write(json.dumps(summary_list, indent=2))
+  else:
+    with open(summary_file) as summary_json:
+      summary = json.load(summary_json, object_pairs_hook=OrderedDict)
+    summary.append(entry)
+
+    with open(summary_file, mode='w') as f:
+      json.dump(summary, f, indent=2)
+  return fix_percentage
 
 def RunSetupTests():
   # Grab nominal and degraded test lists
@@ -121,19 +162,21 @@ def RunSetupTests():
   adapted = False
   # For each test scenario
   for i in range(len(nominal_json)):
-    # Run the tests
+
     name = nominal_json[i]['name']
 
     # Replace the attacker config with the nominal parameters.
     parameters = nominal_json[i]['parameters']
-
     with open('src/configs/attacker_config.json', 'w') as attacker_config:
       json.dump(parameters, attacker_config, indent=2)
+
+    # Run the tests
     nominal_results = RunTestScenario('nominal_traces', nominal_json[i])
 
     # Replace the attacker config with the degraded parameters.
     parameters = degraded_json[i]['parameters']
     adaptation = "scripts/srtr/brass/results/adaptations/{}_adaptation.json".format(name)
+      # Either used the adapted params or the degraded ones if this is the first iteration
     if (os.path.isfile(adaptation)):
       adapted = True
       command = "cp {} src/configs/attacker_config.json".format(adaptation)

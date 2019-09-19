@@ -552,7 +552,7 @@ void Executor::HandleExecution() {
       navigation_logger::NavigationLogger::LogAndResetEntry();
       }
 
-      //loop.Sleep();
+//       loop.Sleep();
 
       if (!kProduction) {
         ofs << std::setprecision(15) << GetMonotonicTime() << "\n";

@@ -95,6 +95,7 @@ void TuneFromTraceFile(const string& filename,
                                                       &lowers);
 
     std::ofstream json_file(output_file);
+    std::cout << std::setw(4) << parameters << std::endl;
     json_file << std::setw(4) << parameters << std::endl;
   }
 }
@@ -106,7 +107,7 @@ int main(int argc, char** argv) {
     file_name = argv[1];
   }
   std::cout << "Machine Name: " << machine_name << std::endl;
-  const double start_time = GetWallTime();
+//   const double start_time = GetWallTime();
   const int all_corrections = INT_MAX;
   TuneFromTraceFile(file_name,
                     machine_name,
@@ -117,8 +118,8 @@ int main(int argc, char** argv) {
                     machine_name,
                     "brass_srtr_starved.json",
                     starved_corrections);
-  const double end_time = GetWallTime();
-  std::cout << "Solver Time: " << end_time - start_time << std::endl;
+//   const double end_time = GetWallTime();
+//   std::cout << "Solver Time: " << end_time - start_time << std::endl;
   data_file.close();
   return 0;
 }

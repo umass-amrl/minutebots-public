@@ -1,0 +1,22 @@
+[{
+  "name": "catchveleasy",
+  "numScenarios": 60,
+  "perturbations": [{
+    "name": "catch_velocity",
+    "perturbedValue": 8000.0
+  }]
+}, {
+  "name": "catchradiuseasy",
+  "numScenarios": 60,
+  "perturbations": [{
+    "name": "catch_radius",
+    "perturbedValue": 20.0
+  }]
+}, {
+  "name": "yprimeeasy",
+  "numScenarios": 60,
+  "perturbations": [{
+    "name": "y_prime_vel",
+    "perturbedValue": -10.0
+  }]
+}]

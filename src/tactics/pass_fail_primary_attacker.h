@@ -58,7 +58,7 @@ class PassFailPrimaryAttacker : public PrimaryAttacker {
   }
 
   void DeflectionFailiure() {
-    static constexpr int kMaxIterations = 300;
+    static constexpr int kMaxIterations = 200;
     static int count = 0;
     if (count > kMaxIterations) {
       throw TacticException("Attacker Failure");

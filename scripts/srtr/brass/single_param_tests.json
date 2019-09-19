@@ -1,0 +1,64 @@
+[{
+  "name": "aligneasy",
+  "numScenarios": 20,
+  "perturbations": [{
+    "name": "align",
+    "perturbedValue": 50.0
+  }]
+}, {
+  "name": "velocityeasy",
+  "numScenarios": 60,
+  "perturbations": [{
+    "name": "ball_velocity",
+    "perturbedValue": 10000.0
+  }]
+}, {
+  "name": "angleeasy",
+  "numScenarios": 60,
+  "perturbations": [{
+    "name": "angle",
+    "perturbedValue": 0.0
+  }]
+}, {
+  "name": "distanceeasy",
+  "numScenarios": 60,
+  "perturbations": [{
+    "name": "distance",
+    "perturbedValue": 10.0
+  }]
+}, {
+  "name": "yprimeeasy",
+  "numScenarios": 60,
+  "perturbations": [{
+    "name": "y_prime_velocity",
+    "perturbedValue": 1.0
+  }]
+}, {
+  "name": "relativeveleasy",
+  "numScenarios": 60,
+  "perturbations": [{
+    "name": "relative_vel",
+    "perturbedValue": 5.0
+  }]
+}, {
+  "name": "catchveleasy",
+  "numScenarios": 60,
+  "perturbations": [{
+    "name": "angular_vel",
+    "perturbedValue": 8000.0
+  }]
+}, {
+  "name": "catchradiuseasy",
+  "numScenarios": 60,
+  "perturbations": [{
+    "name": "ball_velocity",
+    "perturbedValue": 20.0
+  }]
+}, {
+  "name": "scorespeedeasy",
+  "numScenarios": 60,
+  "perturbations": [{
+    "name": "ball_velocity",
+    "perturbedValue": 10.0
+  }]
+}]

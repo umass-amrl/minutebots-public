@@ -33,7 +33,7 @@
   }
 }, {
   "name": "relative_vel",
-  "nominalValue": 50,
+  "nominalValue": 50.0,
   "minorDegrdation": {
     "min": 2.5,
     "max": 5.5

@@ -1198,16 +1198,10 @@ void PrimaryAttacker::Transition() {
                                           false,
                                           false,
                                           true);
-    const bool should_stox_pivot =
-        ShouldSTOXPivot(ball_pose, ball_vel, current_pose, current_velocity);
     // Decide whether to pass or receive (or keep waiting)
     if (should_kick) {
       state_ = kick_;
       kick_solution_.isInitialized = false;
-    } else if (should_stox_pivot) {
-      state_ = stox_pivot_;
-    } else if (ShouldGoToBall()) {
-      state_ = start_;
     } else if (should_catch) {
       state_ = receive_;
     } else if (ShouldIntercept()) {
@@ -1215,7 +1209,12 @@ void PrimaryAttacker::Transition() {
         intercept_solution_.isInitialized = false;
       }
       state_ = intercept_;
+    } else if (ShouldGoToBall()) {
+      state_ = start_;
     } else {
+      if (state_ != intercept_) {
+        intercept_solution_.isInitialized = false;
+      }
       state_ = intercept_;
     }
   }

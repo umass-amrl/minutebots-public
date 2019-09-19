@@ -1,18 +1,36 @@
 [{
-  "name": "aim",
+  "name": "align-easy",
   "numScenarios": 20,
   "perturbations": [{
     "name": "align",
     "perturbedValue": 0.0
-  }, {
-    "name": "angle",
-    "perturbedValue": 1.0
   }]
 }, {
-  "name": "intercept",
+  "name": "velocity-easy",
   "numScenarios": 20,
   "perturbations": [{
     "name": "ball_velocity",
-    "perturbedValue": 1000.0
+    "perturbedValue": 10000.0
+  }]
+}, {
+  "name": "angle-easy",
+  "numScenarios": 20,
+  "perturbations": [{
+    "name": "angle",
+    "perturbedValue": 0.0
+  }]
+}, {
+  "name": "distance-easy",
+  "numScenarios": 20,
+  "perturbations": [{
+    "name": "distance",
+    "perturbedValue": 10.0
+  }]
+}, {
+  "name": "velocity-easy",
+  "numScenarios": 20,
+  "perturbations": [{
+    "name": "ball_velocity",
+    "perturbedValue": 10000.0
   }]
 }]

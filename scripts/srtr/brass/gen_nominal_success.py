@@ -12,7 +12,7 @@ import sys
 import os
 from collections import OrderedDict
 
-kKickSpeed = 1.5
+kKickSpeed = 1.25
 
 def exec_soccer(args):
     x, y, angle= args
@@ -39,13 +39,13 @@ def merge_result(result_list, result):
     return result_list
 
 def save_to_file(result_list):
-    filename = 'scripts/srtr/brass/test_library.json'
+    filename = 'scripts/srtr/brass/test_library3.json'
     text_file = open(filename, "w")
     json.dump(result_list, text_file, indent=2)
     text_file.close()
 
-xs = [(e * 4000/9) for e in list(range(10))]
-ys = [e * (3000/10) for e in list(range(-10, 10))]
+xs = [(e * 3969/64) for e in list(range(65))]
+ys = [e * (2500/40) for e in list(range(-40, 41))]
 angles = [e * 36 for e in list(range(10))]
 tasks = list(itertools.product(xs, ys, angles))
 

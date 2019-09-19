@@ -6,7 +6,11 @@ import json
 from collections import OrderedDict
 import sys
 import copy
-    
+
+# Creates two json files listing tests by randomly sampling from the
+# list of nominally successful poses, and pairing them wih degraded
+# parameter values.
+
 def load_nominal_values(nominal_file):
   nominal_values = OrderedDict()
   with open(nominal_file) as nominal:
@@ -16,7 +20,7 @@ def load_nominal_values(nominal_file):
   return nominal_values
 
 def LoadTests():
-  with open("scripts/srtr/brass/test_library.json") as input_file:
+  with open("scripts/srtr/brass/test_library3.json") as input_file:
     file_json = json.load(input_file)
     return file_json
 
@@ -42,13 +46,15 @@ if (len(sys.argv) != 2):
 test_list = LoadTests()
 nominal = load_nominal_values('scripts/srtr/brass/parameter_enumeration.json')
 
+
 with open(sys.argv[1]) as test_file:
   input_json = json.load(test_file)
   nominal_json = []
   degraded_json = []
-  for x in input_json:
+  for x in input_json: # Loops over all different perturbation sets in the tests.
     # Randomly sample N poses
-    n_poses = random.sample(test_list, x['numScenarios'])
+    shuffler = random.Random(1)
+    n_poses = shuffler.sample(test_list, x['numScenarios'])
     nominal_part,degraded_part = convert_to_json(n_poses, x['name'], x, nominal)
     nominal_json = nominal_json + nominal_part
     degraded_json = degraded_json + degraded_part

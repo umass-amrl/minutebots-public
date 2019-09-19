@@ -18,10 +18,6 @@ def CopyAndAdapt(test_scenario):
   command = "mv brass_srtr_starved.json scripts/srtr/brass/results/adaptations/{}_starved_adaptation.json".format(test_scenario)
   result = subprocess.call(command, shell=True)
 
-# Input file
-if (len(sys.argv) != 2):
-  print("Expects 1 argument: nominal, degraded, or adapted")
-
 directory_path = "scripts/srtr/brass/results/"
 nominal_path = directory_path + "nominal_traces/"
 degraded_path = directory_path + "degraded_traces/"
@@ -33,8 +29,6 @@ for file in sorted(os.listdir(nominal_path)):
   first_underscore = filename.find("_")
   current_scenario = filename[:first_underscore]
   # Identify if we've changed test scenarios or not
-  print(test_scenario)
-  print(current_scenario)
   if (current_scenario != test_scenario and test_scenario != ""):
     print("Adapting")
     CopyAndAdapt(test_scenario)
