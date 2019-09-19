@@ -71,7 +71,7 @@ def RunTestScenario(state_name, scenario):
                   state_name])
   # Spawns two threads, so divide CPUs by two.
   count = (mp.cpu_count() // 2) - 1
-  pool = mp.Pool(processes=count)
+  pool = mp.Pool(processes=4)
   # Run the jobs in parallel!!!!
   exec_results = pool.map(exec_soccer, tasks)
   pool.close()
