@@ -57,7 +57,7 @@ with open(sys.argv[1]) as test_file:
   num_test_scenarios = len(input_json)
 
 # Continue adapting until performance is sufficiently high or some cutoff
-while (iterations < 3):
+while (iterations < 1):
   os.mkdir("scripts/srtr/brass/results/adapted_traces")
   os.mkdir("scripts/srtr/brass/results/adapted_traces_starved")
   os.mkdir("scripts/srtr/brass/results/nominal_traces")
