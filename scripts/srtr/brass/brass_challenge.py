@@ -70,7 +70,7 @@ while (iterations < 1):
   # Generate the adapted results
   fix_percentage = RunAdaptedTests(False)
   # Generate the starved adaptation results
-  # RunAdaptedTests(True);
+  RunAdaptedTests(True);
 
   # Save the traces from the current iteration
   folder = "scripts/srtr/brass/results/traces/trace_" + str(iterations) + "/"
