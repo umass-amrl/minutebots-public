@@ -60,28 +60,34 @@ using std::vector;
 
 namespace experimental_simulator {
 
-ExperimentalSim::ExperimentalSim(double step_time, SimState* world_state)
+ExperimentalSim::ExperimentalSim(double step_time,
+                                   SimState* world_state,
+                                   const unsigned int queue_size)
     : step_time_(step_time),
       ball_acceleration_(kBallAcceleration),
-      localization_noise_stddev_(0.0),
+      localization_noise_stddev_(0.0015),
       angle_localization_noise_stddev_(0.0),
       current_time_(0.0),
       frame_index_(0),
       random_(),
-      world_state_(world_state) {}
+      world_state_(world_state) {
+        InitializeControlQueue(queue_size);
+  }
 
 ExperimentalSim::ExperimentalSim(double step_time,
-                                 double current_time,
-                                 int frame_index,
-                                 SimState* world_state)
+                                   double current_time,
+                                   int frame_index,
+                                   SimState* world_state)
     : step_time_(step_time),
-      ball_acceleration_(kBallAcceleration),
-      localization_noise_stddev_(0.0),
-      angle_localization_noise_stddev_(0.0),
-      current_time_(current_time),
-      frame_index_(frame_index),
-      random_(),
-      world_state_(world_state) {}
+    ball_acceleration_(kBallAcceleration),
+    localization_noise_stddev_(0),
+    angle_localization_noise_stddev_(0.0),
+    current_time_(current_time),
+    frame_index_(frame_index),
+    random_(),
+    world_state_(world_state) {
+      InitializeControlQueue(1);
+  }
 
 ExperimentalSim::ExperimentalSim()
     : step_time_(kTransmitPeriodSeconds),
@@ -124,22 +130,50 @@ bool IsInCameraField(const Vector2f& position, const int camera_id) {
 
 bool ExperimentalSim::ValidateVelocityCommandIntegrity(
     const RadioProtocolWrapper& velocity_command) {
-  if (velocity_command.command_size() == 0) {
-    LOG(ERROR) << "No velocity commands given to simulator!";
-    return false;
-  }
-  return true;
+    if (velocity_command.command_size() == 0) {
+      LOG(ERROR) << "No velocity commands given to simulator!";
+      return false;
+    }
+    return true;
+}
+
+void ExperimentalSim::InitializeControlQueue(const unsigned int queue_size) {
+    for (unsigned int i = 0; i < queue_size; i++) {
+      RadioProtocolWrapper rpw = GetEmptyRadioCommand();
+      control_queue_.push(rpw);
+    }
+}
+
+RadioProtocolWrapper ExperimentalSim::GetEmptyRadioCommand() {
+    RadioProtocolWrapper rpw;
+
+    for (const Robot& robot : world_state_->GetRobots()) {
+      RadioProtocolCommand* command = rpw.add_command();
+
+      command->set_velocity_x(robot.GetVelocity().x()/1000);
+      command->set_velocity_y(robot.GetVelocity().y()/1000);
+      command->set_velocity_r(robot.rotational_velocity_);
+
+      command->set_robot_id(robot.GetId());
+
+      command->set_dribbler_spin(0.0);
+      command->set_flat_kick(0.0);
+      command->set_chip_kick(0.0);
+    }
+
+    return rpw;
 }
 
 vector<SSL_WrapperPacket> ExperimentalSim::GetSSLWrapperPackets() {
-  // Setup the messages for the four cameras with default constructed
-  // SSL_WrapperPackets.
-  vector<SSL_WrapperPacket> wrapper_packets(kNumCameras);
-  for (size_t camera_id = 0; camera_id < wrapper_packets.size(); ++camera_id) {
-    SSL_WrapperPacket& wrapper_packet = wrapper_packets[camera_id];
-    SSL_DetectionFrame* detection = wrapper_packet.mutable_detection();
-    // If we need to define field lines again, look at commit:
-    // 5e130f22d8d0224df26ff84d8c1da86f3aa400b8
+    // Setup the messages for the four cameras with default constructed
+    // SSL_WrapperPackets.
+    vector<SSL_WrapperPacket> wrapper_packets(kNumCameras);
+    for (size_t camera_id = 0;
+         camera_id < wrapper_packets.size(); ++camera_id) {
+      SSL_WrapperPacket& wrapper_packet = wrapper_packets[camera_id];
+      SSL_DetectionFrame* detection = wrapper_packet.mutable_detection();
+      // If we need to define field lines again, look at commit:
+      // 5e130f22d8d0224df26ff84d8c1da86f3aa400b8
 
     detection->set_frame_number(frame_index_);
     // TODO(jaholtz): Add lag between time captured and time sent?
@@ -232,14 +266,17 @@ PositionVelocityState ExperimentalSim::GetWorldState(const team::Team team) {
   return world_pvs;
 }
 
-void ExperimentalSim::SimulateStep(const RadioProtocolWrapper& command) {
-  if (ValidateVelocityCommandIntegrity(command)) {
-    world_state_->Update(command, step_time_);
-    world_state_->SetBallAccel(ball_acceleration_);
-  }
-  last_command_ = command;
-  current_time_ += step_time_;
-  frame_index_++;
+void ExperimentalSim::SimulateStep(const RadioProtocolWrapper& new_command) {
+    const RadioProtocolWrapper next_command = control_queue_.front();
+    control_queue_.pop();
+    control_queue_.push(new_command);
+    if (ValidateVelocityCommandIntegrity(next_command)) {
+      world_state_->Update(next_command, step_time_);
+      world_state_->SetBallAccel(ball_acceleration_);
+    }
+    last_command_ = next_command;
+    current_time_ += step_time_;
+    frame_index_++;
 }
 
 MinuteBotsProto::FactorTuningData ExperimentalSim::GetFactorChanges() {

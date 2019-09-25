@@ -11,7 +11,7 @@ return {
     { outcome = "aborted", condition = {"halt"} },
   },
    roles = {
-    {"pass_fail_primary_attacker"},
+    {"PassFailAttacker"},
     {"halt"},
     {"halt"},
     {"halt"},

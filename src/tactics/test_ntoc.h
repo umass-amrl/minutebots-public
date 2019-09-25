@@ -1,4 +1,4 @@
-// Copyright 2018 afischer@umass.edu
+// Copyright 2018 - 2019 afischer@umass.edu
 // College of Information and Computer Sciences,
 // University of Massachusetts Amherst
 //
@@ -65,7 +65,6 @@ class TestNTOC : public Tactic {
   };
 
   ExecutionState execution_state;
-  ExecutionState previous_state;
 
   Eigen::Vector2f start_pos = Vector2f(-1000, 0);
   Eigen::Vector2f start_vel = Vector2f(0.0, 0.0);
@@ -82,6 +81,7 @@ class TestNTOC : public Tactic {
   bool isFirstRun;
   FILE* log_file;
   int log_number;
+  const int kNumTrials_ = 30;  // how many runs until soccer quits
 };
 }  // namespace tactics
 

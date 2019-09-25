@@ -47,9 +47,9 @@ os.mkdir("scripts/srtr/brass/results/traces")
 command = "scripts/srtr/brass/setup_brass_tests.py {}".format(sys.argv[1])
 result = subprocess.call(command, shell=True)
 
-fix_percentage = 0;
-iterations = 0;
-original_failures = 0;
+fix_percentage = 0
+iterations = 0
+original_failures = 0
 
 num_test_scenarios = 1
 with open(sys.argv[1]) as test_file:

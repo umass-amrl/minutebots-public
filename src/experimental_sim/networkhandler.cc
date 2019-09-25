@@ -1,4 +1,4 @@
-// Copyright 2016 - 2018 jaholtz@cs.umass.edu
+// Copyright 2016 - 2019 jaholtz@cs.umass.edu
 // College of Information and Computer Sciences,
 // University of Massachusetts Amherst
 //

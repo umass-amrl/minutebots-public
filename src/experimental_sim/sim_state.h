@@ -1,4 +1,4 @@
-// Copyright 2016 - 2018 jaholtz@cs.umass.edu
+// Copyright 2016 - 2019 jaholtz@cs.umass.edu
 // College of Information and Computer Sciences,
 // University of Massachusetts Amherst
 //
@@ -37,8 +37,12 @@ class SimState {
           const float& friction_coefficient,
           const float& time_slice);
   SimState(const std::vector<pose_2d::Pose2Df>& positions,
-          const float& friction_coefficient,
-          const float& time_slice);
+           const float& friction_coefficient,
+           const float& time_slice);
+  SimState(const std::vector<pose_2d::Pose2Df>& positions,
+           const std::vector<pose_2d::Pose2Df>& velocities,
+           const float& friction_coefficient,
+           const float& time_slice);
   ~SimState() = default;
 
   void Update(const RadioProtocolWrapper& velocity_command,

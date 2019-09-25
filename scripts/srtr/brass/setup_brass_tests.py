@@ -20,7 +20,7 @@ def load_nominal_values(nominal_file):
   return nominal_values
 
 def LoadTests():
-  with open("scripts/srtr/brass/test_library3.json") as input_file:
+  with open("scripts/srtr/brass/new_sim_tests2.json") as input_file:
     file_json = json.load(input_file)
     return file_json
 
@@ -45,8 +45,7 @@ if (len(sys.argv) != 2):
 # Load the file with the nominally successful tests
 test_list = LoadTests()
 nominal = load_nominal_values('scripts/srtr/brass/parameter_enumeration.json')
-
-
+print(len(test_list))
 with open(sys.argv[1]) as test_file:
   input_json = json.load(test_file)
   nominal_json = []

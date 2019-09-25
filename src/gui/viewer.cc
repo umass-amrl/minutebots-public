@@ -1,4 +1,4 @@
-// Copyright 2017-2018 joydeepb@cs.umass.edu
+// Copyright 2017-2019 joydeepb@cs.umass.edu
 // College of Information and Computer Sciences,
 // University of Massachusetts Amherst
 //
@@ -158,6 +158,8 @@ void Viewer::keyPressEvent(QKeyEvent* event) {
   if (event->key() == Qt::Key_H) RefHalt();
   if (event->key() == Qt::Key_K) SetTransition();
   if (event->key() == Qt::Key_N) UnsetTransition();
+  if (event->key() == Qt::Key_C) ContinueTransition();
+  if (event->key() == Qt::Key_E) EndFile();
   //   if (event->key() == Qt::Key_A) TestSelection();
   if (event->key() == Qt::Key_G) RefForceStart();
   if (event->key() == Qt::Key_Left && pause_status) Previous();
@@ -442,6 +444,16 @@ void Viewer::RefHalt() {
 
 void Viewer::SetLive(bool value) {
   log_status_ = !value;
+}
+
+void Viewer::ContinueTransition() {
+  file_logger_->ContinueTransition(slider_.value(), tuning_box_.currentIndex());
+}
+
+void Viewer::EndFile() {
+  std::cout << slider_.value() << std::endl;
+  file_logger_->EndFile(slider_.value());
+//   close();
 }
 
 void Viewer::SetTransition() {

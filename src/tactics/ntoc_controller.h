@@ -1,4 +1,4 @@
-// Copyright 2017 - 2018 dbalaban@cs.umass.edu, slane@cs.umass.edu
+// Copyright 2017 - 2019 dbalaban@cs.umass.edu, slane@cs.umass.edu
 // College of Information and Computer Sciences,
 // University of Massachusetts Amherst
 //
@@ -20,6 +20,7 @@
 #include <memory>
 #include <vector>
 
+#include "configuration_reader/reader.h"
 #include "math/poses_2d.h"
 #include "motion_control/ntoc_2d.h"
 #include "motion_control/optimal_control_1d.h"
@@ -66,7 +67,7 @@ class NTOC_Controller : public Tactic {
   pose_2d::Pose2Df goal_;
 
   const bool kDebug_ = false;
-  const bool kDefaultUsePD_ = false;
+  const bool kDefaultUsePD_ = true;
 
   motion::MotionModel motion_model_;
   bool relax_angle_;

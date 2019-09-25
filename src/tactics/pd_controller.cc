@@ -1,4 +1,4 @@
-// Copyright 2017 - 2018 slane@cs.umass.edu
+// Copyright 2017 - 2019 slane@cs.umass.edu
 // College of Information and Computer Sciences,
 // University of Massachusetts Amherst
 //
@@ -24,6 +24,7 @@
 #include <algorithm>
 #include <cmath>
 
+#include "configuration_reader/reader.h"
 #include "constants/constants.h"
 #include "datastructures/better_map.h"
 #include "eigen3/Eigen/Dense"
@@ -83,8 +84,10 @@ void PDController::Run() {
 
   // const float kTranslationProportional = 15.0;
   // const float kTranslationDerivative = -3.0;
-  static constexpr float kTranslationProportional = 9.5 / 0.8;  // 250.0;
-  static constexpr float kTranslationDerivative = -0.1 / 1.1;   // -30.0;
+  static float kTranslationProportional =
+    configuration_reader::CONFIG_pd_translation_proportional;  // 250.0;
+  static float kTranslationDerivative =
+    configuration_reader::CONFIG_pd_translation_derivative;   // -30.0;
 
   // Deadzone for commands around the center in mm.
   static constexpr float kTranslationalDeadZone = 7;
@@ -105,6 +108,8 @@ void PDController::Run() {
 
   const Vector2f translation_error =
       (goal_.translation - current_pose.translation);
+
+  logger->LogPrint("Translation error: %f", translation_error.norm());
 
   Pose2Df target_velocity(0, 0, 0);
   if (translation_complete_ ||

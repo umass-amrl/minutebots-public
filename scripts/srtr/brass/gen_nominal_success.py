@@ -17,6 +17,7 @@ kKickSpeed = 1.25
 def exec_soccer(args):
     x, y, angle= args
     vx, vy = speed_to_velocity(angle)
+    file = "test.txt"
     command = "./bin/soccer -S -b {},{},{},{} -dp -tb -py".format(x, y, vx, vy)
     result = subprocess.call(command, shell=True)
     return (x, y, vx, vy, angle, (result == 0))
@@ -39,20 +40,20 @@ def merge_result(result_list, result):
     return result_list
 
 def save_to_file(result_list):
-    filename = 'scripts/srtr/brass/test_library3.json'
+    filename = 'scripts/srtr/brass/new_sim_tests2.json'
     text_file = open(filename, "w")
     json.dump(result_list, text_file, indent=2)
     text_file.close()
 
-xs = [(e * 3969/64) for e in list(range(65))]
-ys = [e * (2500/40) for e in list(range(-40, 41))]
+xs = [(e * 3000/30) for e in list(range(31))]
+ys = [e * (2500/20) for e in list(range(21))]
 angles = [e * 36 for e in list(range(10))]
 tasks = list(itertools.product(xs, ys, angles))
 
 #Spawns two threads, so divide CPUs by two.
 count = mp.cpu_count()
-pool = mp.Pool(processes=count)
-
+pool = mp.Pool(processes=(count/2)-1) 
+print(len(tasks))
 #Run the jobs in parallel!!!!
 exec_results = pool.map(exec_soccer, tasks)
 result_list = reduce(merge_result, exec_results, [])

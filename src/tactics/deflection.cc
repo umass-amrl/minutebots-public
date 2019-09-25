@@ -1,4 +1,4 @@
-// Copyright 2018 tszkeiserena@umass.edu, jaholtz@cs.umass.edu
+// Copyright 2018 - 2019 tszkeiserena@umass.edu, jaholtz@cs.umass.edu
 // College of Information and Computer Sciences,
 // University of Massachusetts Amherst
 //
@@ -261,6 +261,7 @@ void Deflection::Kick() {
       Rotation2Df(robot_angle) * desired_acceleration;
 
   ControlSequence1D rotational_control;
+
   TimeOptimalControlAnyFinal1D(robot_angle, omega, interception_angle_actual_,
                                0.0, 0.0, kMaxRobotRotAccel, kMaxRobotRotVel,
                                &rotational_control);
@@ -485,7 +486,7 @@ void Deflection::Transition() {
 
   // Calculates projected time until ball reaches intersection of path
   float ball_arrival_time =
-      GetBallArrivalTime(ball_speed, ball_distance_from_point.norm());
+      GetBallArrivalTime(ball_speed, ball_distance_from_point.norm()) ;
   float next_ball_time = ball_arrival_time - kTransmitPeriodSeconds;
   if (ball_arrival_time == -1.0f) {
     logger->LogPrint("Something wrong with ball time calculation");

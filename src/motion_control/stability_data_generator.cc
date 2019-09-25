@@ -1,4 +1,4 @@
-// Copyright 2017 - 2018 dbalaban@cs.umass.edu
+// Copyright 2017 - 2019 dbalaban@cs.umass.edu
 // College of Information and Computer Sciences,
 // University of Massachusetts Amherst
 //

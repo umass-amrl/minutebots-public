@@ -129,6 +129,9 @@ class Executor {
   threadsafe::ThreadSafeActor<experimental_simulator::Simulator*>*
       thread_safe_simulator_;
   experimental_simulator::Simulator* local_simulator_;
+
+  const bool useDSS_ = false;
+
   std::exception_ptr* exception_;
 };
 }  // namespace app

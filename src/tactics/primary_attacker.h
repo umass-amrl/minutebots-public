@@ -23,6 +23,7 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <iostream>
 
 #include "state/shared_state.h"
 #include "tactics/state_machine_tactic.h"
@@ -54,6 +55,8 @@ class PrimaryAttacker : public StateMachineTactic {
                      const float& catch_trajectory, const float& toward_robot);
   void LoadConfigFile();
   void SetValue(nlohmann::json config_json, RepairableParam* param);
+  void SetState(nlohmann::json config_json);
+  void WriteTrainingData(const State& last_state);
   // True when:
   // 1) Within angular error margin from aim &&
   // 2) Within desired radial distance &&
@@ -144,6 +147,9 @@ class PrimaryAttacker : public StateMachineTactic {
   void Receive();
 
   void STOXPivot();
+
+  void ManualTransition();
+  void NetTransition();
 
   SolutionParameters intercept_solution_;
   SolutionParameters catch_solution_;

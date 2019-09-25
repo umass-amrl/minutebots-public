@@ -1,4 +1,4 @@
-// Copyright 2017 - 2018 kvedder@umass.edu
+// Copyright 2017 - 2019 kvedder@umass.edu
 // College of Information and Computer Sciences,
 // University of Massachusetts Amherst
 //
@@ -117,6 +117,16 @@ class KalmanUpdate {
                          bool is_ours,
                          PositionVelocityArray* robots,
                          KalmanArray* kalman_array);
+
+  void AddNewRobotKalmanSim(
+    const double detection_timestamp,
+    const unsigned int camera_id,
+    const unsigned int  robot_id,
+    const pose_2d::Pose2Df pose,
+    const pose_2d::Pose2Df velocity,
+    bool is_ours,
+    PositionVelocityArray* robots,
+    KalmanArray* kalman_array);
 
   void AddNewRobotVision(const double detection_timestamp,
                          const unsigned int camera_id,

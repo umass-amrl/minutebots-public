@@ -127,6 +127,10 @@ void Kick::Reset() {
   target_set_ = false;
 }
 
+int Kick::GetKickCount() {
+  return kick_count_;
+}
+
 void Kick::SetGoal(const Pose2Df& pose) {
   target_angle_ = pose.angle;
   target_set_ = true;
@@ -143,7 +147,7 @@ void Kick::Kicking() {
   Pose2Df current_pose =
       world_state_.GetOurRobotPosition(our_robot_index_).position;
   safety::DSS2::SetObstacleFlag(our_robot_index_,
-                                obstacle::ObstacleFlag::GetDefenseAreas());
+                                obstacle::ObstacleFlag::GetEmpty());
   kick_count_++;
   state->flat_kick_set = true;
   const Vector2f robot_pose =
@@ -333,7 +337,7 @@ void Kick::Transition() {
     bool in_defense = false;
     for (auto obstacle : flags) {
       if (obstacle->PointCollision(ball_pose, kBallRadius)) {
-        in_defense = true;
+        in_defense = false;
       }
     }
     if (timed_out || kicked || in_defense) {

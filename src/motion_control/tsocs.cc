@@ -33,15 +33,17 @@ using ntoc::ControlSequence1D;
 using math_util::AngleMod;
 using Eigen::Vector2d;
 
+ScopedFile tsocs_data_fid("TSOCS-data.txt", "a");
+
 namespace tsocs {
 
 const double kTSOCSThreshold = 1e-5;
+const double kMaxRegularization = 100.0;
 static const bool kRescaleGuess = true;
 static const bool kOpenLoop = false;
 static const double kDeltaT = 1.0 / kTransmitFrequency;
 // maximum ceres iterations
 static const int kMaxIterations = 100;
-extern ScopedFile tsocs_data_fid;
 
 Tsocs::Tsocs() : Tsocs(Vector2d(0, 0), Vector2d(0, 0), Vector2d(0, 0),
                    Vector2d(0, 0), kDefaultRobotAcceleration) {}
@@ -51,7 +53,10 @@ Tsocs::Tsocs(Vector2d x0, Vector2d v0, Vector2d xf, Vector2d vf, double a_max)
       v0(v0 / a_max),
       xf(xf / a_max),
       vf(vf / a_max),
-      a_max(a_max) {
+      a_max(a_max),
+      t_reg_ratio(configuration_reader::CONFIG_t_reg_ratio),
+      k1(configuration_reader::CONFIG_k1),
+      k2(configuration_reader::CONFIG_k2) {
   if (isnan(x0.x()) || isnan(x0.y()) || isnan(v0.x()) || isnan(v0.y()) ||
       isnan(xf.x()) || isnan(xf.y()) || isnan(vf.x()) || isnan(vf.y())) {
     printf("Tsocs constructor was passed nan values\n");
@@ -367,6 +372,11 @@ bool Tsocs::GetSolution(SolutionParameters* params, logger::Logger* logger) {
     cout << "vf = " << vf << endl;
   }
   SolutionParameters params_old = *params;
+  if (params->isInitialized) {
+    use_t_regularization = true;
+    t_expected = params->T - 1.0 / kTransmitFrequency;
+  }
+
   if (!params->isInitialized || params->cost >= kTSOCSThreshold) {
     if (logger != NULL) {
       logger->LogPrint("Guessing Parameters");
@@ -386,8 +396,6 @@ bool Tsocs::GetSolution(SolutionParameters* params, logger::Logger* logger) {
     if (kOpenLoop) {
       return true;
     }
-    use_t_regularization = true;
-    t_expected = params->T;
   }
   if (use_t_regularization) {
     double prop_accel = static_cast<double>(delta_vel.norm()) / t_expected;
@@ -422,20 +430,19 @@ bool Tsocs::GetSolution(SolutionParameters* params, logger::Logger* logger) {
   }
 
   if (kCollectTSOCSData) {
-//     fprintf(tsocs_data_fid, "\tCOST COEFS: %f %f\n", x_cost_coef,
-//             v_cost_coef);
-//     fprintf(tsocs_data_fid, "\tT REGULARIZATION: %s\n",
-//             use_t_regularization ? "TRUE" : "FALSE");
-//     if (use_t_regularization) {
-//       fprintf(tsocs_data_fid, "\tEXPECTED T: %f\n", t_expected);
-//     }
+    fprintf(tsocs_data_fid, "\tCOST COEFS: %f %f\n", x_cost_coef,
+            v_cost_coef);
+    fprintf(tsocs_data_fid, "\tT REGULARIZATION: %s\n",
+            use_t_regularization ? "TRUE" : "FALSE");
+    if (use_t_regularization) {
+      fprintf(tsocs_data_fid, "\tEXPECTED T: %f\n", t_expected);
+    }
   }
-  if (cost2 < kTSOCSThreshold) {
-    params->cost = cost2;
-  } else {
+  if (cost2 >= kTSOCSThreshold) {
     *params = params_old;
     UpdateParameters(params);
   }
+  params->cost = cost2;
   use_t_regularization = false;
   x_cost_coef = 1.0;
   v_cost_coef = 1.0;
@@ -456,6 +463,16 @@ void Tsocs::GetState(Eigen::Vector2d* xt, Eigen::Vector2d* vt, const double t,
   (*vt)[0] = a_max * (V(a, b, c, d, t) + v0.x());
   (*vt)[1] = a_max * (V(b, a, d, c, t) + v0.y());
 }
+
+Vector2d Tsocs::GetAccelVector(const double t,
+                               SolutionParameters params) {
+  const double psi1 = params.a * t + params.c;
+  const double psi2 = params.b * t + params.d;
+  const double psi_mag = sqrt(psi1 * psi1 + psi2 * psi2);
+  const double f = a_max / psi_mag;
+  return Vector2d(f * psi1, f * psi2);
+}
+
 
 std::vector<Eigen::Vector2f> Tsocs::GetPath(const unsigned int npts,
                                             SolutionParameters params) {

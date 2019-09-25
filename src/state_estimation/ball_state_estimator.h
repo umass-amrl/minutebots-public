@@ -1,4 +1,4 @@
-// Copyright 2017 - 2018 srabiee@cs.umass.edu, slane@cs.umass.edu
+// Copyright 2017 - 2019 srabiee@cs.umass.edu, slane@cs.umass.edu
 // College of Information and Computer Sciences,
 // University of Massachusetts Amherst
 //
@@ -67,6 +67,8 @@ class BallStateEstimator {
   void UpdateCameraParams(const SSLVisionProto::SSL_GeometryData&
       geometry_packet);
 
+  void SetBallState(
+      const state::PositionVelocityState::BallPositionVelocity& ball);
 
  private:
   Eigen::Vector2d GetBestBallObservation(

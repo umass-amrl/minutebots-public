@@ -1,4 +1,4 @@
-// Copyright 2018 slane@cs.umass.edu
+// Copyright 2018 - 2019 slane@cs.umass.edu
 // College of Information and Computer Sciences,
 // University of Massachusetts Amherst
 //

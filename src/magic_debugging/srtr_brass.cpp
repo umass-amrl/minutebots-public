@@ -58,7 +58,7 @@ std::ofstream num_file;
 void TuneFromTraceFile(const string& filename,
                        const string& machine_name,
                        const string& output_file,
-                       const int& max_corrections) {
+                       const float& max_corrections) {
   Trace trace;
   // Read Text trace from file
   std::ifstream trace_file;
@@ -71,7 +71,8 @@ void TuneFromTraceFile(const string& filename,
   vector<PossibleTransition> transitions;
   vector<StateMachineData> state_machines;
   std::cout << "Trace size: " << trace.trace_elements_size() << std::endl;
-  const int num_corrections = std::min(max_corrections,
+  const int corrections = max_corrections * trace.trace_elements_size();
+  const int num_corrections = std::min(corrections,
                                        trace.trace_elements_size());
   for (int i = 0; i < num_corrections; ++i) {
     StateMachineData data = trace.trace_elements(i);
@@ -108,12 +109,12 @@ int main(int argc, char** argv) {
   }
   std::cout << "Machine Name: " << machine_name << std::endl;
 //   const double start_time = GetWallTime();
-  const int all_corrections = INT_MAX;
+  const int all_corrections = 1.0;
   TuneFromTraceFile(file_name,
                     machine_name,
                     "brass_srtr.json",
                     all_corrections);
-  const int starved_corrections = 3;
+  const float starved_corrections = 0.2;
   TuneFromTraceFile(file_name,
                     machine_name,
                     "brass_srtr_starved.json",

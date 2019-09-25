@@ -1,4 +1,4 @@
-// Copyright 2018 ikhatri@umass.edu
+// Copyright 2018 - 2019 ikhatri@umass.edu
 // College of Information and Computer Sciences,
 // University of Massachusetts Amherst
 //
@@ -254,5 +254,31 @@ void Stop() {
 }
 
 CFG_VECTOR2F(triangle_test, "config_triangle_point");
+CFG_DOUBLE(kHardwareLagTranslation, "kHardwareLagTranslation");
+CFG_DOUBLE(kLatency, "kLatency");
+CFG_DOUBLE(kSimulatorLatency, "kSimulatorLatency");
+CFG_DOUBLE(t_reg_ratio, "t_reg_ratio");
+CFG_DOUBLE(min_v_cost_coef, "min_v_cost_coef");
+CFG_DOUBLE(linear_activation_noise, "linear_activation_noise");
+CFG_DOUBLE(angular_activation_noise, "angular_activation_noise");
+CFG_DOUBLE(angular_deviation_noise, "angular_deviation_noise");
+CFG_DOUBLE(activation_drift_angle, "activation_drift_angle");
+CFG_DOUBLE(drift_angle_weight, "drift_angle_weight");
+CFG_DOUBLE(kDefaultRobotAcceleration, "kDefaultRobotAcceleration");
+CFG_DOUBLE(k1, "k1");
+CFG_DOUBLE(k2, "k2");
+CFG_DOUBLE(kSimulatorStepSize, "kSimulatorStepSize");
+CFG_UINT(kSimulatorControlQueueSize, "kSimulatorControlQueueSize");
+
+CFG_DOUBLE(ntoc_pd_position_threshold, "ntoc_pd_position_threshold");
+CFG_DOUBLE(ntoc_pd_velocity_threshold, "ntoc_pd_velocity_threshold");
+
+CFG_DOUBLE(pd_translation_proportional, "pd_translation_proportional");
+CFG_DOUBLE(pd_translation_derivative, "pd_translation_derivative");
+
+CFG_DOUBLE(tsocs_xf, "tsocs_xf");
+CFG_DOUBLE(tsocs_yf, "tsocs_yf");
+CFG_DOUBLE(tsocs_vxf, "tsocs_vxf");
+CFG_DOUBLE(tsocs_vyf, "tsocs_vyf");
 
 }  // namespace configuration_reader

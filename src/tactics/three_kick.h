@@ -45,6 +45,7 @@ class ThreeKick : public StateMachineTactic {
   float GetCost() override;
   void SetPassOnly(const bool& pass_only);
   void SetChip(const bool& chip, const float& chip_distance);
+  int GetKickCount();
 
   float target_angle_;
 

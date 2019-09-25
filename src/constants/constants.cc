@@ -1,4 +1,4 @@
-// Copyright 2018 joydeepb@cs.umass.edu
+// Copyright 2018 - 2019 joydeepb@cs.umass.edu
 //
 // College of Information and Computer Sciences,
 // University of Massachusetts Amherst
@@ -26,6 +26,7 @@
 #include <string>
 #include <vector>
 
+#include "configuration_reader/reader.h"
 #include "constants/includes.h"
 #include "constants/typedefs.h"
 #include "math/math_util.h"
@@ -72,19 +73,19 @@ const float kRobotFaceRadius = 67.12;
 const double kBallZeroHeight = 30.0;
 
 // Max velocity of the robots in mm/s.
-const float kMaxRobotVelocity = 3000;
+const float kMaxRobotVelocity = 4000;
 
 // Max velocity of the robots in mm/s.
-const float kDefaultRobotVelocity = 3000;
+const float kDefaultRobotVelocity = 4000;
 
 // Max velocity of the robots in mm/s the minutebot radio is willing to sent.
 const float kMaxRobotRadioVelocityCommand = 5110;
 
-// const float kMaxRobotVelocity = 2800;
 // Max acceleration of the robots in mm/s^2
-const float kMaxRobotAcceleration = 3000;
 
-const float kDefaultRobotAcceleration = 3000;
+float kDefaultRobotAcceleration = 5000;
+
+constexpr const float kMaxRobotAcceleration = 3000;
 
 // Max rotational velocity of the robots in rad/s
 constexpr const float kMaxRobotRotVel = 4.0 * M_PI;
@@ -107,17 +108,12 @@ const float kCollisionDamping = 0.4;
 const float kKickBoost = 5000;  // in mm/s
 const float kKickDetectionThreshold = 500;
 
-// Estimated time used for forward prediction in seconds
-// Should be the time between an image being captured and a command executing
-// Set this to something low in simulation
-const double kLatency = 0.115;
-const double kSimulatorLatency = 1.0f / 60.0f;
 const double kBallLatency = 0.115;
 
 // Lag in seconds that the hardware has in activation.
 // Sample usecase: Extending DSS control period to account for the hardware
 // activation lag.
-const double kHardwareLagTranslation = 0.05;
+double kHardwareLagTranslation;
 const double kHardwareLagRotation = 0.03;
 
 const double kSimulatorPacketLossPercent = 0.0;
@@ -179,7 +175,7 @@ const float kDistanceThreshold = 100.0;
 const float kAngleThreshold = math_util::DegToRad(1.0);
 // const float kAngleThreshold = 0.1;
 const float kLinearVelocityThreshold = 150;
-const float kAngularVelocitythreshold = math_util::DegToRad(10.0);
+const float kAngularVelocitythreshold = math_util::DegToRad(1.0);
 const float kPullRightAdjustment = math_util::DegToRad(0.0);
 
 namespace field_dimensions {
@@ -187,8 +183,8 @@ const float kFieldLength = (kFieldSetup == LAB)
                                ? 8800.0
                                : ((kFieldSetup == A_LEAGUE) ? 12000.0 : 9000.0);
 const float kFieldWidth = (kFieldSetup == LAB)
-                              ? 5600.0
-                              : ((kFieldSetup == A_LEAGUE) ? 9000.0 : 6000.0);
+                              ? 10600.0
+                              : ((kFieldSetup == A_LEAGUE) ? 10600.0 : 10600.0);
 const float kHalfFieldLength = 0.5 * kFieldLength;
 const float kHalfFieldWidth = 0.5 * kFieldWidth;
 const float kGoalWidth = (kFieldSetup == B_LEAGUE) ? 1000.0 : 1200.0;
@@ -267,10 +263,10 @@ extern const float kStoppedMinimumAngle =
 //                                kRobotRadius + kDefaultSafetyMargin;
 
 // Default navigation thresholds
-const float kNavigationLocationThreshold = 8;                 // mm
-const float kNavigationAngularThreshold = 0.025;              // rad (1 degree)
-const float kNavigationLinearVelocityThreshold = 50;          // mm/s
-const float kNavigationAngularVelocityThreshold = 0.0872665;  // rad/s
+const float kNavigationLocationThreshold = 20;               // mm
+const float kNavigationAngularThreshold = 0.025;             // rad (1 degree)
+const float kNavigationLinearVelocityThreshold = 100;        // mm/s
+const float kNavigationAngularVelocityThreshold = 0.174533;  // rad/s
 
 // Minimum forward distance for STOx Navigation
 const float kNavigationForwardMovement = 200;
@@ -357,6 +353,33 @@ const bool kCollectTSOCSData = false;
 
 const double kExtendedKalmanFilterCovarianceTimeout = 0.1;
 
-double min_v_cost_coef = 0.001;
-
 const float kChipKickPadding = 45;
+
+// 'constants' that are read by the configuration reader
+
+// Estimated time used for forward prediction in seconds
+// Should be the time between an image being captured and a command executing
+double kLatency;
+double kSimulatorLatency;
+
+double min_v_cost_coef;
+
+// amount of time elapsed between each update
+double kSimulatorStepSize;
+// larger queues lead to more simulated latency
+unsigned int kSimulatorControlQueueSize;
+
+void ReadConfigurationConstants() {
+  kHardwareLagTranslation =
+    configuration_reader::CONFIG_kHardwareLagTranslation;
+  kLatency = configuration_reader::CONFIG_kLatency;
+  kSimulatorLatency = configuration_reader::CONFIG_kSimulatorLatency;
+  min_v_cost_coef = configuration_reader::CONFIG_min_v_cost_coef;
+  kDefaultRobotAcceleration =
+      configuration_reader::CONFIG_kDefaultRobotAcceleration;
+
+  kSimulatorStepSize =
+      configuration_reader::CONFIG_kSimulatorStepSize;
+  kSimulatorControlQueueSize =
+      configuration_reader::CONFIG_kSimulatorControlQueueSize;
+}

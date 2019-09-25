@@ -1,4 +1,4 @@
-// Copyright 2018 afischer@umass.edu
+// Copyright 2018 - 2019 afischer@umass.edu
 // College of Information and Computer Sciences,
 // University of Massachusetts Amherst
 //
@@ -51,7 +51,7 @@ using tactics::TacticIndex;
 static unsigned int seed = 2;
 static int num_problems = 0;
 static int trials_per_problem = 1;
-// ScopedFile ntoc_data_fid("NTOC-data.txt", "a");
+ScopedFile ntoc_data_fid("NTOC-data.txt", "a");
 
 #define TACTIC_VARIABLES \
   logger::Logger& log = \
@@ -105,26 +105,26 @@ void TestNTOC::Execute() {
   controller->Run();
 
   if (kCollectTSOCSData) {
-//     Pose2Df current_velocity =
-//         world_state_.GetOurRobotPosition(our_robot_index_).velocity;
-//     Pose2Df current_pose =
-//         world_state_.GetOurRobotPosition(our_robot_index_).position;
-//     Eigen::Rotation2Df robot_to_world_rotation(current_pose.angle);
-//     Eigen::Rotation2Df world_to_robot_rotation(-current_pose.angle);
-//     Vector2f current_velocity_world =
-//         robot_to_world_rotation * current_velocity.translation;
-//     Pose2Df observed_pose =
-//         world_state_.GetOurRobotPosition(our_robot_index_).observed_pose;
+    Pose2Df current_velocity =
+        world_state_.GetOurRobotPosition(our_robot_index_).velocity;
+    Pose2Df current_pose =
+        world_state_.GetOurRobotPosition(our_robot_index_).position;
+    Eigen::Rotation2Df robot_to_world_rotation(current_pose.angle);
+    Eigen::Rotation2Df world_to_robot_rotation(-current_pose.angle);
+    Vector2f current_velocity_world =
+        robot_to_world_rotation * current_velocity.translation;
+    Pose2Df observed_pose =
+        world_state_.GetOurRobotPosition(our_robot_index_).observed_pose;
 
-//     fprintf(ntoc_data_fid, "\tCURRENT STATE: %f, %f, %f, %f\n",
-//       current_pose.translation.cast<double>().x(),
-//       current_pose.translation.cast<double>().y(),
-//       current_velocity_world.cast<double>().x(),
-//       current_velocity_world.cast<double>().y());
-//     fprintf(ntoc_data_fid, "\tOBSERVED POSE: %f, %f\n",
-//       observed_pose.translation.cast<double>().x(),
-//       observed_pose.translation.cast<double>().y());
-//     fprintf(ntoc_data_fid, "\tCURRENT TIME: %f\n", world_state_.world_time_);
+    fprintf(ntoc_data_fid, "\tCURRENT STATE: %f, %f, %f, %f\n",
+      current_pose.translation.cast<double>().x(),
+      current_pose.translation.cast<double>().y(),
+      current_velocity_world.cast<double>().x(),
+      current_velocity_world.cast<double>().y());
+    fprintf(ntoc_data_fid, "\tOBSERVED POSE: %f, %f\n",
+      observed_pose.translation.cast<double>().x(),
+      observed_pose.translation.cast<double>().y());
+    fprintf(ntoc_data_fid, "\tCURRENT TIME: %f\n", world_state_.world_time_);
   }
 
   log.AddPoint(wr_loc, 0, 0, 0, 1);
@@ -160,32 +160,26 @@ void TestNTOC::Start() {
 
   const float speed = start_dir.dot(wr_vel);
   const float start_speed = start_vel.norm();
-  const float next_speed = min(speed + kControlPeriodTranslation *
-                                   kMaxRobotAcceleration,
-                               start_speed);
-  const Vector2f vel_next = next_speed * start_dir;
-  log.LogPrint("CMD: %f, %f", vel_next.x(), vel_next.y());
-
-  state::SharedRobotState* state =
-      shared_state_->GetSharedState(our_robot_index_);
-  const Vector2f robot_cmd = Eigen::Rotation2Df(-wr_angle) * vel_next;
-  state->our_robot_index = our_robot_index_;
-  state->ssl_vision_id =
-      world_state_.GetOurRobotPosition(our_robot_index_).ssl_vision_id;
-  state->velocity_x = robot_cmd.x();
-  state->velocity_y = robot_cmd.y();
+  Pose2Df accel(0, 0, 0);
+  if (speed < start_speed) {
+    accel.translation = kDefaultRobotAcceleration
+      * (Eigen::Rotation2Df(-wr_angle) * start_dir);
+  } else if (speed > start_speed + kMaxDeltaV) {
+    accel.translation = -kDefaultRobotAcceleration * wr_vel.normalized();
+  } else {
+    accel.translation = Eigen::Vector2f(0, 0);
+  }
 
   // Compute angular velocity that will get us to 0 orientation
   Pose2Df current_velocity =
       world_state_.GetOurRobotPosition(our_robot_index_).velocity;
   Pose2Df current_pose =
       world_state_.GetOurRobotPosition(our_robot_index_).position;
-  Pose2Df desired_velocity(current_pose);
   if (current_pose.angle > 0) {
     if (current_velocity.angle > 0) {
       // we are rotating away from the desired orientation, and we want to
       // rotate back
-      desired_velocity.angle = current_velocity.angle - kMaxDeltaRotV;
+          accel.angle = -kMaxRobotRotAccel;
     } else {
       // the angle we will be at if we decelerate to a screeching halt
       double t_halt = -current_velocity.angle / kMaxRobotRotAccel;
@@ -195,17 +189,17 @@ void TestNTOC::Start() {
         // accelerate towards 0
         if (std::abs(current_velocity.angle - kMaxDeltaRotV)
           <= kMaxRobotRotVel) {
-          desired_velocity.angle = current_velocity.angle - kMaxDeltaRotV;
+          accel.angle = -kMaxRobotRotAccel;
         } else {
-          desired_velocity.angle = current_velocity.angle;
+          accel.angle = 0;
         }
       } else {
-        desired_velocity.angle = current_velocity.angle + kMaxDeltaRotV;
+          accel.angle = kMaxRobotRotAccel;
       }
     }
   } else if (current_pose.angle < 0) {
     if (current_velocity.angle < 0) {
-      desired_velocity.angle = current_velocity.angle + kMaxDeltaRotV;
+          accel.angle = kMaxRobotRotAccel;
     } else {
       // the angle we will be at if we decelerate to a screeching halt
       double t_halt = current_velocity.angle / kMaxRobotRotAccel;
@@ -215,16 +209,23 @@ void TestNTOC::Start() {
         // accelerate towards 0
         if (std::abs(current_velocity.angle - kMaxDeltaRotV)
           <= kMaxRobotRotVel) {
-          desired_velocity.angle = current_velocity.angle + kMaxDeltaRotV;
+          accel.angle = kMaxRobotRotAccel;
         } else {
-          desired_velocity.angle = current_velocity.angle;
+          accel.angle = -0;
         }
       } else {
-        desired_velocity.angle = current_velocity.angle - kMaxDeltaRotV;
+          accel.angle = -kMaxRobotRotAccel;
       }
     }
   }
-  state->velocity_r = desired_velocity.angle;
+  state::SharedRobotState* state =
+      shared_state_->GetSharedState(our_robot_index_);
+  state->our_robot_index = our_robot_index_;
+  state->ssl_vision_id =
+      world_state_.GetOurRobotPosition(our_robot_index_).ssl_vision_id;
+  state->acceleration_command = accel;
+  log.LogPrint("acceleration command: %f, %f, %f",
+               accel.translation.x(), accel.translation.y(), accel.angle);
 }
 
 void TestNTOC::Stop() {
@@ -284,11 +285,11 @@ void TestNTOC::GenerateNewProblem() {
     trials_this_problem++;
   }
   if (kCollectTSOCSData) {
-//     fprintf(ntoc_data_fid,
-//       "GENERATED PROBLEM: %12f, %12f, %12f, %12f, %12f, %12f, %12f, %12f\n",
-//        start_pos.x(), start_pos.y(), start_vel.x(), start_vel.y(),
-//        goal_pos.x(), goal_pos.y(), goal_vel.x(), goal_vel.y());
-//     fflush(ntoc_data_fid);
+    fprintf(ntoc_data_fid,
+      "GENERATED PROBLEM: %12f, %12f, %12f, %12f, %12f, %12f, %12f, %12f\n",
+       start_pos.x(), start_pos.y(), start_vel.x(), start_vel.y(),
+       goal_pos.x(), goal_pos.y(), goal_vel.x(), goal_vel.y());
+    fflush(ntoc_data_fid);
   }
 }
 
@@ -328,13 +329,15 @@ void TestNTOC::Run() {
 
     case START: {
       // Check if the robot has passed the start location.
-      if ((current_pose.translation - start_pos).norm() < 20.0) {
+      if ((current_pose.translation - start_pos).norm() < 30.0) {
         execution_state = EXECUTE;
         t_state_start = world_state_.world_time_;
         if (kCollectTSOCSData) {
           collect_ntoc_data = true;
         }
         // NewLog();
+      } else if (time_in_state > kTimeOut) {
+        execution_state = GOTO_WAIT;
       }
     } break;
 
@@ -346,6 +349,7 @@ void TestNTOC::Run() {
         (current_pose.translation - goal_pos).norm());
       log.LogPrint("V distance: %f",
         (current_velocity_world - goal_vel).norm());
+      log.LogPrint("Time in this state: %f", time_in_state);
       if (((current_pose.translation - goal_pos).norm() < 5.0 &&
           (current_velocity_world - goal_vel).norm() < 50.0) ||
           time_in_state > kTimeOut) {
@@ -369,10 +373,13 @@ void TestNTOC::Run() {
                     wait_pos.x(), wait_pos.y(),
                     (current_pose.translation - wait_pos).norm(),
                     current_velocity.translation.norm());
-      if (((current_pose.translation - wait_pos).norm() < 5.0 &&
+      if (((current_pose.translation - wait_pos).norm() < 10.0 &&
           current_velocity.translation.norm() < 50.0)) {
         execution_state = WAIT;
         t_state_start = world_state_.world_time_;
+        if (num_problems == kNumTrials_) {
+          exit(0);
+        }
       }
     } break;
   }
@@ -409,8 +416,7 @@ void TestNTOC::Run() {
 }
 
 void TestNTOC::Reset() {
-  execution_state = START;
-  previous_state = WAIT;
+  execution_state = GOTO_WAIT;
   current_goal_pos = start_pos;
   current_goal_vel = start_vel;
   isFirstRun = true;
@@ -422,8 +428,7 @@ void TestNTOC::Reset() {
 }
 
 void TestNTOC::Init() {
-  execution_state = START;
-  previous_state = WAIT;
+  execution_state = GOTO_WAIT;
   current_goal_pos = start_pos;
   current_goal_vel = start_vel;
   isFirstRun = true;

@@ -1,4 +1,4 @@
-// Copyright 2017-2018 slane@cs.umass.edu
+// Copyright 2017-2019 slane@cs.umass.edu
 // College of Information and Computer Sciences,
 // University of Massachusetts Amherst
 //
@@ -42,6 +42,10 @@ class ExtendedKalmanFilter {
                        const double& timestep,
                        unsigned int camera_id);
 
+  ExtendedKalmanFilter(const pose_2d::Pose2Df& observed_pose,
+                       const pose_2d::Pose2Df& observed_vel,
+                       const double& timestep,
+                       unsigned int camera_id);
   ExtendedKalmanFilter();
   ExtendedKalmanFilter(const ExtendedKalmanFilter& other) = default;
   ExtendedKalmanFilter(ExtendedKalmanFilter&& other) = default;
@@ -103,6 +107,7 @@ class ExtendedKalmanFilter {
 
  private:
   void Init(pose_2d::Pose2Df init_pose,
+            pose_2d::Pose2Df init_vel,
             const double& timestep,
             const unsigned int camera_id);
 

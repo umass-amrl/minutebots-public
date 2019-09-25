@@ -1,4 +1,4 @@
-// Copyright 2016 - 2018 joydeepb@cs.umass.edu
+// Copyright 2016 - 2019 joydeepb@cs.umass.edu
 // College of Information and Computer Sciences,
 // University of Massachusetts Amherst
 //

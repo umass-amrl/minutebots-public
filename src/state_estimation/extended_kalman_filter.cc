@@ -1,4 +1,4 @@
-// Copyright 2017 - 2018 slane@cs.umass.edu
+// Copyright 2017 - 2019 slane@cs.umass.edu
 // College of Information and Computer Sciences,
 // University of Massachusetts Amherst
 //
@@ -124,7 +124,33 @@ ExtendedKalmanFilter::ExtendedKalmanFilter(const Pose2Df& observed_pose,
                             observed_pose.translation.y(),
                             observed_pose.angle),
       observed_velocity_(0, 0, 0) {
-  Init(observed_pose, timestep, camera_id);
+  Pose2Df zero_velocity(0, 0, 0);
+  Init(observed_pose, zero_velocity, timestep, camera_id);
+}
+
+ExtendedKalmanFilter::ExtendedKalmanFilter(const Pose2Df& observed_pose,
+                                           const Pose2Df& observed_vel,
+                                           const double& timestep,
+                                           const unsigned int camera_id)
+: current_state_(Vector6d::Zero()),
+current_covariance_(Matrix6d::Zero()),
+previous_predict_time_(0),
+previous_update_time_(0),
+initial_covariance_(current_covariance_),
+predict_reset_time_(GetWallTime()),
+time_start_(0),
+ssl_measurement_queue_(kFrameQueueSize),
+predicted_pos_queue_(kFrameQueueSize),
+update_pos_queue_(kFrameQueueSize),
+current_command_(observed_pose.translation.x(),
+                 observed_pose.translation.y(),
+                 observed_pose.angle),
+uses_commands_(false),
+previous_observation_(observed_pose.translation.x(),
+                      observed_pose.translation.y(),
+                      observed_pose.angle),
+                      observed_velocity_(observed_vel) {
+    Init(observed_pose, observed_vel, timestep, camera_id);
 }
 
 ExtendedKalmanFilter::ExtendedKalmanFilter()
@@ -144,7 +170,7 @@ ExtendedKalmanFilter::ExtendedKalmanFilter()
       observed_velocity_(0, 0, 0) {
   Pose2Df default_pose(0.0f, 0.0f, 0.0f);
 
-  Init(default_pose, GetWallTime(), 42);
+  Init(default_pose, default_pose, GetWallTime(), 42);
   is_initialized_ = false;
 }
 
@@ -326,7 +352,6 @@ void ExtendedKalmanFilter::Predict(const double& timestamp,
                            command.cmd_time);
           LogPose(current_command, logger);
         }
-
         motion_model_.Predict(delta_t,
                               (*output_state),
                               current_command,
@@ -378,6 +403,7 @@ void ExtendedKalmanFilter::Predict(const double& timestamp,
                          timestamp);
         LogPose(current_command, logger);
       }
+
       motion_model_.Predict(delta_t,
                             (*output_state),
                             current_command,
@@ -438,11 +464,12 @@ void ExtendedKalmanFilter::Update(const Pose2Df& observed_pose,
     Reset();
   }
   if (!is_initialized_) {
-    Init(observed_pose, timestamp, camera_id);
+    Pose2Df default_pose(0.0f, 0.0f, 0.0f);
+    Init(observed_pose, default_pose, timestamp, camera_id);
   }
   if (timestamp != previous_update_time_ && timestamp > previous_update_time_) {
     if (kDumpKalmanData) {
-      if (uses_commands_ || !commands_.empty()) {
+      if (uses_commands_ && !commands_.empty()) {
         fprintf(file_, "%f, %f, %f, ",
                 previous_update_time_,
                 commands_[0].cmd_time,
@@ -476,6 +503,10 @@ void ExtendedKalmanFilter::Update(const Pose2Df& observed_pose,
     if (kDebug) {
         logger->LogPrint("Current Time: %f", timestamp);
         LogState(current_state_, logger, "Pre-Predict State");
+        logger->LogPrint("Command: %f, %f, %f",
+                         current_command_.translation.x(),
+                         current_command_.translation.y(),
+                         current_command_.angle);
     }
 
     Predict(timestamp, &temp_state, &temp_covariance, logger);
@@ -488,7 +519,7 @@ void ExtendedKalmanFilter::Update(const Pose2Df& observed_pose,
     }
 
     if (kDumpKalmanData) {
-      if (uses_commands_ || !commands_.empty()) {
+      if (uses_commands_ && !commands_.empty()) {
         fprintf(file_,
                 "%f, %f, %f, ",
                 commands_[0].velocity_x,
@@ -615,9 +646,12 @@ void ExtendedKalmanFilter::Update(const Pose2Df& observed_pose,
 void ExtendedKalmanFilter::UpdateCmd(const SharedRobotState& command) {
   if (!uses_commands_) {
     uses_commands_ = true;
-    current_command_ = Pose2Dd(0.0, 0.0, 0.0);
+    current_command_ = Pose2Dd(command.velocity_r,
+                               command.velocity_x,
+                               command.velocity_y);
+  } else {
+    commands_.push_back(command);
   }
-  commands_.push_back(command);
 }
 
 void ExtendedKalmanFilter::Reset() { is_initialized_ = false; }
@@ -732,6 +766,7 @@ void ExtendedKalmanFilter::LogTrajectories(logger::Logger* logger) {
 }
 
 void ExtendedKalmanFilter::Init(pose_2d::Pose2Df init_pose,
+                                pose_2d::Pose2Df init_vel,
                                 const double& timestep,
                                 unsigned int camera_id) {
   previous_predict_time_ = timestep;
@@ -744,9 +779,9 @@ void ExtendedKalmanFilter::Init(pose_2d::Pose2Df init_pose,
   current_state_(0) = static_cast<double>(init_pose.translation.x());
   current_state_(1) = static_cast<double>(init_pose.translation.y());
   current_state_(2) = static_cast<double>(init_pose.angle);
-  current_state_(3) = 0.0;
-  current_state_(4) = 0.0;
-  current_state_(5) = 0.0;
+  current_state_(3) = static_cast<double>(init_vel.translation.x());
+  current_state_(4) = static_cast<double>(init_vel.translation.y());
+  current_state_(5) = static_cast<double>(init_vel.angle);
 
   current_covariance_ = MatrixXd::Zero(kRobotStateSize, kRobotStateSize);
   // Standard deviation of 25 mm
@@ -773,11 +808,11 @@ void ExtendedKalmanFilter::Init(pose_2d::Pose2Df init_pose,
   measurement_noise_jacobian_ = MatrixXd::Identity(3, 3);
 
   measurement_covariance_ = MatrixXd::Zero(3, 3);
-  // Standard deviation of 10 mm
+  // Standard deviation of 1.5 mm
   measurement_covariance_(0, 0) = Sq(1.5);
-  // Standard deviation of 10 mm
+  // Standard deviation of 1.5 mm
   measurement_covariance_(1, 1) = Sq(1.5);
-  // Standard deviation of 5 deg
+  // Standard deviation of 1 deg
   measurement_covariance_(2, 2) = Sq(DegToRad(1.0));
 
   // These thresholds are meant to be 3 sigma
@@ -1086,9 +1121,7 @@ Pose2Df ExtendedKalmanFilter::GetObservedVelocity() {
 Pose2Df ExtendedKalmanFilter::CalcObservedVelocity(Vector3d observation,
                                                    double delta_t) {
   Pose2Df observed_velocity_;
-  observed_velocity_.angle = static_cast<float>(AngleDiff(observation(2),
-                                 previous_observation_(2))/delta_t);
-
+  observed_velocity_.angle = static_cast<float>(observation(2))/delta_t;
   observed_velocity_.translation = ((observation.head(2) -
       previous_observation_.head(2))/delta_t).cast<float>();
 

@@ -1,4 +1,4 @@
-// Copyright 2017 - 2018 joydeepb@cs.umass.edu
+// Copyright 2017 - 2019 joydeepb@cs.umass.edu
 // College of Information and Computer Sciences,
 // University of Massachusetts Amherst
 //
@@ -155,8 +155,11 @@ class Viewer : public QWidget {
   void Pause();
   // Send the viewer live
   void Live();
+
   void SetTransition();
   void UnsetTransition();
+  void ContinueTransition();
+  void EndFile();
 
   // Replay a message without saving to file
   void Replay(const MinuteBotsProto::SoccerDebugMessage& msg);

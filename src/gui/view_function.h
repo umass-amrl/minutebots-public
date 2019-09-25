@@ -1,4 +1,4 @@
-// Copyright 2011-2018 afischer@umass.edu
+// Copyright 2011-2019 afischer@umass.edu
 // College of Information and Computer Sciences,
 // University of Massachusetts Amherst
 //

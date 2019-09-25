@@ -1,3 +1,4 @@
+
 // Copyright 2018 - 2019 jaholtz@cs.umass.edu
 // College of Information and Computer Sciences,
 // University of Massachusetts Amherst
@@ -20,8 +21,8 @@
 #include "tactics/primary_attacker.h"
 #include <algorithm>
 #include <cmath>
+#include <float.h>
 #include <iomanip>  // std::setprecision
-#include <memory>
 #include "constants/constants.h"
 #include "eigen3/Eigen/Dense"
 #include "eigen3/Eigen/Geometry"
@@ -145,7 +146,7 @@ PrimaryAttacker::PrimaryAttacker(const string& machine_name,
       thresholds_could_score_speed_(1000, 0.0, 5000.0,
                                     "could_score_speed", this),
       thresholds_ball_velocity_(100, 0.0, 5000.0, "ball_velocity", this),
-      thresholds_catch_radius_(6 * kRobotRadius, 0.0, kFieldLength,
+      thresholds_catch_radius_(2 * kRobotRadius, 0.0, kFieldLength,
                                "catch_radius", this),
       thresholds_kick_percent_(85, 0, 100, "kick_percent", this),
       thresholds_kick_speed_(1000, 0.0, 5000.0, "kick_speed", this),
@@ -156,6 +157,15 @@ PrimaryAttacker::PrimaryAttacker(const string& machine_name,
       last_target_robot_(42),
       last_target_position_({0, 0}) {
   state_ = start_;
+  if (our_robot_index == 0) {
+    data_file.open("attacker_training.txt", std::ofstream::out);
+    data_file << "index, start_state, bot_x, bot_y, bot_a, bot_vx, bot_vy,";
+    data_file << "bot_va, ball_x, ball_y, ball_vx, ball_vy,";
+    data_file << "kick_count,";
+    data_file << "attacker_dist, angle_diff,";
+    data_file << "angular_vel, radial_dist, rel_vel_y,rel_vel,y_dist,end_state";
+    data_file << endl;
+  }
   LoadConfigFile();
 }
 
@@ -168,10 +178,30 @@ void PrimaryAttacker::SetValue(nlohmann::json config_json,
   }
 }
 
+void PrimaryAttacker::SetState(nlohmann::json config_json) {
+  auto it = config_json.find("initial_state");
+  if (it != config_json.end()) {
+    const string initial_state = config_json["initial_state"];
+    if (initial_state.compare("Start") == 0) {
+      state_ = start_;
+    }
+    if (initial_state.compare("Receive") == 0) {
+      state_ = receive_;
+    }
+    if (initial_state.compare("Intercept") == 0) {
+      state_ = intercept_;
+    }
+    if (initial_state.compare("Kick") == 0) {
+      state_ = kick_;
+    }
+  }
+}
+
 void PrimaryAttacker::LoadConfigFile() {
   std::ifstream json_file("src/configs/attacker_config.json");
   nlohmann::json config_json;
   json_file >> config_json;
+  SetState(config_json);
   SetValue(config_json, &thresholds_angle_);
   SetValue(config_json, &thresholds_distance_);
   SetValue(config_json, &thresholds_y_prime_vel_);
@@ -186,6 +216,11 @@ void PrimaryAttacker::LoadConfigFile() {
   SetValue(config_json, &thresholds_kick_percent_);
   SetValue(config_json, &thresholds_kick_speed_);
   SetValue(config_json, &thresholds_follow_through_);
+  auto it = config_json.find("continue_state");
+  if (it != config_json.end()) {
+    continue_mode_ = true;
+    continue_state_ = config_json["continue_state"];
+  }
 }
 
 void PrimaryAttacker::Init() {
@@ -251,6 +286,14 @@ bool PrimaryAttacker::CouldBallScore(logger::Logger* the_logger,
   return speed_check && passes_goal && proximity;
 }
 
+// NOTE: Logic should really be more complex then "is it coming at us"
+// When do we really want to do this:::?
+// Coming at us is a precondition...
+// However it should also be true that we can't score using intercept OR
+// that scoring via catch/deflection would be faster more reliable?
+// When is that true?
+// When the ball is going largely away from their goal?
+// When we've just passed I suppose?
 bool PrimaryAttacker::ShouldCatch(logger::Logger* the_logger,
                                   const float target_angle,
                                   const Vector2f current_ball_pose,
@@ -282,6 +325,7 @@ bool PrimaryAttacker::ShouldCatch(logger::Logger* the_logger,
       robot_translation + kMaxCatchRadius * ball_perpendicular;
   const Vector2f line_end =
       robot_translation - kMaxCatchRadius * ball_perpendicular;
+
   Vector2f intersect_point(0, 0);
   float intersect_distance = 0;
   const bool intersects = RayIntersect(current_ball_pose,
@@ -290,57 +334,21 @@ bool PrimaryAttacker::ShouldCatch(logger::Logger* the_logger,
                                        line_end,
                                        &intersect_distance,
                                        &intersect_point);
-  // Check if the ball could intersect with the robot at all.
-  if (intersects) {
-    robot_logger->LogPrint("Intersects Attacker Line");
-    const float attacker_dist =
-        EuclideanDistance(intersect_point, robot_translation);
-    const bool towards_robot = attacker_dist < thresholds_catch_radius_;
 
-    const float catch_time =
-        offense::GetNtocTime(current_robot_pose,
-                             current_robot_velocity.translation,
-                             intersect_point);
-
-    const float ball_time = offense::GetBallTravelTime(
-        current_ball_velocity.norm(), current_ball_pose, intersect_point);
-    robot_logger->AddCircle(intersect_point, kBallRadius, 1.0, 0, 0, 1.0);
-    bool in_time =
-        (catch_time - ball_time) < 2 || attacker_dist < 2 * kRobotRadius;
-        if (!in_time) {
-          robot_logger->LogPrint("Time Difference %f", catch_time -
-          ball_time);
-        }
-    // This disables the time check
-    in_time = true;
-    const bool could_score_check = !CouldBallScore(the_logger,
-                                                   target_angle,
-                                                   current_ball_pose,
-                                                   current_ball_velocity,
-                                                   current_robot_pose,
-                                                   current_robot_velocity,
-                                                   false,
-                                                   false,
-                                                   true);
-    if (!speed_check) {
-      robot_logger->LogPrint("Ball too slow");
-    }
-    if (!could_score_check) {
-      robot_logger->LogPrint("Ball Could score");
-    }
-    if (!towards_robot) {
-      robot_logger->LogPrint("Too far dist: = %f", attacker_dist);
-    }
-    robot_logger->Pop();
-    const bool should_catch =
-        speed_check && could_score_check && towards_robot && in_time;
-    SetTransition(should_catch);
-    return should_catch;
-  } else {
-    robot_logger->LogPrint("Doesn't Intersect");
+  // Check if the ball will pass close enough to the robot.
+  float attacker_dist =
+      EuclideanDistance(intersect_point, robot_translation);
+  if (!intersects) {
+    attacker_dist = FLT_MAX;
   }
-  SetTransition(false);
-  return false;
+  const float kTooCloseDist = 1000.0 * 1000.0;
+  const bool towards_robot = attacker_dist < thresholds_catch_radius_;
+  const bool too_close = intersect_distance < kTooCloseDist;
+  const bool should_catch =
+      speed_check && towards_robot && !(too_close && state_ != receive_);
+
+  SetTransition(should_catch);
+  return should_catch;
 }
 
 bool PrimaryAttacker::ShouldKick(logger::Logger* logger,
@@ -352,118 +360,76 @@ bool PrimaryAttacker::ShouldKick(logger::Logger* logger,
                                  const bool is_currenlty_kicking,
                                  const bool has_timed_out,
                                  const bool debug) {
-  const bool kDebug = false;
-  if (kDebug) {
-    logger->LogPrintPush("ShouldKick");
-  }
-  const Eigen::Rotation2Df robot_to_world_rotation(current_robot_pose.angle);
-  const Eigen::Rotation2Df world_to_target_rotation(-target_angle);
-  const Eigen::Rotation2Df robot_to_target_rotation =
-      world_to_target_rotation * robot_to_world_rotation;
-
-  const Vector2f current_velocity_world =
-      robot_to_world_rotation * current_robot_velocity.translation;
-
-  const Vector2f robot_prime_vel =
-      robot_to_target_rotation * current_robot_velocity.translation;
-
-  const Vector2f robot_to_ball_displace =
-      current_ball_pose - current_robot_pose.translation;
-  Vector2f desired_norm(cos(target_angle), sin(target_angle));
-  Vector2f collision_point =
-      current_robot_pose.translation + kInterceptionRadius * desired_norm;
-  const float robot_heading = current_robot_pose.angle;
-  const Vector2f y_dir(-sin(robot_heading), cos(robot_heading));
-
-  float y_dist = y_dir.dot(robot_to_ball_displace);
-  float robot_y_prime_vel = robot_prime_vel.y();
-  float ball_y_prime_vel =
-      (world_to_target_rotation * current_ball_velocity).y();
-  float rel_y_prime_vel = robot_y_prime_vel - ball_y_prime_vel;
-
-  const Vector2f relative_velocity_vector =
-      current_velocity_world - current_ball_velocity;
-
-  // The boolean logic of "should_kick"
-
-  // SET POTENTIAL TRANSITION
-  potential_state_ = "Kick";
-  // ADD A BLOCK OF CLAUSES
-  AddBlock(true);
-  // SET AND FOR CLAUSES
-  and_clause_ = true;
-  double angle_diff =
-      RadToDeg(fabs(AngleDiff(target_angle, current_robot_pose.angle)));
-  const bool is_at_angle = angle_diff < thresholds_angle_;
-
-  double angular_vel = RadToDeg(fabs(current_robot_velocity.angle));
-  const bool is_rotation_at_rest = angular_vel < thresholds_angular_vel_;
-
-  double radial_dist = (collision_point - current_ball_pose).norm();
-  const bool is_at_radial_dist = radial_dist < thresholds_distance_;
-
-  const bool is_y_prime_at_relative_rest =
-      fabs(rel_y_prime_vel) < thresholds_y_prime_vel_;
-
-  double relative_vel = (relative_velocity_vector).norm();
-  const bool is_at_relative_rest = relative_vel < thresholds_relative_vel_;
-
-  const bool is_in_alignment = fabs(y_dist) < thresholds_align_;
-
-  if (kDebug) {
-    if (!is_at_angle) {
-      logger->LogPrint("Not At Angle. Angle Diff: %f, Thresh: %f",
-                       angle_diff,
-                       static_cast<float>(thresholds_angle_));
+  const Vector2f zero_pose = {0, 0};
+  if (current_ball_pose != zero_pose) {
+    const bool kDebug = false;
+    if (kDebug) {
+      logger->LogPrintPush("ShouldKick");
     }
-    if (!is_rotation_at_rest) {
-      logger->LogPrint("Not Rotation At Rest. Angular Vel: %f, Thresh: %f",
-                       angular_vel,
-                       static_cast<float>(thresholds_angular_vel_));
-    }
-    if (!is_at_radial_dist) {
-      logger->LogPrint("Not At Radial Dist. Distance %f, Thresh: %f",
-                       radial_dist,
-                       static_cast<float>(thresholds_distance_));
-    }
-    if (!is_y_prime_at_relative_rest) {
-      logger->LogPrint("Not at Relative Rest Y. Y Rel. Vel: %f, Thresh: %f",
-                       fabs(rel_y_prime_vel),
-                       static_cast<float>(thresholds_y_prime_vel_));
-    }
-    if (!is_at_relative_rest) {
-      logger->LogPrint("Not at Relative Rest. Relative Vel: %f, Thresh: %f",
-                       relative_vel,
-                       static_cast<float>(thresholds_relative_vel_));
-    }
-    if (!is_in_alignment) {
-      logger->LogPrint("Not in alignment. Y dist %f, Thresh: %f",
-                       y_dist,
-                       static_cast<float>(thresholds_align_));
-    }
-  }
 
-  const bool should_kick =
-      (is_at_angle && is_at_radial_dist && is_at_relative_rest &&
-       is_in_alignment && is_rotation_at_rest && is_y_prime_at_relative_rest) ||
-      (!has_timed_out && is_currenlty_kicking);
+    // Rotate all velocities to target frame
+    const Eigen::Rotation2Df robot_to_world_rotation(current_robot_pose.angle);
+    const Eigen::Rotation2Df world_to_target_rotation(-target_angle);
+    const Eigen::Rotation2Df robot_to_target_rotation =
+        world_to_target_rotation * robot_to_world_rotation;
 
-  // Don't kick the ball if it is in their defense area.
-  obstacle::ObstacleFlag flags = obstacle::ObstacleFlag::GetDefenseAreas();
-  for (auto obstacle : flags) {
-    if (obstacle->PointCollision(current_ball_pose, kBallRadius)) {
-      SetTransition(false);
+    const Vector2f current_velocity_world =
+        robot_to_world_rotation * current_robot_velocity.translation;
+
+    const Vector2f robot_prime_vel =
+        robot_to_target_rotation * current_robot_velocity.translation;
+
+    const Vector2f robot_to_ball_displace =
+        current_ball_pose - current_robot_pose.translation;
+    const float robot_heading = current_robot_pose.angle;
+    const Vector2f y_dir(-sin(robot_heading), cos(robot_heading));
+
+    float y_dist = y_dir.dot(robot_to_ball_displace);
+    float robot_y_prime_vel = robot_prime_vel.y();
+    float ball_y_prime_vel =
+        (world_to_target_rotation * current_ball_velocity).y();
+    float rel_y_prime_vel = robot_y_prime_vel - ball_y_prime_vel;
+
+    const Vector2f relative_velocity_vector =
+        current_velocity_world - current_ball_velocity;
+
+    // The boolean logic of "should_kick"
+
+    // SET POTENTIAL TRANSITION
+    potential_state_ = "Kick";
+    // ADD A BLOCK OF CLAUSES
+    AddBlock(true);
+    // SET AND FOR CLAUSES
+    and_clause_ = true;
+    double angle_diff =
+        RadToDeg(fabs(AngleDiff(target_angle, current_robot_pose.angle)));
+    const bool is_at_angle = angle_diff < thresholds_angle_;
+
+    double angular_vel = RadToDeg(fabs(current_robot_velocity.angle));
+    const bool is_rotation_at_rest = angular_vel < thresholds_angular_vel_;
+
+    const bool is_y_prime_at_relative_rest =
+        fabs(rel_y_prime_vel) < thresholds_y_prime_vel_;
+
+    double relative_vel = (relative_velocity_vector).norm();
+    const bool is_at_relative_rest = relative_vel < thresholds_relative_vel_;
+
+    const bool is_in_alignment = fabs(y_dist) < thresholds_align_;
+
+    const bool should_kick =
+        (is_at_angle  && is_at_relative_rest &&
+        is_in_alignment && is_rotation_at_rest &&
+        is_y_prime_at_relative_rest) ||
+        (!has_timed_out && is_currenlty_kicking);
+
+    // SET SHOULD TRANSITION
+    SetTransition(should_kick);
+    if (kDebug) {
       logger->Pop();
-      return false;
     }
+    return should_kick;
   }
-
-  // SET SHOULD TRANSITION
-  SetTransition(should_kick);
-  if (kDebug) {
-    logger->Pop();
-  }
-  return should_kick;
+  return false;
 }
 
 bool PrimaryAttacker::DoesPathCrossBallRay() {
@@ -482,77 +448,42 @@ bool PrimaryAttacker::DoesPathCrossBallRay() {
   logger::Logger* logger =
       soccer_state_->GetMutableRobotLoggerByOurRobotIndex(our_robot_index_);
   logger->AddCircle(desired_point, kRobotRadius, 1.0, 1.0, 0.0, 1.0);
-  return RayIntersect(ball_pose,
-                      ball_vel.normalized(),
-                      current_pose.translation,
-                      desired_point,
-                      &dist,
-                      &point);
+  bool intersects = RayIntersect(ball_pose,
+                                 ball_vel.normalized(),
+                                 current_pose.translation,
+                                 desired_point,
+                                 &dist,
+                                 &point);
+  return intersects &&
+      !ShouldCatch(logger,
+                  target_angle_,
+                  robot_interception_point_,
+                  ball_vel,
+                  {current_pose.angle, desired_point},
+                  world_state_.GetOurRobotPosition(our_robot_index_).velocity,
+                  false,
+                  false,
+                  false);
 }
 
 bool PrimaryAttacker::ShouldIntercept() {
   const Pose2Df current_pose =
       world_state_.GetOurRobotPosition(our_robot_index_).position;
 
-  bool is_safe_path = !DoesPathCrossBallRay();
+  // Can we synthesize the idea of this?
 
-  zone::FieldZone field_zone(zone::FULL_FIELD);
-  bool is_valid_intercept = field_zone.IsInZone(
-      robot_interception_point_.cast<float>(), kDefaultSafetyMargin);
+  // bool is_safe_path = !DoesPathCrossBallRay();
 
-  bool is_legal_intercept = true;
-
-  // Don't kick the ball if it is in their defense area.
-  obstacle::ObstacleFlag flags = obstacle::ObstacleFlag::GetDefenseAreas();
-  for (auto obstacle : flags) {
-    if (obstacle->LineCollision(current_pose.translation,
-                                robot_interception_point_,
-                                kDefaultSafetyMargin)) {
-      is_legal_intercept = false;
-    }
-  }
-
-  ObstacleFlag obstacles = ObstacleFlag::GetAllExceptTeam(
-      world_state_, *soccer_state_, our_robot_index_, our_robot_index_);
-  obstacles = obstacles & ~ObstacleFlag::GetBall();
-  SafetyMargin safety_margin;
-
-  bool is_collision_free = CollisionFreePath(obstacles,
-                                             safety_margin,
-                                             current_pose.translation,
-                                             robot_interception_point_);
-
-  logger::Logger* robot_logger =
-      soccer_state_->GetMutableRobotLoggerByOurRobotIndex(our_robot_index_);
-  robot_logger->LogPrintPush("ShouldIntercept");
-  if (!is_valid_intercept) {
-    robot_logger->LogPrint("Intercept point not in field.");
-  }
-  if (!is_legal_intercept) {
-    robot_logger->LogPrint("Intercept point in defense area. ");
-  }
-  if (!is_collision_free) {
-    robot_logger->LogPrint("Intercept path not collision free.");
-  }
-  if (!is_safe_path) {
-    robot_logger->LogPrint("Intercept path crosses ball trajectory.");
-  }
-  if (is_valid_intercept && is_legal_intercept && is_collision_free &&
-      is_safe_path) {
-    // SET POTENTIAL TRANSITION
-    potential_state_ = "Intercept";
-    // ADD A BLOCK OF CLAUSES
-    AddBlock(true);
-    // SET AND FOR CLAUSES
-    and_clause_ = true;
-    const float ball_speed = ball_interception_vel_.norm();
-    const bool ball_speed_check = ball_speed > thresholds_ball_velocity_;
-    SetTransition(ball_speed_check);
-    return ball_speed_check && is_valid_intercept && is_legal_intercept &&
-           is_collision_free && is_safe_path;
-  }
-  robot_logger->Pop();
-  return false;
+  // SET POTENTIAL TRANSITION
+  potential_state_ = "Intercept";
+  // ADD A BLOCK OF CLAUSES
+  AddBlock(true);
+  // SET AND FOR CLAUSES
+  and_clause_ = true;
+  const float ball_speed = ball_interception_vel_.norm();
+  const bool ball_speed_check = ball_speed > thresholds_ball_velocity_;
+  SetTransition(ball_speed_check);
+  return ball_speed_check;
 }
 
 bool PrimaryAttacker::ShouldGoToBall() {
@@ -569,62 +500,6 @@ bool PrimaryAttacker::ShouldGoToBall() {
   return speed_check || soccer_state_->BallTheirPossession();
 }
 
-bool PrimaryAttacker::ShouldSTOXPivot(
-    const Vector2f current_ball_pose,
-    const Vector2f current_ball_velocity,
-    const Pose2Df current_robot_pose,
-    const Pose2Df current_robot_velocity) const {
-  const bool ball_slow_enough = (current_ball_velocity.squaredNorm() < Sq(80));
-  const bool ball_close_enough =
-      ((current_ball_pose - current_robot_pose.translation).squaredNorm() <
-       Sq(300));
-  return (ball_slow_enough && ball_close_enough && false);
-}
-
-bool PrimaryAttacker::ShouldNavigateToCatch() {
-  return false;
-  //   logger::Logger* robot_logger =
-  //       soccer_state_->GetMutableRobotLoggerByOurRobotIndex(our_robot_index_);
-  //   const Vector2f ball_vel = world_state_.GetBallPosition().velocity;
-  //   const Vector2f ball_pose = world_state_.GetBallPosition().position;
-  //   const Pose2Df current_pose =
-  //       world_state_.GetOurRobotPosition(our_robot_index_).position;
-  //   const Pose2Df current_vel =
-  //       world_state_.GetOurRobotPosition(our_robot_index_).velocity;
-  //
-  //   // if ball moving towards our goal
-  //   bool direction_check;
-  //   if (kFieldSetup == LAB) {
-  //     direction_check = false;
-  //   } else {
-  //     direction_check = Sign(ball_vel.x()) == -1;
-  //   }
-  //
-  //   // if ball heading towards robot within angular margin
-  //   Vector2f ball_dir = ball_vel.normalized();
-  //   Vector2f displace_dir =
-  //   (current_pose.translation - ball_pose).normalized();
-  //   const float angle = acos(ball_dir.dot(displace_dir));
-  //   bool angle_check = fabs(angle) < thresholds_toward_robot_;
-  //   // if ball moving fast
-  //   bool upper_speed_check = ball_vel.norm() > thresholds_ball_velocity_;
-  //   bool could_score_check =
-  //       !CouldBallScore(robot_logger, target_angle_, ball_pose, ball_vel,
-  //                       current_pose, current_vel, false, false, false);
-  //
-  //   zone::FieldZone field_zone(zone::FULL_FIELD);
-  //
-  //   bool intercept_in_field =
-  //       field_zone.IsInZone(robot_interception_point_, kDefaultSafetyMargin);
-  //
-  //   //   if (EuclideanDistance(ball_vel, current_pose.translation) <
-  //   //       thresholds_catch_trajectory_) {
-  //   //     return false;
-  //   //   }
-  //
-  //   return (direction_check || angle_check || !intercept_in_field) &&
-  //          upper_speed_check && could_score_check;
-}
 
 float PrimaryAttacker::GetCost() {
   logger::Logger* logger =
@@ -879,7 +754,6 @@ void PrimaryAttacker::GetTarget(const Vector2f& source,
       current_pose.translation, target_end, 1.0, 0.0, 1.0, 1.0);
 }
 
-// TODO(jaholtz) Change start to 'GoToBall', or something like that.
 void PrimaryAttacker::Start() {
   intercept_solution_.isInitialized = false;
   catch_solution_.isInitialized = false;
@@ -937,16 +811,18 @@ void PrimaryAttacker::Start() {
       (*tactic_list_)[TacticIndex::EIGHT_GRID].get());
   const float kSpeedThresh = 250;
   // Run the controller with the calculated goal and margins.
-  controller->SetObstacles(
-      obstacle::ObstacleFlag::GetAllExceptTeam(
-          world_state_, *soccer_state_, our_robot_index_, our_robot_index_) |
-      obstacle::ObstacleFlag::GetMediumBall());
+//   controller->SetObstacles(
+//       obstacle::ObstacleFlag::GetAllExceptTeam(
+//           world_state_, *soccer_state_, our_robot_index_, our_robot_index_) |
+//       obstacle::ObstacleFlag::GetMediumBall());
+  controller->SetObstacles(obstacle::ObstacleFlag::GetMediumBall());
   // If we're moving slow enough we want to get closer to the ball.
   if (current_vel.translation.norm() < kSpeedThresh) {
-    controller->SetObstacles(
-        obstacle::ObstacleFlag::GetAllExceptTeam(
-            world_state_, *soccer_state_, our_robot_index_, our_robot_index_) |
-        obstacle::ObstacleFlag::GetBall());
+//     controller->SetObstacles(
+//         obstacle::ObstacleFlag::GetAllExceptTeam(
+//           world_state_, *soccer_state_, our_robot_index_, our_robot_index_) |
+//         obstacle::ObstacleFlag::GetBall());
+    controller->SetObstacles(obstacle::ObstacleFlag::GetBall());
     safety::DSS2::SetObstacleFlag(our_robot_index_,
                                   obstacle::ObstacleFlag::GetEmpty());
   }
@@ -1007,7 +883,7 @@ void PrimaryAttacker::Intercept() {
   if (last_target_robot_ != offense::kNoPassRobot &&
       target_displacement.norm() < kSetPassDistance) {
     safety::DSS2::SetObstacleFlag(our_robot_index_,
-                                  obstacle::ObstacleFlag::GetDefenseAreas());
+                                  obstacle::ObstacleFlag::GetEmpty());
     if (world_state_.GetBallPosition().velocity.norm() < 3000) {
       shared_state_->SetPass(last_target_robot_, last_target_position_);
     }
@@ -1088,7 +964,7 @@ void PrimaryAttacker::Kick() {
 void PrimaryAttacker::PostKick() { Reset(); }
 
 void PrimaryAttacker::Receive() {
-  Tactic* controller = (*tactic_list_)[TacticIndex::RECEIVER].get();
+  Tactic* controller = (*tactic_list_)[TacticIndex::CATCH].get();
   controller->Run();
 }
 
@@ -1146,11 +1022,122 @@ void PrimaryAttacker::STOXPivot() {
   controller->Run();
 }
 
+void PrimaryAttacker::WriteTrainingData(const State& last_state) {
+
+  //   "index, start_state, bot_x, bot_y, bot_a, bot_vx, bot_vy,";
+  //   "bot_va, ball_x, ball_y, ball_vx, ball_vy,";
+  //   "kick_count,";
+  //   "attacker_dist, "ball_speed", angle_diff,";
+  //   "angular_vel, radial_dist, rel_vel_y,rel_vel,y_dist,end_state";
+
+  // State Variables
+  Pose2Df current_pose =
+      world_state_.GetOurRobotPosition(our_robot_index_).position;
+  Vector2f ball_pose = world_state_.GetBallPosition().position;
+  Vector2f ball_vel = world_state_.GetBallPosition().velocity;
+  Pose2Df current_velocity =
+      world_state_.GetOurRobotPosition(our_robot_index_).velocity;
+
+  // Writing training data
+  static int count = 0;
+  data_file << count << ",";
+  count++;
+  data_file << last_state.name_ << ",";
+  data_file << std::setprecision(10);
+  data_file << current_pose.translation.x() << ",";
+  data_file << current_pose.translation.y() << ",";
+  data_file << current_pose.angle << ",";
+  data_file << current_velocity.translation.x() << ",";
+  data_file << current_velocity.translation.y() << ",";
+  data_file << current_velocity.angle << ",";
+  data_file << ball_pose.x() << "," << ball_pose.y() << ",";
+  data_file << ball_vel.x() << "," << ball_vel.y() << ",";
+
+  // Kick Count
+  Tactic* controller = (*tactic_list_)[TacticIndex::THREE_KICK].get();
+  const int three_count = static_cast<class::ThreeKick*>(controller)->GetKickCount();
+  controller = (*tactic_list_)[TacticIndex::KICK].get();
+  const int intercept_count = static_cast<class::Kick*>(controller)->GetKickCount();
+
+  const int kick_count = std::max(three_count, intercept_count);
+  data_file << kick_count << ",";
+
+  // ------ Catch Variables ----------
+  // Draw a line through the attacker perpendicular to the ball velocity
+  const Vector2f robot_translation = current_pose.translation;
+  const Vector2f ball_perpendicular = Perp(ball_vel);
+  const float kMaxCatchRadius = kFieldLength;
+  const Vector2f line_start =
+  robot_translation + kMaxCatchRadius * ball_perpendicular;
+  const Vector2f line_end =
+  robot_translation - kMaxCatchRadius * ball_perpendicular;
+  Vector2f intersect_point(0, 0);
+  float intersect_distance = 0;
+  const bool intersects = RayIntersect(ball_pose,
+                                       ball_vel,
+                                       line_start,
+                                       line_end,
+                                       &intersect_distance,
+                                       &intersect_point);
+  float attacker_dist =
+      EuclideanDistance(intersect_point, robot_translation);
+  if (!intersects) {
+    attacker_dist = FLT_MAX;
+  }
+  data_file << std::setprecision(10) << attacker_dist << ",";
+  data_file << ball_vel.norm() << ",";
+  // ------ End Catch Variables ----------
+
+  // ------ Kick Variables -------
+  Eigen::Rotation2Df robot_to_world_rotation(current_pose.angle);
+  Vector2f current_velocity_world =
+      robot_to_world_rotation * current_velocity.translation;
+  const Eigen::Rotation2Df world_to_target_rotation(-target_angle_);
+  const Eigen::Rotation2Df robot_to_target_rotation =
+      world_to_target_rotation * robot_to_world_rotation;
+
+  const Vector2f robot_prime_vel =
+  robot_to_target_rotation * current_velocity.translation;
+
+  const Vector2f robot_to_ball_displace =
+      ball_pose - current_pose.translation;
+  Vector2f desired_norm(cos(target_angle_), sin(target_angle_));
+  Vector2f collision_point =
+      current_pose.translation + kInterceptionRadius * desired_norm;
+  const float robot_heading = current_pose.angle;
+  const Vector2f y_dir(-sin(robot_heading), cos(robot_heading));
+
+  float y_dist = y_dir.dot(robot_to_ball_displace);
+  float robot_y_prime_vel = robot_prime_vel.y();
+  float ball_y_prime_vel =
+      (world_to_target_rotation * ball_vel).y();
+  float rel_y_prime_vel = robot_y_prime_vel - ball_y_prime_vel;
+
+  const Vector2f relative_velocity_vector =
+      current_velocity_world - ball_vel;
+
+  const double angle_diff =
+    RadToDeg(fabs(AngleDiff(target_angle_, current_pose.angle)));
+  data_file << std::setprecision(10) << angle_diff << ",";
+  const double angular_vel = RadToDeg(fabs(current_velocity.angle));
+  data_file << std::setprecision(10) << angular_vel << ",";
+  const double radial_dist = (collision_point - ball_pose).norm();
+  data_file << std::setprecision(10) << radial_dist << ",";
+  data_file << std::setprecision(10) << fabs(rel_y_prime_vel) << ",";
+  const double relative_vel = (relative_velocity_vector).norm();
+  data_file << std::setprecision(10) << relative_vel << ",";
+  data_file << std::setprecision(10) << fabs(y_dist) << ",";
+  // ------ End Kick Variables ----------
+
+  // Final State
+  data_file << state_.name_ << endl;
+}
+
 void PrimaryAttacker::Transition() {
-  // Setup
+
   logger::Logger* robot_logger =
       soccer_state_->GetMutableRobotLoggerByOurRobotIndex(our_robot_index_);
-
+  // Setup
   Pose2Df current_pose =
       world_state_.GetOurRobotPosition(our_robot_index_).position;
   Vector2f ball_pose = world_state_.GetBallPosition().position;
@@ -1158,25 +1145,24 @@ void PrimaryAttacker::Transition() {
   Pose2Df current_velocity =
       world_state_.GetOurRobotPosition(our_robot_index_).velocity;
 
-  // If going slowly, only the defense areas are obstacles for the attacker.
-  // Helps with dueling.
-  if (current_velocity.translation.norm() < 250) {
-    safety::DSS2::SetObstacleFlag(our_robot_index_,
-                                  obstacle::ObstacleFlag::GetDefenseAreas());
-  }
+  // This attacker dss's nothing!
+  safety::DSS2::SetObstacleFlag(our_robot_index_,
+                                obstacle::ObstacleFlag::GetEmpty());
 
   Vector2f ball_vel = world_state_.GetBallPosition().velocity;
+  auto current_ball_pose = world_state_.GetBallPosition().position;
 
   Eigen::Rotation2Df robot_to_world_rotation(current_pose.angle);
 
   Vector2f current_velocity_world =
-      robot_to_world_rotation * current_velocity.translation;
+  robot_to_world_rotation * current_velocity.translation;
 
   // Gets the TSOCS solution used for ball intercept
   GetSolution(
       current_pose.translation, current_velocity_world, ball_pose, ball_vel);
   Deflection* deflection =
       static_cast<Deflection*>((*tactic_list_)[TacticIndex::DEFLECTION].get());
+
   State last_state = state_;
   // Don't transition out of kick unless kick decides too.
   if (state_ != kick_ && !deflection->IsKick()) {
@@ -1199,7 +1185,7 @@ void PrimaryAttacker::Transition() {
                                           false,
                                           true);
     // Decide whether to pass or receive (or keep waiting)
-    if (should_kick) {
+    if (should_kick && continue_state_.compare("Kick") != 0) {
       state_ = kick_;
       kick_solution_.isInitialized = false;
     } else if (should_catch) {
@@ -1209,27 +1195,23 @@ void PrimaryAttacker::Transition() {
         intercept_solution_.isInitialized = false;
       }
       state_ = intercept_;
-    } else if (ShouldGoToBall()) {
-      state_ = start_;
     } else {
-      if (state_ != intercept_) {
-        intercept_solution_.isInitialized = false;
-      }
-      state_ = intercept_;
+      state_ = start_;
     }
   }
 
   // Special handling to break out of the receive state.
-  if (state_ == receive_) {
-    class ::Receiver* controller = static_cast<class ::Receiver*>(
-        (*tactic_list_)[TacticIndex::RECEIVER].get());
-    if (controller->IsComplete()) {
-      Reset();
-      Transition();
-    } else if (controller->BadTiming()) {
-      state_ = intercept_;
-    }
-  }
+//   if (state_ == receive_) {
+//     class ::Receiver* controller = static_cast<class ::Receiver*>(
+//       (*tactic_list_)[TacticIndex::RECEIVER].get());
+//     if (controller->IsComplete()) {
+//       Reset();
+//       //       Transition();
+//     } else if (controller->BadTiming()) {
+//       state_ = intercept_;
+//     }
+//   }
+
   // Check the controller completion conditions
   if (state_ == kick_) {
     Tactic* controller = (*tactic_list_)[TacticIndex::THREE_KICK].get();
@@ -1250,6 +1232,7 @@ void PrimaryAttacker::Transition() {
   if (state_ != last_state) {
     aim_count_ = 0;
   }
+  WriteTrainingData(last_state);
 }
 
 }  // namespace tactics

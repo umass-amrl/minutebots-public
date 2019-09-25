@@ -1,4 +1,5 @@
-// Copyright 2017 - 2019 kvedder@umass.edu, jaholtz@cs.umass.edu
+// Copyright 2017 - 2019 kvedder@umass.edu, jaholtz@cs.umass.edu,
+// jspitzer@cs.umass.edu
 // College of Information and Computer Sciences,
 // University of Massachusetts Amherst
 //
@@ -46,8 +47,10 @@
 #include "state/world_robot.h"
 #include "state/world_state.h"
 #include "util/timer.h"
+#include "tactics/SimpleDeflection.h"
 
 #include "radio_protocol_wrapper.pb.h"
+#include "js_bots.pb.h"
 #include "referee.pb.h"
 
 STANDARD_USINGS;
@@ -55,6 +58,7 @@ using defense::DefenseEvaluator;
 using defense::PenaltyRecieveEvaluator;
 using defense::StoppedEvaluator;
 using Eigen::Matrix;
+using JSBotsProto::World;
 using logger::Logger;
 using net::UDPMulticastServer;
 using safety::DSS;
@@ -94,6 +98,42 @@ using passing_evaluation::save_pass_ahead_heatmap;
 namespace app {
 
 // static bool kUseTestPlays = true;
+static constexpr char kWorldWriteAddress[] = "224.5.23.3";
+static constexpr int kWorldWritePort = 41235;
+
+static World getWorldMessage(state::WorldState* local_world_state) {
+  World world_message;
+
+  for (const auto& robot : local_world_state->GetOurRobots()) {
+    auto nextBot = world_message.add_our_bots();
+    nextBot->set_id(robot.ssl_vision_id);
+    nextBot->set_p_x(robot.position.translation.x());
+    nextBot->set_p_y(robot.position.translation.y());
+    nextBot->set_p_theta(robot.position.angle);
+    nextBot->set_v_x(robot.velocity.translation.x());
+    nextBot->set_v_y(robot.velocity.translation.y());
+    nextBot->set_v_theta(robot.velocity.angle);
+  }
+  for (const auto& robot : local_world_state->GetTheirRobots()) {
+    auto nextBot = world_message.add_their_bots();
+    nextBot->set_id(robot.ssl_vision_id);
+    nextBot->set_p_x(robot.position.translation.x());
+    nextBot->set_p_y(robot.position.translation.y());
+    nextBot->set_p_theta(robot.position.angle);
+    nextBot->set_v_x(robot.velocity.translation.x());
+    nextBot->set_v_y(robot.velocity.translation.y());
+    nextBot->set_v_theta(robot.velocity.angle);
+  }
+
+  const Vector2f bp = local_world_state->GetBallPosition().position;
+  const Vector2f bv = local_world_state->GetBallPosition().velocity;
+  world_message.set_p_x(bp.x());
+  world_message.set_p_y(bp.y());
+  world_message.set_v_x(bv.x());
+  world_message.set_v_y(bv.y());
+
+  return world_message;
+}
 
 Executor::Executor(
     const string& udp_address, const int udp_port, const int refbox_port,
@@ -167,6 +207,16 @@ Executor::~Executor() {
     google::protobuf::io::OstreamOutputStream output_stream(&trace_file);
     google::protobuf::TextFormat::Print(tactic_trace, &output_stream);
   }
+  // Use the trace system to dump the info from deflection
+//   if (!trace_file_name_.empty()) {
+//     vector<SoccerRobot>* mutable_soccer_robots =
+//       soccer_state_.GetAllMutableSoccerRobots();
+//     SoccerRobot* deflector = &mutable_soccer_robots->at(0);
+//     tactics::SimpleDeflection* deflect =
+//       static_cast<tactics::SimpleDeflection*>(
+//         (deflector->tactic_list_)[TacticIndex::SIMPLE_DEFLECTION].get());
+//    deflect->WriteDataFile(trace_file_name_);
+//   }
   // Signal the thread that we are shutting down
   is_running_ = false;
 
@@ -191,6 +241,23 @@ void Executor::SimStart(ThreadSafeActor<Simulator*>* thread_safe_sim,
   soccer_state_.GetMutableSharedState()->ConvertToRadioWrapper(
     local_world_state_, &logger_);
   local_simulator_ = simulator;
+
+  // Hack to get the kalman filter to use set velocities from the beginning
+  SharedState initial_state;
+  initial_state.Init();
+  const double time = 0.0;
+  initial_state.SetCommandTime(time);
+  PositionVelocityState start_state =
+      local_simulator_->GetWorldState(Team::BLUE);
+  for (auto robot : start_state.GetOurTeamRobots()) {
+    auto robot_state = initial_state.GetSharedStateByID(robot.ssl_vision_id);
+    robot_state->velocity_x = robot.velocity.translation.x();
+    robot_state->velocity_y = robot.velocity.translation.y();
+    robot_state->velocity_r = robot.velocity.angle;
+  }
+  thread_safe_shared_state_queue_->Add(initial_state);
+  local_world_state_.AddSharedState(initial_state);
+
   simulating_ = true;
   SSL_Referee message;
   SSL_Referee::TeamInfo* blue = message.mutable_blue();
@@ -297,6 +364,16 @@ void Executor::HandleExecution() {
                 << "HandleExecution thread exiting.";
     }
     CHECK(referee_server.IsOpen());
+
+    // Used to send the current world state.
+    UDPMulticastServer world_state_heartbeat;
+    if (!world_state_heartbeat.Open(kWorldWriteAddress, kWorldWritePort,
+      false)) {
+      LOG(FATAL) << "Error opening UDP for world state "
+                << "HandleExecution thread exiting.";
+    }
+    CHECK(world_state_heartbeat.IsOpen());
+
 
     // Used to maintain a constant transmit rate to the robots.
     RateLoop loop(kTransmitFrequency);
@@ -429,9 +506,11 @@ void Executor::HandleExecution() {
       //     dss.MakeSafe({kMaxRobotAcceleration, kMaxRobotVelocity},
       //                  {kMaxRobotAcceleration, kMaxRobotVelocity},
       //                  kDSSControlPeriodTicks / kTransmitFrequency);
-      dss2.MakeSafe({kMaxRobotAcceleration, kMaxRobotVelocity},
-                    {kMaxRobotAcceleration, kMaxRobotVelocity},
-                    &logger_);
+      if (useDSS_) {
+        dss2.MakeSafe({kMaxRobotAcceleration, kMaxRobotVelocity},
+                      {kMaxRobotAcceleration, kMaxRobotVelocity},
+                      &logger_);
+      }
 
       const double t_post_dss = GetMonotonicTime();
 
@@ -477,6 +556,11 @@ void Executor::HandleExecution() {
         if (!udp_server.SendProtobuf(wrapper)) {
           LOG(ERROR) << "Send output error" << endl;
         }
+      }
+
+      if (!world_state_heartbeat.SendProtobuf(getWorldMessage(
+        &local_world_state_))) {
+        LOG(ERROR) << "World state send output error." << endl;
       }
 
       const double t_end = GetMonotonicTime();
@@ -549,7 +633,7 @@ void Executor::HandleExecution() {
       logger_.Clear();
 
       if (kLogNavigation) {
-      navigation_logger::NavigationLogger::LogAndResetEntry();
+        navigation_logger::NavigationLogger::LogAndResetEntry();
       }
 
 //       loop.Sleep();

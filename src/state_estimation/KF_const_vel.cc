@@ -1,4 +1,4 @@
-// Copyright 2017 - 2018 srabiee@cs.umass.edu, slane@cs.umass.edu
+// Copyright 2017 - 2019 srabiee@cs.umass.edu, slane@cs.umass.edu
 // College of Information and Computer Sciences,
 // University of Massachusetts Amherst
 //
@@ -48,6 +48,16 @@ KFConstVel::KFConstVel()
   state_.setZero();
   state_(2) = kBallZeroHeight;
   covariance_.setZero();
+}
+
+void KFConstVel::SetState(const Vector6d& state) {
+  state_ = state;
+
+  Matrix6d Q;
+  CalculateProcessNoise(0.016, &Q);
+
+  covariance_ = kInitialCovarianceWeight_ * Q;
+  is_initialized_ = true;
 }
 
 void KFConstVel::ForwardPredict(const Vector2f& position,
@@ -127,10 +137,14 @@ void KFConstVel::Predict(const Vector6d& state,
 
 void KFConstVel::Reset(const Vector2d& observation,
                         double delta_t) {
-  state_.head(2) = observation;
-  state_(2) = kBallZeroHeight;
-  state_.segment(3, 2) = (observation - previous_observation_)/delta_t;
-  state_(5) = 0.0;
+  // state vector: [x, x_dot, y, y_dot, z, z_dot]'
+  Vector2d velocity = (observation - previous_observation_)/delta_t;
+  state_[0] = observation.x();
+  state_[1] = observation.y();
+  state_[2] = kBallZeroHeight;
+  state_[3] = velocity.x();
+  state_[4] = velocity.y();
+  state_[5] = 0;
 
   Matrix6d Q;
   CalculateProcessNoise(delta_t, &Q);

@@ -1,4 +1,4 @@
-// Copyright 2011-2018 jaholtz@cs.umass.edu
+// Copyright 2011-2019 jaholtz@cs.umass.edu
 // College of Information and Computer Sciences,
 // University of Massachusetts Amherst
 //
@@ -18,8 +18,11 @@
 // ========================================================================
 
 #include "logging/logger.h"
+#include <google/protobuf/text_format.h>
+#include <google/protobuf/io/zero_copy_stream_impl.h>
 #include <iomanip>  // std::setprecision
 #include <map>
+#include "third_party/json.hpp"
 
 using gui::Viewer;
 using MinuteBotsProto::SoccerDebugMessage;
@@ -36,6 +39,7 @@ using team::Team;
 using pose_2d::Pose2Df;
 using MinuteBotsProto::StateMachineData;
 using MinuteBotsProto::PossibleTransition;
+using MinuteBotsProto::Trace;
 
 namespace logger {
 
@@ -341,10 +345,7 @@ KickData::KickData(const SoccerDebugMessage& message, const int& robot_number) {
 }
 
 void ReadLogger::SetTransition(const int& index, const int& transition) {
-//   std::cout << "Index: " << index << std::endl;
-//   std::cout << tuning_index_.size() << std::endl;
   if (transition != -1) {
-//     std::cout << "Index here: " << transition << std::endl;
     SoccerDebugMessage* tuning_message = &tuning_index_[index];
     int count = transition;
     for (int i = 0; i < tuning_message->tuning_data_size(); ++i) {
@@ -364,32 +365,116 @@ void ReadLogger::SetTransition(const int& index, const int& transition) {
 
 void ReadLogger::UnsetTransition(const int& index,
                                  const int& transition) {
-  std::cout << "Index: " << index << std::endl;
-  std::cout << "Tuning size: " << tuning_index_.size() << std::endl;
   if (transition != -1) {
-    std::cout << "Index here" << std::endl;
     SoccerDebugMessage* tuning_message = &tuning_index_[index];
     int count = transition;
-    std::cout << "Starting Count: " << count << std::endl;
-//     bool found = false;
-    std::cout << "State Machines: "
-        << tuning_message->tuning_data_size() << std::endl;
     for (int i = 0; i < tuning_message->tuning_data_size(); ++i) {
       StateMachineData* data = tuning_message->mutable_tuning_data(i);
       std::cout << data->transitions_size() << std::endl;
       for (int j = 0; j < data->transitions_size(); ++j) {
         PossibleTransition* transition = data->mutable_transitions(j);
         if (count == 0) {
-//           found = true;
-          std::cout << "Transition Set Successfully" << std::endl;
           transition->set_human_constraint(true);
           transition->set_should_transition(false);
         }
         count--;
-        std::cout << "Count: " << count << std::endl;
       }
     }
   }
+}
+
+// TODO(jaholtz) figure out how to shoehorn the docker into this function.
+// State machines could have their own 'WriteContinue' methods...?
+void WriteContinueMode(const PossibleTransition& transition,
+                       const SoccerDebugMessage& soccer_message) {
+  // Load the attacker_config json file
+  std::ifstream json_file("src/configs/attacker_config.json");
+  nlohmann::json config_json;
+  json_file >> config_json;
+  json_file.close();
+  // Add continue information to it
+  config_json["initial_state"] = transition.start_state();
+  config_json["continue_state"] = transition.potential_state();
+  // Write it back to a file
+  std::ofstream output_json("src/configs/attacker_config.json");
+  output_json << std::setw(4) << config_json << std::endl;
+  output_json.close();
+  // Open a new json file
+  nlohmann::json world_json;
+
+  // Add the parameters of the current world state to it
+//   for (auto block : transition.blocks()) {
+//     for (auto clause : block.clauses()) {
+//       world_json[clause.rhs()] = clause.lhs();
+//     }
+//   }
+
+  MinuteBotsProto::WorldState world = soccer_message.world_state();
+  // TODO(jaholtz) identify which robot to get this information for, or
+  // get information for all robots
+  world_json["robot_x"] = world.robots(0).pose().loc().x();
+  world_json["robot_y"] = world.robots(0).pose().loc().y();
+  world_json["robot_a"] = world.robots(0).pose().angle();
+  world_json["robot_vx"] = world.robots(0).velocity().x();
+  world_json["robot_vy"] = world.robots(0).velocity().y();
+  world_json["robot_va"] = world.robots(0).rotational_velocity();
+
+  // Get the ball information (assuming only one ball)
+  world_json["ball_x"] = world.balls(0).x();
+  world_json["ball_y"] = world.balls(0).y();
+  world_json["ball_vx"] = world.ball_velocities(0).x();
+  world_json["ball_vy"] = world.ball_velocities(0).y();
+
+  // Write it to a file.
+  std::ofstream world_output_json("src/configs/initial_state.json");
+  world_output_json << std::setw(4) << world_json << std::endl;
+  world_output_json.close();
+}
+
+void ReadLogger::ContinueTransition(const int& index,
+                                    const int& transition) {
+  if (transition != -1) {
+    SoccerDebugMessage* tuning_message = &tuning_index_[index];
+    int count = transition;
+    for (int i = 0; i < tuning_message->tuning_data_size(); ++i) {
+      StateMachineData* data = tuning_message->mutable_tuning_data(i);
+      std::cout << data->transitions_size() << std::endl;
+      for (int j = 0; j < data->transitions_size(); ++j) {
+        PossibleTransition* transition = data->mutable_transitions(j);
+        if (count == 0) {
+          transition->set_human_constraint(true);
+          transition->set_should_transition(false);
+          WriteContinueMode(*transition, *tuning_message);
+        }
+        count--;
+      }
+    }
+  }
+}
+
+void ReadLogger::EndFile(const int& index) {
+  // Create a trace file.
+  Trace trace;
+  // Fill the trace
+  int count = 0;
+  for (auto debug_message : tuning_index_) {
+    if (count <= index) {
+      for (int i = 0; i < debug_message.second.tuning_data_size(); ++i) {
+        *(trace.add_trace_elements()) =
+            debug_message.second.tuning_data(i);
+      }
+    }
+    count++;
+  }
+  // Write that trace to a file.
+  std::ofstream trace_file;
+  trace_file.open("end_file_trace.txt");
+  google::protobuf::io::OstreamOutputStream output_stream(&trace_file);
+  string trace_string;
+  google::protobuf::TextFormat::PrintToString(trace, &trace_string);
+  trace_file << trace_string << std::endl;
+  trace_file.close();
+  std::cout << "Trace File Written" << std::endl;
 }
 
 void Logger::SetTeam(const bool& team_yellow) {

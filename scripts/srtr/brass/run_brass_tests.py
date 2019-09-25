@@ -11,6 +11,7 @@ import json
 import sys
 import os
 from collections import OrderedDict
+
 kKickSpeed = 1.25
 
 def exec_soccer(args):
@@ -71,7 +72,7 @@ def RunTestScenario(state_name, scenario):
                   state_name])
   # Spawns two threads, so divide CPUs by two.
   count = (mp.cpu_count() // 2) - 1
-  pool = mp.Pool(processes=4)
+  pool = mp.Pool(processes=8)
   # Run the jobs in parallel!!!!
   exec_results = pool.map(exec_soccer, tasks)
   pool.close()
@@ -128,16 +129,16 @@ def AnalyzeResults(name, result, nominal_result, degraded_result):
   entry["Successfully Repaired"] = reward
   entry["Added Failures"] = penalty
   entry["Fix Percentage"] = fix_percentage 
-  entry["Failure Percentage"] = penalty / total
   entry["Adapted Success Rate"] = adapted_success / total
   degraded_success_rate = (total - possible_fixes) / total
+  entry["Degraded Success Change"] = 1 - degraded_success_rate
   entry["Degraded Success Rate"] = degraded_success_rate
   entry["Change in Success Rate"] = (adapted_success / total) - degraded_success_rate
   # Output Summary json to file
-  filename = 'scripts/srtr/brass/results/' + name + '_summary.json'
-  text_file = open(filename, "w")
-  json.dump(entry, text_file, indent=2)
-  text_file.close()
+  # filename = 'scripts/srtr/brass/results/' + name + '_summary.json'
+  # text_file = open(filename, "w")
+  # json.dump(entry, text_file, indent=2)
+  # text_file.close()
   summary_file = 'scripts/srtr/brass/results/SUMMARY.json'
   summary_list = []
   if not os.path.isfile(summary_file):

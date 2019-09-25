@@ -34,7 +34,7 @@
 // Example of debug behavior: LOG(FATAL) and quitting upon error versus allow
 // undefined behavior. Compile time constant to allow the compiler to optimize
 // away undesired checks.
-static constexpr bool kProduction = true;
+static constexpr bool kProduction = false;
 
 enum FieldSetup { LAB, B_LEAGUE, A_LEAGUE };
 
@@ -146,7 +146,7 @@ extern const float kMaxRobotRadioVelocityCommand;
 extern const float kMaxRobotAcceleration;
 
 // Default acceleration of the robots in mm/s^2
-extern const float kDefaultRobotAcceleration;
+extern float kDefaultRobotAcceleration;
 
 // Max rotational velocity of the robots in rad/s
 extern const float kMaxRobotRotVel;
@@ -173,14 +173,16 @@ extern const float kKickDetectionThreshold;
 // Should be the time between an image being captured and a command executing
 // Set this to something low in simulation
 // Set this to 0.14 on real hardware
-extern const double kLatency;
-extern const double kSimulatorLatency;
+extern double kLatency;
+extern double kSimulatorLatency;
+extern double kSimulatorStepSize;
+extern unsigned int kSimulatorControlQueueSize;
 extern const double kBallLatency;
 
 // Lag in seconds that the hardware has in activation.
 // Sample usecase: Extending DSS control period to account for the hardware
 // activation lag.
-extern const double kHardwareLagTranslation;
+extern double kHardwareLagTranslation;
 extern const double kHardwareLagRotation;
 
 // Percent of individual robot updates the simulator should randomly drop.
@@ -419,4 +421,7 @@ extern const double kExtendedKalmanFilterCovarianceTimeout;
 extern double min_v_cost_coef;
 
 extern const float kChipKickPadding;
+
+void ReadConfigurationConstants();
+
 #endif  // SRC_CONSTANTS_CONSTANTS_H_

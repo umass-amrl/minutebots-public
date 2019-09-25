@@ -257,6 +257,8 @@ void InterceptionController::Command() {
 
   state->acceleration_command.translation = translation_accel;
   state->acceleration_command.angle = angle_accel;
+  logger->LogPrint("Commanding angular acceleration: %f deg/s^2",
+                   RadToDeg(angle_accel));
 
   logger->AddLine(
       current_pose.translation.x(), current_pose.translation.y(),

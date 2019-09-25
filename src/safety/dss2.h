@@ -1,4 +1,4 @@
-// Copyright 2018 kvedder@umass.edu
+// Copyright 2018 - 2019 kvedder@umass.edu
 // College of Information and Computer Sciences,
 // University of Massachusetts Amherst
 //
@@ -96,8 +96,8 @@ class DSS2 {
 
     void Verify() const {
       NP_CHECK_MSG(end_control_time <= halted_time,
-                   "End control time: " << end_control_time
-                                        << " Halted time: " << halted_time);
+                   "End control time: " << end_control_time << " Halted time: "
+                                        << halted_time);
       NP_CHECK_MSG(end_control_time >= 0,
                    "End control time: " << end_control_time);
       NP_CHECK_MSG(halted_time >= 0, "Halted time: " << halted_time);
@@ -119,7 +119,8 @@ class DSS2 {
           initial_position(0, 0),
           initial_velocity(0, 0),
           commanded_acceleration(0, 0) {}
-    InitialCommandInfo(const SSLVisionId& ssl_vision_id, const float& radius,
+    InitialCommandInfo(const SSLVisionId& ssl_vision_id,
+                       const float& radius,
                        const obstacle::ObstacleFlag dss_obstacles,
                        const Position& initial_position,
                        const Velocity& initial_velocity,
@@ -129,7 +130,12 @@ class DSS2 {
           dss_obstacles(dss_obstacles),
           initial_position(initial_position),
           initial_velocity(initial_velocity),
-          commanded_acceleration(commanded_acceleration) {}
+          commanded_acceleration(commanded_acceleration) {
+      if (commanded_acceleration.squaredNorm() > Sq(kMaxRobotAcceleration)) {
+        this->commanded_acceleration =
+            commanded_acceleration.normalized() * kMaxRobotAcceleration;
+      }
+    }
 
     void Verify() const {
       NP_CHECK(!std::isnan(ssl_vision_id));
@@ -185,16 +191,20 @@ class DSS2 {
       const motion::MotionModel& trajectory_motion_model,
       const DSS2::TrajectoryArray& array,
       const motion::MotionModel& array_motion_model,
-      logger::Logger* logger, const bool use_variable_margin) const;
+      logger::Logger* logger,
+      const bool use_variable_margin) const;
 
   std::tuple<Position, Velocity> ComputeEndOfControlInfo(
-      const Position& current_position, const Velocity& current_velocity,
+      const Position& current_position,
+      const Velocity& current_velocity,
       const Acceleration& commanded_acceleration,
-      const motion::MotionModel& motion_model, const Time control_period) const;
+      const motion::MotionModel& motion_model,
+      const Time control_period) const;
 
   std::tuple<Position, Acceleration, Time> ComputeStoppedInfo(
       const Position& end_of_control_position,
-      const Velocity& end_of_control_velocity, const Time end_of_control_time,
+      const Velocity& end_of_control_velocity,
+      const Time end_of_control_time,
       const motion::MotionModel& motion_model) const;
 
   TrajectoryCheckpoints ComputeTrajectoryCheckpoints(
@@ -247,7 +257,8 @@ class DSS2 {
       const motion::MotionModel& our_motion_model,
       const DSS2::TrajectoryArray& their_trajectories,
       const motion::MotionModel& their_motion_model,
-      const obstacle::ObstacleFlag& obstacle_flag, logger::Logger* logger);
+      const obstacle::ObstacleFlag& obstacle_flag,
+      logger::Logger* logger);
 
   // Max move out of obstacle velocity in mm/s
   //   const float kObstacleExitVelocity = kMaxRobotVelocity;

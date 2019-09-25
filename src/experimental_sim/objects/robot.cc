@@ -1,4 +1,4 @@
-// Copyright 2016 - 2018 jaholtz@cs.umass.edu
+// Copyright 2016 - 2019 jaholtz@cs.umass.edu
 // College of Information and Computer Sciences,
 // University of Massachusetts Amherst
 //
@@ -61,19 +61,22 @@ namespace experimental_simulator {
 
 Robot::Robot(const SimState& world_state,
              Pose2Df initial_pose,
-             Vector2f initial_velocity,
+             Pose2Df initial_velocity,
              int id,
              team::Team team,
              const float time_slice_length)
     : world_state(world_state),
       pose(initial_pose),
-      current_velocity_(initial_velocity),
       obstacle(pose),
+      model(),
       id(id),
       team(team),
       time_slice_length(time_slice_length),
       hardware_drift_x_(0.0),
-      hardware_drift_y_(0.00) {}
+      hardware_drift_y_(0.00) {
+  current_velocity_ = initial_velocity.translation;
+  rotational_velocity_ = initial_velocity.angle;
+}
 
 bool Robot::IsInKickRectangle(const Ball& ball) {
   // Constructs a polar rectangle that sits in front of the robot.
@@ -327,14 +330,21 @@ void Robot::Update(const RadioProtocolCommand& velocity_command,
       (velocity_x + hardware_drift_x_) * 1000,
       (velocity_y + hardware_drift_y_) * 1000);
 
+  const Pose2Df velocity(velocity_command.velocity_r(),
+                         velocity_command_vector);
+  const Pose2Df current_velocity(rotational_velocity_, current_velocity_);
+
   // ---- Moves the robot regardless of collision ------
   // Translate pose based on movement.
   // 1000 scales velocity command from m/s to mm/s.
-  Pose2Df translation_pose =
-      Pose2Df(velocity_command.velocity_r() * time_slice_length,
-            Vector2f(
-              (velocity_command_vector.x() * time_slice_length),
-              (velocity_command_vector.y() * time_slice_length)));
+  Pose2Df translation_pose;
+  Pose2Df velocity_pose;
+
+  model.MoveRobot(velocity,
+                  current_velocity,
+                  time_slice,
+                  &translation_pose,
+                  &velocity_pose);
 
   HandleCollision(ball,
                   translation_pose,
@@ -347,8 +357,8 @@ void Robot::Update(const RadioProtocolCommand& velocity_command,
   obstacle.UpdatePose(pose);
 
   // Update the velocities.
-  current_velocity_ = velocity_command_vector;
-  rotational_velocity_ = velocity_command.velocity_r();
+  current_velocity_ = velocity_pose.translation;
+  rotational_velocity_ = velocity_pose.angle;
 }
 
 const Vector2f Robot::GetBoundedMovement(

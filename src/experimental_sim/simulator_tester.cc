@@ -1,4 +1,4 @@
-// Copyright 2017 - 2018 jaholtz@cs.umass.edu
+// Copyright 2017 - 2019 jaholtz@cs.umass.edu
 // College of Information and Computer Sciences,
 // University of Massachusetts Amherst
 //
@@ -35,7 +35,7 @@ int main() {
   const double time_step = 1.0f / 60.0f;
   const int kRobots = 1;
   SimState state(kRobots, 0.0005f, time_step);
-  ExperimentalSim simulator(time_step, &state);
+  ExperimentalSim simulator(time_step, &state, 1);
   const team::Team team = team::Team::BLUE;
   PositionVelocityState pvs = simulator.GetWorldState(team);
   state::WorldState world_state(&pvs, team);

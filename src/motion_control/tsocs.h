@@ -27,6 +27,7 @@
 #include <memory>
 #include <vector>
 
+#include "configuration_reader/reader.h"
 #include "eigen3/Eigen/Dense"
 #include "logging/logger.h"
 #include "motion_control/motion_control_structures.h"
@@ -41,6 +42,7 @@
 namespace tsocs {
 
 extern const double kTSOCSThreshold;
+extern const double kMaxRegularization;
 using Eigen::Vector2d;
 
 class Tsocs {
@@ -80,6 +82,9 @@ class Tsocs {
   void GetState(Eigen::Vector2d* xt, Eigen::Vector2d* vt, const double t,
                 SolutionParameters params);
 
+  Eigen::Vector2d GetAccelVector(const double t,
+                      SolutionParameters params);
+
   std::vector<Eigen::Vector2f> GetPath(const unsigned int npts,
                                        SolutionParameters params);
 
@@ -95,7 +100,11 @@ class Tsocs {
   double x_cost_coef = 1.0, v_cost_coef = 1.0;
   // all of these vectors are divided by a_max
   Vector2d x0, v0, xf, vf, delta_pose, delta_vel;
+
   double a_max;
+  double t_reg_ratio;
+  double k1;
+  double k2;
   double t_expected;
   bool use_t_regularization = false;
   struct Xdist {
@@ -171,9 +180,10 @@ class Tsocs {
     template <typename T>
     bool operator()(const T* const t, T* residual) const {
       residual[0] =
-          sqrt(kTSOCSThreshold) / 2 *
-          ceres::exp(T(10) * (*t / T(tsocs->t_expected + kEpsilon) - 1.4));
-      residual[0] = min(residual[0], T(100));
+          tsocs->k1 *
+          ceres::exp(T(tsocs->k2) * (*t / T(tsocs->t_expected + kEpsilon)
+          - tsocs->t_reg_ratio));
+      residual[0] = min(residual[0], T(kMaxRegularization));
       return true;
     }
   };

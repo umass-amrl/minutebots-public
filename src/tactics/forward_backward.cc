@@ -1,4 +1,4 @@
-// Copyright 2017-2018 slane@cs.umass.edu
+// Copyright 2017-2019 slane@cs.umass.edu
 // College of Information and Computer Sciences,
 // University of Massachusetts Amherst
 //
@@ -177,8 +177,8 @@ void ForwardBackward::Run() {
 
 void ForwardBackward::Reset() {
   execution_state_ = GET_TO_INIT_POSE;
-  Vector2f pos1(4000, 1300 - static_cast<float>(our_robot_index_) * 200);
-  Vector2f pos2(-4000, 1300 - static_cast<float>(our_robot_index_) * 200);
+  Vector2f pos1(2500, -1300 - static_cast<float>(our_robot_index_) * 200);
+  Vector2f pos2(500, -1300 - static_cast<float>(our_robot_index_) * 200);
   goal_angle_ = 0;
   pose1_.Set(0.0, pos1);
   pose2_.Set(0.0, pos2);

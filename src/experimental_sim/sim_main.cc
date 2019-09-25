@@ -105,12 +105,46 @@ std::vector<Pose2Df> ReadStartPositions(const std::string& file_path) {
   return positions;
 }
 
+std::vector<Pose2Df> ReadStartVelocities(const std::string& file_path) {
+  std::vector<Pose2Df> velocities;
+  std::ifstream infile(file_path);
+
+  if (!infile) {
+    LOG(FATAL) << "Cannot open file " << file_path;
+  }
+
+  std::string line;
+  while (std::getline(infile, line)) {
+    LOG(INFO) << "Line: " << line;
+    std::istringstream iss(line);
+    float x = 0, y = 0, theta = 0;
+    if (!(iss >> x >> y >> theta)) {
+      break;
+    }
+
+    velocities.push_back({theta, x, y});
+  }
+  return velocities;
+}
+
 SimState GenerateWorldState(int argc, char** argv) {
   if (argc > 1) {
     // Grab positions file.
     const std::vector<Pose2Df> positions = ReadStartPositions(argv[1]);
+    std::vector<Pose2Df> velocities;
+    if (argc > 2) {
+      velocities = ReadStartVelocities(argv[2]);
+    } else {
+      for (unsigned int i = 0; i < positions.size(); i++) {
+        velocities.push_back({0.0, 0.0, 0.0});
+      }
+    }
 //     CHECK_EQ(positions.size(), kNumRobots);
-    return {positions, 0.0005f, kTimeSlice};
+    if (positions.size() != velocities.size()) {
+      printf("WARNING: there are %lu positions listed but %lu velocities"
+        ", these must be equal", positions.size(), velocities.size());
+    }
+    return {positions, velocities, 0.0005f, kTimeSlice};
   } else {
     return {kNumRobots, 0.0005f, kTimeSlice};
   }

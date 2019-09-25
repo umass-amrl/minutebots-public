@@ -23,10 +23,15 @@ FIND_PACKAGE(Protobuf REQUIRED)
 FIND_PACKAGE(Qt4 COMPONENTS QtCore QtGui QtOpenGL REQUIRED)
 FIND_PACKAGE(LuaJIT REQUIRED)
 
+#FIND_PACKAGE(Ceres REQUIRED PATHS "${CMAKE_MODULE_PATH}ceres-solver-1.12.0")
+
 FIND_PACKAGE(Ceres REQUIRED)
 INCLUDE (FindRE2)
 FIND_PACKAGE (RE2 REQUIRED)
+# INCLUDE (FINDZ3)
 FIND_PACKAGE (Z3 REQUIRED)
+# INCLUDE (FindSRTR)
+# FIND_PACKAGE (SRTR REQUIRED)
 INCLUDE(${QT_USE_FILE})
 
 SET(CMAKE_CXX_FLAGS "-std=c++11 -Wall -Wsign-compare -Werror -g")
@@ -47,7 +52,7 @@ ELSEIF(${CMAKE_BUILD_TYPE} MATCHES "Debug")
 ENDIF()
 
 SET(libs
-    ${PROTOBUF_LIBRARY} ${Z3_LIBRARIES} glog pthread popt X11 ${BUILD_SPECIFIC_LIBRARIES} amrl-shared-lib)
+    ${PROTOBUF_LIBRARY} ${Z3_LIBRARIES} glog pthread atomic popt X11 ${BUILD_SPECIFIC_LIBRARIES} amrl-shared-lib)
 
 FILE(GLOB PROTO_FILES src/proto/*.proto)
 
@@ -67,23 +72,45 @@ add_subdirectory(third_party/SRTR/)
 ADD_SUBDIRECTORY(third_party/amrl_shared_lib/)
 
 INCLUDE_DIRECTORIES(${RE2_INCLUDE_DIR})
+# INCLUDE_DIRECTORIES(${SRTR_INCLUDE_DIR})
 if (NOT SWARM_TARGETS)
 ADD_LIBRARY(protobuf_library ${PROTO_SRCS} ${PROTO_PY})
 ENDIF (NOT SWARM_TARGETS)
+#SET(PROTO_SRCS /home/jaholtz/installs/include/google/protobuf)
 if (SWARM_TARGETS)
 ADD_LIBRARY(protobuf_library ${PROTO_SRCS})
 ENDIF (SWARM_TARGETS)
 INCLUDE_DIRECTORIES(${CERES_INCLUDE_DIRS})
 TARGET_LINK_LIBRARIES(protobuf_library ${libs})
 
+# ADD_LIBRARY(srtr_library STATIC IMPORTED)
+# SET_TARGET_PROPERTIES(srtr_library PROPERTIES IMPORTED_LOCATION src/libsrtr_library.a)
+
 ADD_LIBRARY(state_machine_libs
             third_party/SRTR/src/srtr/state_machine.cc)
 
 TARGET_LINK_LIBRARIES(state_machine_libs protobuf_library ${libs})
 
+# ADD_LIBRARY(srtr_library
+#             src/SRTR/src/srtr/srtr.cc)
+#
+# TARGET_LINK_LIBRARIES(srtr_library protobuf_library ${libs})
+
+ADD_LIBRARY(configuration_reader_library
+            src/configuration_reader/config_types/config_interface.cc
+            src/configuration_reader/config_types/config_double.cc
+            src/configuration_reader/config_types/config_float.cc
+            src/configuration_reader/config_types/config_int.cc
+            src/configuration_reader/config_types/config_string.cc
+            src/configuration_reader/config_types/config_unsigned_int.cc
+            src/configuration_reader/config_types/config_vector2f.cc
+            src/configuration_reader/lua_script.cc
+            src/configuration_reader/reader.cc)
+TARGET_LINK_LIBRARIES(configuration_reader_library ${libs} ${LUAJIT_LIBRARIES})
+
 ADD_LIBRARY(constants_library
             src/constants/constants.cc)
-TARGET_LINK_LIBRARIES(constants_library protobuf_library ${RE2_LIBRARIES} ${libs})
+TARGET_LINK_LIBRARIES(constants_library protobuf_library configuration_reader_library ${RE2_LIBRARIES} ${libs})
 
 ADD_LIBRARY(net_library
   src/net/netraw.cc)
@@ -140,9 +167,14 @@ ADD_LIBRARY(navigation_library
   src/navigation/production/production_eight_grid.cc
   src/navigation/production/collision_grid.cc
   src/navigation/production/eight_grid_common_utils.cc
+  src/navigation/lazy_PRM.cc
+  src/navigation/PRM.cc
+  src/navigation/RRT.cc
   src/navigation/navigation.cc
+  src/navigation/repair/multipath_collision_checks.cc
   src/navigation/eight_grid.cc
   src/navigation/navigation_util.cc
+  src/navigation/scaffolding/scaffold.cc
   src/navigation/static_tangent_planner.cc
   src/navigation/stox_planner.cc)
 TARGET_LINK_LIBRARIES(navigation_library third_party_library
@@ -229,6 +261,49 @@ ADD_LIBRARY(joystick_library
 )
 TARGET_LINK_LIBRARIES(joystick_library constants_library net_library team_library amrl-shared-lib protobuf_library ${libs})
 
+ADD_LIBRARY(robocup_eastar_library
+  src/search/robocup_eastar/common_defines.cc
+  src/search/robocup_eastar/eastar_solver.cc
+  src/search/robocup_eastar/individual_planner.cc
+  src/search/robocup_eastar/path_collision_detector.cc
+  src/search/robocup_eastar/multiagent_data.cc
+  src/search/robocup_eastar/search_window.cc
+  src/search/robocup_eastar/planner_state.cc
+  src/search/robocup_eastar/lazy_neighbor_generator.cc
+  src/navigation/production/collision_grid.cc
+  src/navigation/production/eight_grid_common_utils.cc
+  src/navigation/production/production_eight_grid.cc)
+
+TARGET_LINK_LIBRARIES(robocup_eastar_library
+                      main_library
+                      constants_library net_library team_library amrl-shared-lib
+                      logging_library
+                      state_library
+                      navigation_library
+                      motion_library
+                      tactic_library
+                      protobuf_library
+                      obstacle_library
+                      state_library
+                      play_library ${libs})
+
+ADD_EXECUTABLE(robocup_eastar
+  src/search/robocup_eastar/eastar_main.cc)
+TARGET_LINK_LIBRARIES(robocup_eastar
+                      robocup_eastar_library
+                      main_library
+                      constants_library net_library team_library amrl-shared-lib
+                      logging_library
+                      state_library
+                      navigation_library
+                      motion_library
+                      tactic_library
+                      protobuf_library
+                      obstacle_library
+                      state_library
+                      play_library
+                      ${libs})
+
 ADD_LIBRARY(mstar_library
   third_party/mstar/col_checker.cpp
   third_party/mstar/epemstar.cpp
@@ -238,17 +313,66 @@ ADD_LIBRARY(mstar_library
   third_party/mstar/od_mstar.cpp
   third_party/mstar/policy.cpp)
 
-ADD_LIBRARY(configuration_reader_library
-            src/configuration_reader/config_types/config_interface.cc
-            src/configuration_reader/config_types/config_double.cc
-            src/configuration_reader/config_types/config_float.cc
-            src/configuration_reader/config_types/config_int.cc
-            src/configuration_reader/config_types/config_string.cc
-            src/configuration_reader/config_types/config_unsigned_int.cc
-            src/configuration_reader/config_types/config_vector2f.cc
-            src/configuration_reader/lua_script.cc
-            src/configuration_reader/reader.cc)
-TARGET_LINK_LIBRARIES(configuration_reader_library ${libs} ${LUAJIT_LIBRARIES})
+ADD_EXECUTABLE(robocup_mstar
+  src/search/robocup_mstar/mstar_main.cc)
+TARGET_LINK_LIBRARIES(robocup_mstar
+                      mstar_library
+                      robocup_eastar_library
+                      main_library
+                      constants_library net_library team_library amrl-shared-lib
+                      logging_library
+                      state_library
+                      navigation_library
+                      motion_library
+                      tactic_library
+                      protobuf_library
+                      obstacle_library
+                      state_library
+                      play_library
+                      ${libs})
+
+ADD_EXECUTABLE(robocup_cbs
+  src/search/robocup_cbs/cbs_main.cc)
+TARGET_LINK_LIBRARIES(robocup_cbs
+                      robocup_eastar_library
+                      main_library
+                      constants_library net_library team_library amrl-shared-lib
+                      logging_library
+                      state_library
+                      navigation_library
+                      motion_library
+                      tactic_library
+                      protobuf_library
+                      obstacle_library
+                      state_library
+                      play_library
+                      ${libs})
+
+ADD_LIBRARY(fourgrid_library
+  src/search/fourgrid/fourgrid.cc
+  src/search/fourgrid/fourgrid_solver.cc
+  src/search/fourgrid/dstar_fourgrid_solver.cc)
+TARGET_LINK_LIBRARIES(fourgrid_library logging_library ${libs})
+
+ADD_EXECUTABLE(fourgrind_individual_to_joint src/search/fourgrid/fourgrid_individual_to_joint.cc)
+TARGET_LINK_LIBRARIES(fourgrind_individual_to_joint
+    fourgrid_library
+    logging_library)
+
+ADD_EXECUTABLE(fourgrind_individual_to_individual src/search/fourgrid/fourgrid_individual_to_individual.cc)
+TARGET_LINK_LIBRARIES(fourgrind_individual_to_individual
+    fourgrid_library
+    logging_library)
+
+# ADD_EXECUTABLE(fourgrind_dual_robot src/search/fourgrid/fourgrid_dual_robot.cc)
+# TARGET_LINK_LIBRARIES(fourgrind_dual_robot
+#     fourgrid_library
+#     logging_library)
+#
+# ADD_EXECUTABLE(fourgrind_single_robot src/search/fourgrid/fourgrid_single_robot.cc)
+# TARGET_LINK_LIBRARIES(fourgrind_single_robot
+#     fourgrid_library
+#     logging_library)
 
 ADD_LIBRARY(tactic_library
             src/tactics/tactic.cc
@@ -287,6 +411,7 @@ ADD_LIBRARY(tactic_library
             src/tactics/kick.cc
             src/tactics/three_kick.cc
             src/tactics/primary_attacker.cc
+            src/tactics/example_attacker.cc
             src/tactics/state_machine_example.cc
             src/tactics/ball_placement.cc
             src/tactics/receiver.cc
@@ -296,11 +421,19 @@ ADD_LIBRARY(tactic_library
             src/tactics/coercive_attacker.cc
             src/tactics/test_ntoc.cc
             src/tactics/deflection.cc
+            src/tactics/SimpleDeflection.cc
             src/tactics/pd_controller.cc
             src/tactics/tertiary_defender.cc
             src/tactics/test_defender.cc
             src/tactics/test_attacker.cc
-            src/tactics/better_ball_placement.cc)
+            src/tactics/better_ball_placement.cc
+            src/tactics/docking.cc
+            src/tactics/tsocs_controller.cc
+            src/tactics/test_tsocs.cc
+            src/tactics/demo_tsocs.cc
+            src/tactics/train_tsocs.cc
+            src/tactics/test_sim_tsocs.cc
+            src/tactics/marionette.cc)
 
 TARGET_LINK_LIBRARIES(tactic_library navigation_logging_library main_library
                       constants_library net_library team_library amrl-shared-lib navigation_library
@@ -354,8 +487,23 @@ ADD_LIBRARY(experimental_sim_library
   src/experimental_sim/sim_state.cc
   src/experimental_sim/experimental_sim.cc
   src/experimental_sim/objects/ball.cc
+  src/experimental_sim/objects/robot.cc
+  src/experimental_sim/sim_motion_model.cc
   src/experimental_sim/objects/robot.cc)
 TARGET_LINK_LIBRARIES(experimental_sim_library obstacle_library constants_library net_library team_library amrl-shared-lib protobuf_library ${libs})
+
+ADD_LIBRARY(simplecar_library
+  src/simplecar_sim/simplecar.cc
+  src/simplecar_sim/simplecar_state.cc
+  src/simplecar_sim/simplecar_sim.cc
+  src/simplecar_sim/simplecar_merge.cc
+  src/simplecar_sim/simplecar_control.cc)
+
+ADD_EXECUTABLE(simplecar src/simplecar_sim/simplecar_main.cc)
+TARGET_LINK_LIBRARIES(simplecar simplecar_library logging_library amrl-shared-lib ${libs})
+
+ADD_EXECUTABLE(merge_simplecar src/simplecar_sim/simplecar_main_merge.cc)
+TARGET_LINK_LIBRARIES(merge_simplecar simplecar_library logging_library amrl-shared-lib ${libs})
 
 ADD_LIBRARY(deflection_sim_library
   src/deflection_sim/networkhandler.cc
@@ -396,6 +544,16 @@ qt4_wrap_cpp(GUI_MOC_SRCS
   src/gui/viewer.h
 )
 
+qt4_wrap_cpp(CARGUI_MOC_SRCS
+  src/simplecar_sim/simplecar_viewer_main.h
+  src/gui/graph.h
+  src/simplecar_sim/simplecar_view.h
+  src/gui/text_tree_viewer.h
+  src/simplecar_sim/simplecar_viewer.h
+  src/gui/viewer.h
+  src/gui/soccerview.h
+)
+
 ADD_LIBRARY(gui_library
   src/gui/drawing_helpers.cc
   src/gui/gltext.cc
@@ -408,10 +566,35 @@ ADD_LIBRARY(gui_library
 )
 TARGET_LINK_LIBRARIES(gui_library ${QT_LIBRARIES} constants_library net_library team_library amrl-shared-lib logging_library ${libs})
 
+
 IF (NOT SWARM_TARGETS)
 ADD_EXECUTABLE(viewer src/gui/viewer_main.cc)
 TARGET_LINK_LIBRARIES(viewer
   gui_library
+  constants_library net_library team_library amrl-shared-lib
+  logging_library
+  ${OPENGL_gl_LIBRARY}
+  ${OPENGL_glu_LIBRARY}
+  ${libs}
+)
+
+ADD_LIBRARY(simplecar_gui_library
+  src/gui/drawing_helpers.cc
+  src/gui/gltext.cc
+  src/gui/graph.cc
+  src/gui/opengl_helpers.cc
+  src/simplecar_sim/simplecar_view.cc
+  src/gui/text_tree_viewer.cc
+  src/gui/viewer.cc
+  src/simplecar_sim/simplecar_viewer.cc
+  src/gui/soccerview.cc
+  ${CARGUI_MOC_SRCS}
+)
+TARGET_LINK_LIBRARIES(simplecar_gui_library ${QT_LIBRARIES} constants_library net_library team_library amrl-shared-lib logging_library ${libs})
+
+ADD_EXECUTABLE(carviewer src/simplecar_sim//simplecar_viewer_main.cc)
+TARGET_LINK_LIBRARIES(carviewer
+  simplecar_gui_library
   constants_library net_library team_library amrl-shared-lib
   logging_library
   ${OPENGL_gl_LIBRARY}
@@ -457,6 +640,20 @@ TARGET_LINK_LIBRARIES(viewer_state
  ${libs}
 )
 
+# ADD_EXECUTABLE(kalman_triangle
+#   src/gui/triangle_integration_viewer.cc
+# )
+
+# TARGET_LINK_LIBRARIES(kalman_triangle
+#   gui_library
+#   constants_library net_library team_library amrl-shared-lib
+#   motion_library
+#   state_estimation_library
+#   ${OPENGL_gl_LIBRARY}
+#   ${OPENGL_glu_LIBRARY}
+#   ${libs}
+# )
+
 ADD_EXECUTABLE(text_tree_viewer_tester src/gui/text_tree_viewer_tester.cc)
 TARGET_LINK_LIBRARIES(text_tree_viewer_tester
   gui_library
@@ -477,6 +674,15 @@ TARGET_LINK_LIBRARIES(soccerview_tester
 
 ADD_EXECUTABLE(z3_tuner src/magic_debugging/tuning_sketch.cpp)
 TARGET_LINK_LIBRARIES(z3_tuner
+logging_library
+gui_library
+constants_library net_library team_library amrl-shared-lib
+srtr_library
+protobuf_library
+)
+
+ADD_EXECUTABLE(trace_from_log src/magic_debugging/trace_from_log.cpp)
+TARGET_LINK_LIBRARIES(trace_from_log
 logging_library
 gui_library
 constants_library net_library team_library amrl-shared-lib
@@ -558,9 +764,25 @@ ADD_EXECUTABLE(experimental_test src/experimental_sim/simulator_tester.cc)
 TARGET_LINK_LIBRARIES(experimental_test experimental_sim_library protobuf_library
 obstacle_library constants_library net_library team_library amrl-shared-lib ${libs})
 
+# ADD_EXECUTABLE(factor_tuning src/magic_debugging/factor_tuning.cc)
+# TARGET_LINK_LIBRARIES(factor_tuning bespoke_sim_library protobuf_library
+# obstacle_library constants_library net_library team_library amrl-shared-lib ${libs})
+
 ADD_EXECUTABLE(deflection_sim src/deflection_sim/deflection_sim_main.cc)
 TARGET_LINK_LIBRARIES(deflection_sim deflection_sim_library protobuf_library
 obstacle_library constants_library net_library team_library amrl-shared-lib ${libs})
+
+# ADD_EXECUTABLE(attacker_test src/deflection_sim/attacker_test.cc)
+# TARGET_LINK_LIBRARIES(attacker_test deflection_sim_library protobuf_library tactic_library
+# obstacle_library constants_library net_library team_library amrl-shared-lib ${libs})
+
+# ADD_EXECUTABLE(deflection_test src/deflection_sim/deflection_test.cc)
+# TARGET_LINK_LIBRARIES(deflection_test deflection_sim_library protobuf_library tactic_library
+# obstacle_library constants_library net_library team_library amrl-shared-lib ${libs})
+
+# ADD_EXECUTABLE(docking_test src/deflection_sim/docking_test.cc)
+# TARGET_LINK_LIBRARIES(docking_test deflection_sim_library protobuf_library tactic_library
+# obstacle_library constants_library net_library team_library amrl-shared-lib ${libs})
 
 ADD_EXECUTABLE(debugging_tester src/debugging/debugging_tester.cc)
 TARGET_LINK_LIBRARIES(debugging_tester constants_library net_library team_library amrl-shared-lib ${libs})
@@ -584,6 +806,28 @@ TARGET_LINK_LIBRARIES(direct_drive_tester
     constants_library net_library team_library amrl-shared-lib
     ${libs})
 
+# ADD_EXECUTABLE(expanding_astar src/search/expanding_astar/expanding_main.cc
+#  src/search/expanding_astar/expanding_astar_solver.cc
+#   src/graph/graph.cc
+#   src/obstacles/obstacle_flag.cc
+#   src/obstacles/safety_margin.cc
+#   src/graph/vertex.cc
+#   src/graph/edge.cc
+#   src/constants/constants.cc)
+# TARGET_LINK_LIBRARIES(expanding_astar
+#     logging_library)
+#
+# ADD_EXECUTABLE(expanding_astar_one src/search/expanding_astar/expanding_main_one.cc
+#  src/search/expanding_astar/expanding_astar_solver.cc
+#   src/graph/graph.cc
+#   src/obstacles/obstacle_flag.cc
+#   src/obstacles/safety_margin.cc
+#   src/graph/vertex.cc
+#   src/graph/edge.cc
+#   src/constants/constants.cc)
+# TARGET_LINK_LIBRARIES(expanding_astar_one
+#     logging_library)
+
 IF (test)
   INCLUDE_DIRECTORIES(third_party/)
   # This adds the googletest subdirectory, which has 'project(gtest)'.
@@ -601,6 +845,9 @@ IF (test)
     src/test/obstacles/obstacle_tests.cc
     src/test/navigation/eight_grid_tests.cc
     src/test/navigation/production/production_eight_grid_tests.cc
+    src/test/navigation/repair/multipath_collision_checks_tests.cc
+    src/test/navigation/PRM_tests.cc
+    src/test/navigation/RRT_tests.cc
     src/test/navigation/navigation_util_tests.cc
     src/test/evaluators/offense_tests.cc
     src/test/evaluators/defense_tests.cc
@@ -609,6 +856,8 @@ IF (test)
     src/test/motion_control/motion_control_test.cc
     src/test/safety/dss_tests.cc
     src/test/state/state_tests.cc
+    src/test/search/fourgrid/fourgrid_solver_tests.cc
+    src/test/search/robocup_eastar/lazy_neighbor_generator_tests.cc
     src/test/state_estimation/state_estimation_tests.cc
     src/test/datastructures/datastructures_test.cc
     src/test/logging/logging_tests.cc
@@ -627,9 +876,25 @@ IF (test)
     main_library
     motion_library
     navigation_library
+    fourgrid_library
+    robocup_eastar_library
     simulator_library
     yisibot_radio_library
     logging_library)
+
+  ADD_EXECUTABLE(run_performance_tests src/test/performance_test_main.cc
+    src/test/navigation/tangent_planner_performance_tests.cc
+    src/test/navigation/PRM_performance_tests.cc
+    src/test/navigation/RRT_performance_tests.cc
+    src/test/navigation/scenario_generator.cc
+    src/test/navigation/repair/eight_grid_repairer_demo_tests.cc)
+  TARGET_LINK_LIBRARIES(run_performance_tests gtest gtest_main
+    navigation_library protobuf_library obstacle_library constants_library net_library team_library amrl-shared-lib ${libs})
+
+  #ADD_EXECUTABLE(radio_server
+  #            src/radio/radio_server_main.cc
+  #            src/radio/networkhandler.cc)
+  #TARGET_LINK_LIBRARIES(radio_server main_library constants_library net_library team_library amrl-shared-lib ${libs})
 
   ADD_LIBRARY(yisibot_radio_library
               src/yisibot_radio/yisibot_radio.cc

@@ -1,0 +1,8 @@
+[{
+  "name": "distance-medium",
+  "numScenarios": 5,
+  "perturbations": [{
+    "name": "distance",
+    "perturbedValue": 75.0
+  }]
+}]

@@ -1,4 +1,4 @@
-// Copyright 2017 - 2018 kvedder@umass.edu, slane@cs.umass.edu
+// Copyright 2017 - 2019 kvedder@umass.edu, slane@cs.umass.edu
 // College of Information and Computer Sciences,
 // University of Massachusetts Amherst
 //
@@ -133,6 +133,21 @@ void KalmanUpdate::SimStart(ThreadSafeActor<Simulator*>* thread_safe_sim,
                             Simulator* simulator) {
   thread_safe_simulator_ = thread_safe_sim;
   local_simulator_ = simulator;
+  PositionVelocityState start_state =
+      local_simulator_->GetWorldState(Team::BLUE);
+  for (auto robot : start_state.GetOurTeamRobots()) {
+    AddNewRobotKalmanSim(0.0,
+                      0,
+                      robot.ssl_vision_id,
+                      robot.position,
+                      robot.velocity,
+                      true,
+                      local_position_velocity_state_.GetMutableOurTeamRobots(),
+                      &our_team_kalman_);
+  }
+  state::PositionVelocityState::BallPositionVelocity ball =
+      start_state.GetBallPositionVelocity();
+  ball_state_estimator.SetBallState(ball);
   update_thread_ = thread(&KalmanUpdate::HandleSimUpdate, this);
 }
 
@@ -261,6 +276,26 @@ bool KalmanUpdate::UpdateIfExistingRobotVision(
     return true;
   }
   return false;
+}
+
+void KalmanUpdate::AddNewRobotKalmanSim(
+  const double detection_timestamp,
+  const unsigned int camera_id,
+  const unsigned int robot_id,
+  const Pose2Df pose,
+  const Pose2Df velocity,
+  bool is_ours,
+  PositionVelocityArray* robots,
+  KalmanArray* kalman_array) {
+  kalman_array->InsertBack(
+    {robot_id, {pose, velocity, detection_timestamp, camera_id}});
+  robots->InsertBack({robot_id,
+    pose,
+    velocity,
+    pose,
+    velocity,
+    detection_timestamp,
+    1.0});
 }
 
 void KalmanUpdate::AddNewRobotKalman(
@@ -789,9 +824,6 @@ void KalmanUpdate::HandleUpdate() {
     const unsigned int lead_camera_id =
         ball_state_estimator.GetBallObservationCamera();
     UpdatePositionsAndOrdering(detection_frame, lead_camera_id);
-    //       UpdatePositionsAndOrdering(detection_frame,
-    //                                   GetWallTime() + kSimulatorLatency,
-    //                                   lead_camera_id);
 
     UpdateBall(ssl_packet);
 

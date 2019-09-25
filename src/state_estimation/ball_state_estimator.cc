@@ -1,4 +1,4 @@
-// Copyright 2017-2018 srabiee@cs.umass.edu, slane@cs.umass.edu
+// Copyright 2017-2019 srabiee@cs.umass.edu, slane@cs.umass.edu
 // College of Information and Computer Sciences,
 // University of Massachusetts Amherst
 //
@@ -91,6 +91,20 @@ void BallStateEstimator::LogTrajectory(logger::Logger* logger) {
                     1,
                     1);
   }
+}
+
+void BallStateEstimator::SetBallState(
+    const state::PositionVelocityState::BallPositionVelocity& ball) {
+  // state vector: [x, x_dot, y, y_dot, z, z_dot]'
+  ball_state_[0] = ball.position.x();
+  ball_state_[1] = ball.position.y();
+  ball_state_[2] = 0.0;
+  ball_state_[3] = ball.velocity.x() * 1000;
+  ball_state_[4] = ball.velocity.y() * 1000;
+  ball_state_[5] = 0.0;
+  KF_const_vel_.SetState(ball_state_);
+  previous_observation_ = ball.position.cast<double>();
+  previous_observation_time_ = 0.0;
 }
 
 void BallStateEstimator::Update(

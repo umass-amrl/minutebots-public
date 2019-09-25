@@ -1,4 +1,4 @@
-// Copyright 2017 - 2018 kvedder@umass.edu
+// Copyright 2017 - 2019 kvedder@umass.edu
 // College of Information and Computer Sciences,
 // University of Massachusetts Amherst
 //
@@ -186,6 +186,26 @@ bool PositionVelocityState::ContainsOurRobot(SSLVisionId id) {
   }
 
   return contains_robot;
+}
+
+std::pair< bool, PositionVelocityState::RobotPositionVelocity* >
+PositionVelocityState::GetMutableRobot(SSLVisionId id, bool ours) {
+  auto* robot_list = ours
+  ? &our_team_robots_
+  : &their_team_robots_;
+
+  bool contains_robot = false;
+  PositionVelocityState::RobotPositionVelocity* robot_reference = NULL;
+
+  for (auto& robot : *robot_list) {
+    if (robot.ssl_vision_id == id) {
+      contains_robot = true;
+      robot_reference = &robot;
+      break;
+    }
+  }
+
+  return {contains_robot, robot_reference};
 }
 
 

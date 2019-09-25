@@ -1,4 +1,4 @@
-// Copyright 2017 - 2018 dbalaban@cs.umass.edu, slane@cs.umass.edu
+// Copyright 2017 - 2019 dbalaban@cs.umass.edu, slane@cs.umass.edu
 // College of Information and Computer Sciences,
 // University of Massachusetts Amherst
 //
@@ -201,8 +201,10 @@ void NTOC_Controller::LogPositionTrajectoryToFile(
 }
 
 void NTOC_Controller::Run() {
-  static constexpr float kPDPositionThreshold_ = 90;
-  static constexpr float kPDVelocityThreshold_ = 1000;
+  static const float kPDPositionThreshold_ =
+    configuration_reader::CONFIG_ntoc_pd_position_threshold;
+  static const float kPDVelocityThreshold_ =
+    configuration_reader::CONFIG_ntoc_pd_velocity_threshold;
   logger::Logger* the_logger =
       soccer_state_->GetMutableRobotLoggerByOurRobotIndex(our_robot_index_);
 
@@ -314,7 +316,7 @@ void NTOC_Controller::Run() {
   the_logger->LogPrint("Expected NTOC time: %f\n", total_time);
 
   if (collect_ntoc_data) {
-//     fprintf(ntoc_data_fid, "\tEXPECTED TIME TO FINISH: %f\n", total_time);
+    fprintf(ntoc_data_fid, "\tEXPECTED TIME TO FINISH: %f\n", total_time);
   }
 
   ControlSequence1D rotational_control;

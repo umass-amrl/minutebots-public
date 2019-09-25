@@ -1,4 +1,4 @@
-// Copyright 2017 - 2018 kvedder@umass.edu
+// Copyright 2017 - 2019 kvedder@umass.edu
 // College of Information and Computer Sciences,
 // University of Massachusetts Amherst
 //
@@ -19,12 +19,14 @@
 #define SRC_STATE_POSITION_VELOCITY_STATE_H_
 
 #include <vector>
+#include <utility>
 
 #include "constants/constants.h"
 #include "datastructures/dense_array.h"
 
 #include "math/poses_2d.h"
 #include "motion_control/motion_control_structures.h"
+
 
 namespace state {
 
@@ -145,6 +147,12 @@ class PositionVelocityState {
   void SetTime(double time);
 
   bool ContainsOurRobot(SSLVisionId id);
+
+  // Get the mutable state of a particular robot by SSL ID and team
+  // Returns whether the robot was found and a reference to it
+  std::pair<bool, RobotPositionVelocity*> GetMutableRobot(SSLVisionId id,
+                                                          bool ours);
+
 
  private:
   datastructures::DenseArray<RobotPositionVelocity, kMaxTeamRobots>

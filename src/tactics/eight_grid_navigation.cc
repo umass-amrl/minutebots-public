@@ -1,4 +1,4 @@
-// Copyright 2017 - 2018 kvedder@umass.edu
+// Copyright 2017 - 2019 kvedder@umass.edu
 // College of Information and Computer Sciences,
 // University of Massachusetts Amherst
 //
@@ -430,7 +430,6 @@ bool EightGridNavigation::IsWithinRotationThreshold() {
 
   const float& current_angle = position_velocity.position.angle;
   const float current_angular_velocity = position_velocity.velocity.angle;
-
   const bool angular_location_correct =
       fabs(goal_.angle - current_angle) < angular_threshold_;
   const bool angular_velocity_correct =

@@ -142,6 +142,10 @@ RadioProtocolWrapper SharedState::ConvertToRadioWrapper(
         max_velocity = {kMaxRobotRotVel, kMaxRobotVelocity, kMaxRobotVelocity};
       }
 
+      if (shared_state.acceleration_command.translation.norm() >
+          kMaxRobotAcceleration) {
+      }
+      
       Pose2Df planned_robot_velocity =
           GetNextCommand(world_state,
                          shared_state.acceleration_command,

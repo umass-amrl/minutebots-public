@@ -1,4 +1,4 @@
-// Copyright 2016 - 2018 jaholtz@cs.umass.edu
+// Copyright 2016 - 2019 jaholtz@cs.umass.edu
 // College of Information and Computer Sciences,
 // University of Massachusetts Amherst
 //
@@ -35,7 +35,7 @@ vector<Robot> CreateRobots(const SimState& world_state, const int num_robots,
   vector<Robot> robots;
   for (int i = 0; i < num_robots; ++i) {
     const Pose2Df pose(0.0, Vector2f(500 * i - 3000, 500));
-    const Vector2f velocity(0, 0);
+    const Pose2Df velocity(0.0, Vector2f(0.0, 0.0));
     const int id = i;
     const team::Team team = ((static_cast<size_t>(i) < kMaxTeamRobots) ?
         team::Team::BLUE :
@@ -47,14 +47,34 @@ vector<Robot> CreateRobots(const SimState& world_state, const int num_robots,
 
 vector<Robot> CreateRobots(const SimState& world_state,
                            const vector<Pose2Df>& positions,
+                           const vector<Pose2Df>& velocities,
                            const float time_slice) {
   vector<Robot> robots;
   for (size_t i = 0; i < positions.size(); ++i) {
-    const Vector2f velocity(0, 0);
     const int id = i;
     const team::Team team = ((i < kMaxTeamRobots) ?
         team::Team::BLUE :
         team::Team::YELLOW);
+    robots.push_back(Robot(world_state,
+                           positions[i],
+                           velocities[i],
+                           id,
+                           team,
+                           time_slice));
+  }
+  return robots;
+}
+
+vector<Robot> CreateRobots(const SimState& world_state,
+                           const vector<Pose2Df>& positions,
+                           const float time_slice) {
+  vector<Robot> robots;
+  for (size_t i = 0; i < positions.size(); ++i) {
+    const Pose2Df velocity(0.0, Vector2f(0.0, 0.0));
+    const int id = i;
+    const team::Team team = ((i < kMaxTeamRobots) ?
+    team::Team::BLUE :
+    team::Team::YELLOW);
     robots.push_back(Robot(world_state,
                            positions[i],
                            velocity,
@@ -90,9 +110,10 @@ SimState::SimState(const int& num_robots,
       kFrictionCoefficient_(friction_coefficient) {}
 
 SimState::SimState(const vector<Pose2Df>& positions,
+                   const vector<Pose2Df>& velocities,
                    const float& friction_coefficient,
                    const float& time_slice)
-    : robots(CreateRobots(*this, positions, time_slice)),
+    : robots(CreateRobots(*this, positions, velocities, time_slice)),
       ball(CreateBall(*this, time_slice)),
       kFrictionCoefficient_(friction_coefficient) {}
 

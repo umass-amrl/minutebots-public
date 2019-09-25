@@ -1,4 +1,4 @@
-// Copyright 2018 jaholtz@cs.umass.edu
+// Copyright 2018 - 2019 jaholtz@cs.umass.edu
 // College of Information and Computer Sciences,
 // University of Massachusetts Amherst
 //
@@ -139,6 +139,11 @@ void ThreeKick::SetChip(const bool& chip, const float& chip_distance) {
   chip_distance_ = chip_distance;
 }
 
+int ThreeKick::GetKickCount() {
+  return kick_count_;
+}
+
+
 void ThreeKick::Kicking() {
   safety::DSS2::SetObstacleFlag(our_robot_index_,
                                 obstacle::ObstacleFlag::GetDefenseAreas());
@@ -272,7 +277,9 @@ void ThreeKick::Kicking() {
   float x_accel = .6 * kMaxRobotAcceleration;
 
   const Vector2f desired_accel(x_accel, y_accel);
-
+  robot_logger->LogPrint("YDIST: %f", y_dist_from_intercept);
+  robot_logger->LogPrint("Desired X: %f, desired_y: %f, current_angle %f",
+                         x_accel, y_accel, current_pose.angle);
   state->acceleration_command.translation =
       Rotation2Df(current_pose.angle) * desired_accel;
 }
@@ -340,7 +347,7 @@ void ThreeKick::Transition() {
           obstacle::ObstacleFlag::GetTheirDefenseArea();
       for (auto obstacle : flags) {
         if (obstacle->PointCollision(ball_pose, kBallRadius)) {
-          in_defense = true;
+          in_defense = false;
         }
       }
     }

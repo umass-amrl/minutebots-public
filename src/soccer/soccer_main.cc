@@ -501,7 +501,8 @@ void FatalSignalHandler(int signo) {
   exit(1);
 }
 
-std::vector<Pose2Df> ReadStartPositions(const std::string& file_path) {
+std::vector<Pose2Df> ReadStartPositions(const std::string& file_path,
+                                        std::vector<Pose2Df>* velocities) {
   std::vector<Pose2Df> positions;
   std::ifstream infile(file_path);
 
@@ -512,21 +513,23 @@ std::vector<Pose2Df> ReadStartPositions(const std::string& file_path) {
   std::string line;
   while (std::getline(infile, line)) {
     std::istringstream iss(line);
-    float x = 0, y = 0, theta = 0;
-    if (!(iss >> x >> y >> theta)) {
+    float x = 0, y = 0, theta = 0, vx = 0, vy = 0, vtheta = 0;
+    if (!(iss >> x >> y >> theta >> vx >> vy >> vtheta)) {
       break;
     }
 
     positions.push_back({DegToRad(theta), x, y});
+    velocities->push_back({DegToRad(vtheta), vx, vy});
   }
   return positions;
 }
 
 SimState GenerateWorldState(const float& kTimeSlice,
                             const vector<float>& ball_parameters) {
+  std::vector<Pose2Df> velocities;
   const std::vector<Pose2Df> positions =
-      ReadStartPositions("scripts/simulator_positions.txt");
-  SimState start_state(positions, 0.0005f, kTimeSlice);
+      ReadStartPositions("scripts/simulator_positions.txt", &velocities);
+  SimState start_state(positions, velocities, 0.0005f, kTimeSlice);
   if (ball_parameters.size() > 0) {
     NP_CHECK_EQ(ball_parameters.size(), 4);
     const Vector2f ball_pose = {ball_parameters[0], ball_parameters[1]};
@@ -566,14 +569,19 @@ void SimMode(
   // Global logging for logging on kalman update thread
   Logger global_logger;
 
-  const float kTimeSlice = kSimulatorLatency;
+  const float kTimeSlice = kSimulatorStepSize;
+  const unsigned int queue_size = kSimulatorControlQueueSize;
   SimState start_state = GenerateWorldState(kTimeSlice, ball_parameters);
   // Three identical simulators, a hack to deal with pointer copies....
-  experimental_simulator::ExperimentalSim simulator(kTimeSlice, &start_state);
+  experimental_simulator::ExperimentalSim simulator(kTimeSlice,
+                                                    &start_state,
+                                                    queue_size);
   experimental_simulator::ExperimentalSim kalman_local_simulator(kTimeSlice,
-                                                                 &start_state);
-  experimental_simulator::ExperimentalSim executor_local_simulator(
-      kTimeSlice, &start_state);
+                                                                 &start_state,
+                                                                 queue_size);
+  experimental_simulator::ExperimentalSim executor_local_simulator(kTimeSlice,
+                                                                   &start_state,
+                                                                   queue_size);
   // Scope intended to destroy threading primitives.
   {
     ThreadSafeQueue<SharedState> thread_safe_shared_state_queue;
@@ -691,10 +699,6 @@ void LiveMode(
         global_position_velocity_state);
     ThreadSafeActor<Logger> thread_safe_kalman_logger(global_logger);
 
-    // Start the configuration reader thread
-    configuration_reader::CreateDaemon(
-        {"src/configuration_reader/config_triangle.cfg"});
-
     // Sets up the threads for Kalman update.
     // RAII takes care of ensuring everything shutsdown appropriately.
     KalmanUpdate kalman_update(camera_mask,
@@ -782,6 +786,13 @@ int main(int argc, char** argv) {
   if (signal(SIGABRT, FatalSignalHandler) == SIG_ERR) {
     LOG(FATAL) << "Cannot trap SIGABRT\n";
   }
+
+  // Read variables from the configuration reader
+  configuration_reader::LuaRead(
+      {"src/configuration_reader/config_triangle.cfg",
+        "src/constants/constants.cfg"
+      });
+  ReadConfigurationConstants();
 
   // Seed rand() for use throughout the codebase.
   auto seed_value = time(0);

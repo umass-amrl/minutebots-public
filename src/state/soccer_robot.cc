@@ -31,8 +31,10 @@
 #include "tactics/coercive_attacker.h"
 #include "tactics/custom_route.h"
 #include "tactics/deflection.h"
+#include "tactics/SimpleDeflection.h"
 #include "tactics/direct_free_kicker.h"
 #include "tactics/dive_controller.h"
+#include "tactics/docking.h"
 #include "tactics/eight_grid_navigation.h"
 #include "tactics/forward_backward.h"
 #include "tactics/goalie.h"
@@ -46,10 +48,12 @@
 #include "tactics/navigate_to_intercept.h"
 #include "tactics/ntoc_controller.h"
 #include "tactics/pass_fail_primary_attacker.h"
+#include "tactics/pass_fail_docking.h"
 #include "tactics/pd_controller.h"
 #include "tactics/penalty_kicker.h"
 #include "tactics/penalty_recieve.h"
 #include "tactics/primary_attacker.h"
+#include "tactics/example_attacker.h"
 #include "tactics/simple_attacker.h"
 #include "tactics/primary_defender.h"
 #include "tactics/random_points.h"
@@ -72,6 +76,12 @@
 #include "tactics/three_kick.h"
 #include "tactics/triangle.h"
 #include "tactics/triangle_id_dependent.h"
+#include "tactics/tsocs_controller.h"
+#include "tactics/test_tsocs.h"
+#include "tactics/train_tsocs.h"
+#include "tactics/demo_tsocs.h"
+#include "tactics/test_sim_tsocs.h"
+#include "tactics/marionette.h"
 #include "util/array_util.h"
 
 using obstacle::SafetyMargin;
@@ -238,6 +248,14 @@ void SoccerRobot::InitTactics() {
 
   ADD_TACTIC(DEFLECTION,
              new tactics::Deflection("Deflection",
+                                     world_state_,
+                                     &tactic_list_,
+                                     shared_state,
+                                     our_robot_index_,
+                                     soccer_state_));
+
+  ADD_TACTIC(SIMPLE_DEFLECTION,
+             new tactics::SimpleDeflection("SimpleDeflection",
                                      world_state_,
                                      &tactic_list_,
                                      shared_state,
@@ -473,7 +491,13 @@ void SoccerRobot::InitTactics() {
                                           shared_state,
                                           our_robot_index_,
                                           soccer_state_));
-
+  ADD_TACTIC(EXAMPLE_ATTACKER,
+             new tactics::PrimaryAttacker("ExampleAttacker",
+                                          world_state_,
+                                          &tactic_list_,
+                                          shared_state,
+                                          our_robot_index_,
+                                          soccer_state_));
   ADD_TACTIC(SIMPLE_ATTACKER,
              new tactics::SimpleAttacker("SimpleAttacker",
                                           world_state_,
@@ -571,12 +595,68 @@ void SoccerRobot::InitTactics() {
                                        shared_state,
                                        our_robot_index_,
                                        soccer_state_));
+
+  ADD_TACTIC(TSOCS,
+             new tactics::TSOCSController(world_state_,
+                                          &tactic_list_,
+                                          shared_state,
+                                          our_robot_index_,
+                                          soccer_state_));
+
+  ADD_TACTIC(TEST_TSOCS,
+             new tactics::TestTSOCS(world_state_,
+                                    &tactic_list_,
+                                    shared_state,
+                                    our_robot_index_,
+                                    soccer_state_));
+  ADD_TACTIC(DEMO_TSOCS,
+             new tactics::DemoTSOCS(world_state_,
+                                    &tactic_list_,
+                                    shared_state,
+                                    our_robot_index_,
+                                    soccer_state_));
+  ADD_TACTIC(TRAIN_TSOCS,
+             new tactics::TrainTSOCS(world_state_,
+                                     &tactic_list_,
+                                     shared_state,
+                                     our_robot_index_,
+                                     soccer_state_));
+
+  ADD_TACTIC(TEST_SIM_TSOCS,
+             new tactics::TestSimTSOCS(world_state_,
+                                    &tactic_list_,
+                                    shared_state,
+                                    our_robot_index_,
+                                    soccer_state_));
   ADD_TACTIC(TEST_ATTACKER,
              new tactics::TestAttacker(world_state_,
                                        &tactic_list_,
                                        shared_state,
                                        our_robot_index_,
                                        soccer_state_));
+
+  ADD_TACTIC(DOCKING,
+             new tactics::Docking("Docking",
+                                  world_state_,
+                                  &tactic_list_,
+                                  shared_state,
+                                  our_robot_index_,
+                                  soccer_state_));
+
+  ADD_TACTIC(PASS_FAIL_DOCKING,
+             new tactics::PassFailDocking("PassFailDocking",
+                                  world_state_,
+                                  &tactic_list_,
+                                  shared_state,
+                                  our_robot_index_,
+                                  soccer_state_));
+
+//     ADD_TACTIC(MARIONETTE,
+//              new tactics::Marionette(world_state_,
+//                                        &tactic_list_,
+//                                        shared_state,
+//                                        our_robot_index_,
+//                                        soccer_state_));
 
   // Init all tactics.
   for (auto& tactic : tactic_list_) {

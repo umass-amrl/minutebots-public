@@ -1,4 +1,4 @@
-// Copyright 2017-2018 kvedder@umass.edu
+// Copyright 2017-2019 kvedder@umass.edu
 // College of Information and Computer Sciences,
 // University of Massachusetts Amherst
 //
@@ -24,8 +24,8 @@
 
 namespace team {
 enum class Team {
-  YELLOW,
   BLUE,
+  YELLOW,
 };
 
 bool operator==(const Team& t1, const MinuteBotsProto::RobotState_Team& t2);

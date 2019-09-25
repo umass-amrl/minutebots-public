@@ -1,0 +1,7 @@
+{
+    "CrashThreshold": 5000.0,
+    "CruiseSpeed": 0.35,
+    "DecelThreshold": 1000.48681640625,
+    "MergeSpaceFront": 0.009999999776482582,
+    "RidingThreshold": 1000.0
+}

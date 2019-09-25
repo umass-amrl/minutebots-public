@@ -1,4 +1,4 @@
-// Copyright 2018 kvedder@umass.edu
+// Copyright 2018 - 2019 kvedder@umass.edu
 // College of Information and Computer Sciences,
 // University of Massachusetts Amherst
 //
@@ -50,7 +50,8 @@ KickCurve::KickCurve(const SSLVisionId& ssl_vision_id) : KickCurve() {
 
 int8_t ClampToValidKickRange(const float& f) {
   return static_cast<int8_t>(
-      math_util::Clamp(f, kMinimumKickPower,
+      math_util::Clamp(f,
+                       kMinimumKickPower,
                        static_cast<float>(std::numeric_limits<int8_t>::max())));
 }
 
@@ -62,8 +63,8 @@ int8_t KickCurve::GetKickPower(const float& x) const {
   }
   const float fp_solution = a_ * math_util::Sq(x) + b_ * x + c_;
   const auto result = ClampToValidKickRange(fp_solution);
-  LOG(INFO) << "Kick power computed " << x << " => "
-            << static_cast<int>(result);
+  //   LOG(INFO) << "Kick power computed " << x << " => "
+  //             << static_cast<int>(result);
   return result;
 }
 

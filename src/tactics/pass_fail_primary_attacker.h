@@ -45,7 +45,7 @@ class PassFailPrimaryAttacker : public PrimaryAttacker {
                         our_robot_index,
                         soccer_state) {}
 
-  const char* Name() const override { return "pass_fail_primary_attacker"; }
+  const char* Name() const override { return "PassFailAttacker"; }
 
   void DeflectionSuccess() {
     static const Vector2f goal(kHalfFieldLength, 0);

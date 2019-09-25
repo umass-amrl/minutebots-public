@@ -1,4 +1,4 @@
-// Copyright 2016 - 2018 jaholtz@cs.umass.edu
+// Copyright 2016 - 2019 jaholtz@cs.umass.edu
 // College of Information and Computer Sciences,
 // University of Massachusetts Amherst
 //
@@ -27,6 +27,7 @@
 #include "obstacles/robot_obstacle.h"
 #include "radio_protocol_wrapper.pb.h"
 #include "experimental_sim/objects/ball.h"
+#include "experimental_sim/sim_motion_model.h"
 #include "state/team.h"
 
 namespace experimental_simulator {
@@ -40,7 +41,7 @@ class Robot {
   Robot() = delete;
   Robot(const SimState& world_state,
         pose_2d::Pose2Df initial_pose,
-        Eigen::Vector2f current_velocity,
+        pose_2d::Pose2Df current_velocity,
         int id,
         team::Team team,
         const float time_slice_length);
@@ -100,6 +101,7 @@ class Robot {
   pose_2d::Pose2Df pose;  // Location in mm, angle -PI to PI radians.
   Eigen::Vector2f current_velocity_;
   obstacle::RobotObstacle obstacle;
+  SimMotionModel model;
   const int id;
   const team::Team team;
   float time_slice_length;

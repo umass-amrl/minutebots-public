@@ -45,6 +45,7 @@ class Kick : public StateMachineTactic {
   bool IsComplete() override;
   float GetCost() override;
   void SetPassOnly(const bool& pass_only);
+  int GetKickCount();
 
   float target_angle_;
 

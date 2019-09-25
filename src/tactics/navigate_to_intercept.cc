@@ -1,4 +1,4 @@
-// Copyright 2017 - 2018 dbalaban@cs.umass.edu
+// Copyright 2017 - 2019 dbalaban@cs.umass.edu
 // College of Information and Computer Sciences,
 // University of Massachusetts Amherst
 //
@@ -38,6 +38,7 @@
 #include "state/world_state.h"
 #include "tactics/eight_grid_navigation.h"
 #include "tactics/ntoc_controller.h"
+#include "safety/dss2.h"
 
 STANDARD_USINGS;
 using datastructures::OptionalValueMutable;
@@ -165,12 +166,14 @@ float NavigateToIntercept::FindInterceptNavigationPoint(Pose2Df* target_pose) {
                          kInterceptionRadius + kInterceptionMargin);
   }
 
-  // const Vector2f ball_dir = ball_vel.normalized();
+  const Vector2f ball_dir = ball_vel.normalized();
+  const Vector2d move_dist = final_robot_pos - ball_pos.cast<double>();
   Vector2f navigation_point =
-      final_robot_pos.cast<float>() + kNavigationTimeAdjustment * ball_vel;
-  navigation_point = ProjectToSafety(
-      navigation_point, ball_pos - kInterceptionRadius * desired_norm,
-      kAttackerFieldMargin, the_logger);
+      final_robot_pos.cast<float>() +
+      (move_dist.norm() + kRobotRadius) * -ball_dir;
+//   navigation_point = ProjectToSafety(
+//       navigation_point, ball_pos - kInterceptionRadius * desired_norm,
+//       kAttackerFieldMargin, the_logger);
 
   target_pose->translation = navigation_point;
   target_pose->angle = target_angle;
@@ -186,30 +189,33 @@ void NavigateToIntercept::Run() {
   Pose2Df target_pose;
   FindInterceptNavigationPoint(&target_pose);
 
-  NTOC_Controller* controller =
-      static_cast<NTOC_Controller*>((*tactic_list_)[TacticIndex::NTOC].get());
-  controller->TurnOnAngleRelaxation();
+//   NTOC_Controller* controller =
+//       static_cast<NTOC_Controller*>((*tactic_list_)[TacticIndex::NTOC].get());
+//   controller->TurnOnAngleRelaxation();
 
   EightGridNavigation* planner = static_cast<EightGridNavigation*>(
       (*tactic_list_)[TacticIndex::EIGHT_GRID].get());
 
   planner->SetObstacles(obstacle::ObstacleFlag::GetAllExceptTeam(
           world_state_, *soccer_state_, our_robot_index_, our_robot_index_)
-            | obstacle::ObstacleFlag::GetMediumBall());
+            | obstacle::ObstacleFlag::GetBall());
 
   Pose2Df current_pose =
       world_state_.GetOurRobotPosition(our_robot_index_).position;
   Vector2f ball_pos = world_state_.GetBallPosition().position;
 
-  zone::FieldZone field_zone(zone::FULL_FIELD);
-  bool in_field = field_zone.IsInZone(
-    ball_pos, kDefaultSafetyMargin);
-  if (!in_field) {
-    const Vector2f towards_ball = ball_pos - current_pose.translation;
-    target_pose.angle = Angle(towards_ball);
-  }
+//   zone::FieldZone field_zone(zone::FULL_FIELD);
+//   bool in_field = field_zone.IsInZone(
+//     ball_pos, kDefaultSafetyMargin);
+//   if (!in_field) {
+//     const Vector2f towards_ball = ball_pos - current_pose.translation;
+//     target_pose.angle = Angle(towards_ball);
+//   }
 
   planner->SetGoal(target_pose);
+//   planner->SetObstacles(obstacle::ObstacleFlag::GetBall());
+//   safety::DSS2::SetObstacleFlag(our_robot_index_,
+//                                 obstacle::ObstacleFlag::GetBall());
   planner->Run();
 }
 

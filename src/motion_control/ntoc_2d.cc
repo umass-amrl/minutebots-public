@@ -1,4 +1,4 @@
-// Copyright 2017 - 2018 joydeepb@cs.umass.edu, dbalaban@cs.umass.edu,
+// Copyright 2017 - 2019 joydeepb@cs.umass.edu, dbalaban@cs.umass.edu,
 // kvedder@umass.edu, slane@cs.umass.edu
 // College of Information and Computer Sciences,
 // University of Massachusetts Amherst
@@ -32,7 +32,7 @@ using Eigen::VectorXf;
 using Eigen::Matrix3f;
 using motion::MotionModel;
 
-bool collect_ntoc_data;
+bool collect_ntoc_data = false;
 
 namespace ntoc {
 

@@ -52,14 +52,15 @@ void ReadMachineData(const string& machine_name,
                                 vector<StateMachineData>* state_machines,
                                 vector<PossibleTransition>* data_vector) {
   int transition_count = 0;
+  std::cout << logger->GetMapSize() << std::endl;
   for (int i = 0; i < logger->GetMapSize(); ++i) {
-//     std::cout << "Logger Size: " << logger->GetMapSize() << std::endl;
     SoccerDebugMessage message = logger->GetNextMessage().soccer_debug();
     for (int j = 0; j < message.tuning_data_size(); ++j) {
       StateMachineData data = message.tuning_data(j);
-//       PrintStateMachineData(data);
       state_machines->push_back(data);
+      std::cout << machine_name << std::endl;
       if (machine_name.compare(data.machine_name()) == 0) {
+        std::cout << "Machine: " << data.machine_name() << std::endl;
         for (PossibleTransition transition : data.transitions()) {
           if (transition.should_transition()) {
             transition_count++;
@@ -70,6 +71,7 @@ void ReadMachineData(const string& machine_name,
     }
   }
 }
+
 void ExtractCorrections(const vector<PossibleTransition>& input,
                         vector<PossibleTransition>* no_corrections,
                         vector<PossibleTransition>* corrections) {
@@ -117,212 +119,10 @@ void TuneMachine(const string& machine_name) {
                   &lowers);
 }
 
-// void TestEffects(map<string, float> epsilons,
-//                  map<string, float> base_parameters,
-//                  const vector<PossibleTransition>& transitions) {
-//   int fixed_transition = 0;
-//   int fixed_notransition = 0;
-//   int unchanged_transition = 0;
-//   int unchanged_notransition = 0;
-//   int broken_notransition = 0;
-//   int broken_transition = 0;
-//   vector<string> added;
-//   for (PossibleTransition transition : transitions) {
-//     if (transition.human_constraint()) {
-//       bool will_transition = true;
-//         for (TransitionClause clause : transition.clauses()) {
-//           if (std::find(added.begin(), added.end(), clause.rhs())
-//               == added.end()) {
-//             data_file << epsilons[clause.rhs()] << "\t";
-//             added.push_back(clause.rhs());
-//           }
-//           if (clause.comparator().compare(">") == 0) {
-//             if ( clause.lhs() <
-//               (base_parameters[clause.rhs()] + epsilons[clause.rhs()])) {
-//               will_transition = false;
-//             }
-//           }
-//           if (clause.comparator().compare("<") == 0) {
-//             if ( clause.lhs() >
-//               (base_parameters[clause.rhs()] + epsilons[clause.rhs()])) {
-//               will_transition = false;
-//             }
-//           }
-//         }
-//       if (will_transition && transition.should_transition()) {
-//         fixed_transition++;
-//       } else if (!will_transition && !transition.should_transition()) {
-//         fixed_notransition++;
-//       } else if (!will_transition && transition.should_transition()) {
-//         unchanged_transition++;
-//       } else {
-//         unchanged_notransition++;
-//       }
-//     } else {
-//       bool will_transition = true;
-//         for (TransitionClause clause : transition.clauses()) {
-//           if (std::find(added.begin(), added.end(), clause.rhs())
-//               == added.end()) {
-//             data_file << epsilons[clause.rhs()] << "\t";
-//             added.push_back(clause.rhs());
-//           }
-//           if (clause.comparator().compare(">") == 0) {
-//             if ( clause.lhs() <
-//               (base_parameters[clause.rhs()] + epsilons[clause.rhs()])) {
-//               will_transition = false;
-//             }
-//           }
-//           if (clause.comparator().compare("<") == 0) {
-//             if ( clause.lhs() >
-//               (base_parameters[clause.rhs()] + epsilons[clause.rhs()])) {
-//               will_transition = false;
-//             }
-//           }
-//         }
-//       if (will_transition && transition.should_transition()) {
-//         unchanged_transition++;
-//       } else if (!will_transition && !transition.should_transition()) {
-//         unchanged_notransition++;
-//       } else if (!will_transition && transition.should_transition()) {
-//         broken_transition++;
-//       } else {
-//         broken_notransition++;
-//       }
-//     }
-//   }
-//   data_file << unchanged_transition << "\t"
-//       << "\t" << fixed_transition << "\t" << broken_transition << "\t";
-//   data_file << unchanged_notransition << "\t"
-//       << "\t" << fixed_notransition << "\t" << broken_notransition << "\n";
-// }
-//
-// void WriteTimeData(const vector<int>& counts,
-//                    const vector<double>& time) {
-//   std::ofstream myfile;
-//   myfile.open("tuning_timing.txt");
-//   for (size_t i = 0; i < counts.size(); ++i) {
-//   myfile << counts[i] << "\t" << time[i] << std::endl;
-//   }
-//   myfile.close();
-// }
-
-// void TestNumCorrections() {
-//   context c;
-//   ReadLogger logger("medium_tuning_data.txt");
-//   logger.BuildIndex();
-//   // Read in tuning data from a log file.
-//   vector<PossibleTransition> data;
-//   vector<StateMachineData> state_machines;
-//   std::cout << "Reading Log Files" << std::endl;
-//   // Machine to tune is pulled out here, should make cli input
-//   ReadMachineData("StateMachineAttacker", &logger, &state_machines, &data);
-//   vector<PossibleTransition> corrections;
-//   vector<PossibleTransition> no_corrections;
-//   vector<PossibleTransition> holdout;
-//   vector<PossibleTransition> for_tuning;
-//   std::cout << "Data size: " <<  data.size() << std::endl;
-//   int holdout_size = data.size() * .4;
-//   std::cout << "Holdout Size: " << holdout_size << std::endl;
-//   ChunkDataset(holdout_size, data, &holdout, &for_tuning);
-//   ExtractCorrections(for_tuning, &no_corrections, &corrections);
-//   vector<PossibleTransition> input = no_corrections;
-//   vector<PossibleTransition> remaining = corrections;
-//   vector<double> times;
-//   vector<int> counts;
-//   int num_corrections = 0;
-//   std::cout << "Num Corrections : " << corrections.size() << std::endl;
-//   for (size_t i = 1; i < corrections.size(); i += 1) {
-//     for (int j = 0; j < 50; ++j) {
-//       std::cout << "Number of corrections: " << i
-//           << " Iteration: " << j << std::endl;
-//       vector<PossibleTransition> test_input = input;
-//       std::random_shuffle(remaining.begin(), remaining.end());
-//       vector<PossibleTransition> output;
-//       ChunkDataset(i, remaining, &test_input, &output);
-//       map<string, float> lowers;
-//       map<string, float> base_parameters;
-//       double time = Solve(&c,
-//                         state_machines,
-//                         test_input,
-//                         &base_parameters,
-//                         &lowers);
-//       times.push_back(time);
-//     //     num_corrections++;
-//       counts.push_back(i);
-// //       data_file << i << "\t" << time << "\t";
-//       num_file << i << "," << j << std::endl;
-//       data_file << base_parameters["RadToDeg(thresholds_angle_)"]
-//           + lowers["RadToDeg(thresholds_angle_)"] << ",";
-//       data_file << base_parameters["thresholds_distance_"]
-//           + lowers["thresholds_distance_"] << ",";
-//       data_file << base_parameters["thresholds_align_"]
-//           + lowers["thresholds_align_"] << ",";
-//       data_file << base_parameters["thresholds_y_prime_vel_"]
-//           + lowers["thresholds_y_prime_vel_"] << ",";
-//       data_file << base_parameters["RadToDeg(thresholds_angular_vel_)"]
-//           + lowers["RadToDeg(thresholds_angular_vel_)"] << ",";
-//       data_file << base_parameters["thresholds_relative_vel_"]
-//           + lowers["thresholds_relative_vel_"] << ",";
-//       data_file << 40 << ",";
-//       data_file << 800 << ",";
-//       data_file << 1500 << ",";
-//       data_file << 100 << ",";
-//       data_file << kRobotRadius * 2.0 << ",";
-//       data_file << 100 << std::endl;
-// //       TestEffects(lowers, base_parameters, holdout);
-//       data_file << std::flush;
-//       num_file << std::flush;
-// //       remaining = output;
-//     num_corrections++;
-//     }
-//   WriteTimeData(counts, times);
-//   }
-// }
-//
-// void TestNumDataPoints() {
-//   context c;
-//   ReadLogger logger("medium_tuning_data.txt");
-//   logger.BuildIndex();
-//   // Read in tuning data from a log file.
-//   vector<PossibleTransition> data;
-//   vector<StateMachineData> state_machines;
-//   std::cout << "Reading Log Files" << std::endl;
-//   // Machine to tune is pulled out here, should make cli input
-//   ReadMachineData("StateMachineAttacker", &logger, &state_machines, &data);
-//   const int chunk_size = 1000;
-//   int count = 0;
-//   while (count < 50) {
-//     vector<PossibleTransition> input;
-//     vector<PossibleTransition> remaining = data;
-// //     std::random_shuffle(remaining.begin(), remaining.end());
-//     vector<double> times;
-//     vector<int> counts;
-//     for (size_t i = 42000; i < data.size(); i += chunk_size) {
-//       std::cout << "________ITERATION_______" << i << std::endl;
-//       vector<PossibleTransition> output;
-//       ChunkDataset(chunk_size, remaining, &input, &output);
-//       map<string, float> lowers;
-//       map<string, float> base_parameters;
-//       double time = Solve(&c,
-//                           state_machines,
-//                           input,
-//                           &base_parameters,
-//                           &lowers);
-//       std::cout << time << std::endl;
-//       remaining = output;
-//       times.push_back(time);
-//       counts.push_back(static_cast<int>(input.size()));
-//       data_file << count << "," << input.size() << "," << time << std::endl;
-//     }
-//     count++;
-//   }
-// }
-
-
 int main(int argc, char** argv) {
   data_file.open("all_params.txt");
   num_file.open("num.txt");
-  string machine_name = "PrimaryAttacker";
+  string machine_name = "PassFailPrimaryAttacker";
   if (argc == 2) {
     machine_name = argv[1];
   }

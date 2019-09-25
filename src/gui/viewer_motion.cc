@@ -188,12 +188,8 @@ const double ball_accel = .01 * kDefaultRobotAcceleration;
 bool use_alt_tsocs = false;
 SolutionParameters params, params_stage1, ball_params;
 SolutionParameters new_params_guess;
-static tsocs::Tsocs tsocs_instance(Vector2d(0, 0),
-                                   Vector2d(0, 0),
-                                   Vector2d(0, 0),
-                                   Vector2d(0, 0),
-                                   kDefaultRobotAcceleration);
-static BallInterception intercept;
+static tsocs::Tsocs* tsocs_instance;
+static BallInterception* intercept;
 
 default_random_engine generator;
 
@@ -217,7 +213,7 @@ void CostLeftClick(double x1, double x2, double x3, double x4) {
   } else {
     double a = x1, b = x2, c = cur_params.c, d = x3, T = x4;
     printf("a=%f,b=%f,c=%f,d=%f,T=%f\n", a, b, c, d, T);
-    printf("log10(cost) = %f\n", log10(tsocs_instance.CostFunction(a,
+    printf("log10(cost) = %f\n", log10(tsocs_instance->CostFunction(a,
                                                                    b,
                                                                    c,
                                                                    d,
@@ -261,7 +257,7 @@ void CostKey(CImgDisplay display) {
   SolutionParameters new_params = new_params_guess;
   if (ball_problem) {
     if (new_interception) {
-      foundSolution = intercept.GetInterceptSolution(&new_params);
+      foundSolution = intercept->GetInterceptSolution(&new_params);
     } else {
       foundSolution =
           GetInterceptSolution(x0, v0, ball_pos, ball_vel, ball_accel,
@@ -280,7 +276,7 @@ void CostKey(CImgDisplay display) {
     // run ceres with new parameters
     printf("a=%f,b=%f,c=%f,d=%f,T=%f\n", new_params.a, new_params.b,
            new_params.c, new_params.d, new_params.T);
-    foundSolution = tsocs_instance.GetSolutionNoStages(&new_params);
+    foundSolution = tsocs_instance->GetSolutionNoStages(&new_params);
     solution_color = foundSolution ? kSuccessColor : kFailureColor;
     DrawTSOCSPath(new_params, solution_color, &drawings);
   }
@@ -351,7 +347,7 @@ void* VisualizeCostThread(void* thread_id) {
     } else {
       auto anon_cost = [](double a, double b, double d, double T) {
         return log10(
-            max(tsocs_instance.CostFunction(a, b, params.c, d, T),
+            max(tsocs_instance->CostFunction(a, b, params.c, d, T),
                 kTSOCSThreshold));
       };
       cost_viewer.Display(
@@ -557,7 +553,7 @@ void DefineProblemConditions(SoccerDebugMessage* message) {
   v0 << v1, v2;
   xf << 0, 0;
   vf << 0, 0;
-  tsocs_instance = Tsocs(x0, v0, xf, vf, kDefaultRobotAcceleration);
+  *tsocs_instance = Tsocs(x0, v0, xf, vf, kDefaultRobotAcceleration);
 
   sub_log.set_text(StringPrintf("Initial Conditions"));
   *sub_log.add_sub_tree() =
@@ -613,7 +609,7 @@ void DefineProblemConditionsFinalV(SoccerDebugMessage* message) {
   v0 << v1, v2;
   xf << 0, 0;
   vf << v1f, v2f;
-  tsocs_instance = Tsocs(x0, v0, xf, vf, kDefaultRobotAcceleration);
+  *tsocs_instance = Tsocs(x0, v0, xf, vf, kDefaultRobotAcceleration);
 
   sub_log.set_text(StringPrintf("Initial Conditions"));
   *sub_log.add_sub_tree() =
@@ -682,7 +678,7 @@ void LoadFailureCasesFinalV(SoccerDebugMessage* message,
   v0 = problems[i].v0;
   xf = problems[i].xf;
   vf = problems[i].vf;
-  tsocs_instance = Tsocs(x0, v0, xf, vf, kDefaultRobotAcceleration);
+  *tsocs_instance = Tsocs(x0, v0, xf, vf, kDefaultRobotAcceleration);
   ++i;
 
   sub_log.set_text(StringPrintf("Initial Conditions"));
@@ -733,7 +729,7 @@ void LoadInterceptCase(SoccerDebugMessage* message, const string filename) {
   v0 = problems[i].v0;
   ball_pos = problems[i].xf;
   ball_vel = problems[i].vf;
-  intercept = BallInterception(x0, v0, ball_pos, ball_vel,
+  *intercept = BallInterception(x0, v0, ball_pos, ball_vel,
     kDefaultRobotAcceleration, kBallAcceleration);
   ++i;
 
@@ -779,7 +775,7 @@ void TestSimulatedFailureCase(SoccerDebugMessage* message) {
   } else {
     DrawBoundaryConditions(&drawings);
     LoadFailureCasesFinalV(message, "TSOCS-simulated-iterative-failures.txt");
-    bool foundSolution = tsocs_instance.GetSolution(&params);
+    bool foundSolution = tsocs_instance->GetSolution(&params);
     const Color4f solution_color =
         params.cost < kTSOCSThreshold ? kSuccessColor : kFailureColor;
     DrawBoundaryConditions(&drawings);
@@ -855,7 +851,7 @@ void DefineInterceptionConditions(SoccerDebugMessage* message) {
   ball_pos << 0, 0;
   ball_vel << ball_v1, 0;
 
-  intercept = BallInterception(x0, v0, ball_pos, ball_vel,
+  *intercept = BallInterception(x0, v0, ball_pos, ball_vel,
     kDefaultRobotAcceleration, kBallAcceleration);
 
   const double halt_time = v0.norm() / kDefaultRobotAcceleration;
@@ -986,7 +982,7 @@ void DrawTSOCSPath(const SolutionParameters& params, const Color4f& col,
     Eigen::Vector2d xt;
     Eigen::Vector2d vt;
     if (kNewTSOCS) {
-      tsocs_instance.GetState(&xt, &vt, t, params);
+      tsocs_instance->GetState(&xt, &vt, t, params);
     } else {
       GetState(x0, v0, &xt, &vt, kDefaultRobotAcceleration, t, params);
     }
@@ -1004,7 +1000,7 @@ void DrawTSOCSPath(const SolutionParameters& params, const Color4f& col,
     Eigen::Vector2d xt;
     Eigen::Vector2d vt;
     if (kNewTSOCS) {
-      tsocs_instance.GetState(&xt, &vt, t, params);
+      tsocs_instance->GetState(&xt, &vt, t, params);
     } else {
       GetState(x0, v0, &xt, &vt, kDefaultRobotAcceleration, t, params);
     }
@@ -1056,7 +1052,8 @@ bool VisualizeTSOCS(SoccerDebugMessage* message) {
   bool foundSolution;
   if (kUsePerturbationsFix) {
     int perturbations;
-    foundSolution = tsocs_instance.GetSolutionSet(&params_list, &perturbations);
+    foundSolution = tsocs_instance->
+      GetSolutionSet(&params_list, &perturbations);
     if (foundSolution) {
       if (perturbations_histogram != NULL) {
         perturbations_histogram[perturbations]++;
@@ -1074,7 +1071,7 @@ bool VisualizeTSOCS(SoccerDebugMessage* message) {
       sub_log.Clear();
     }
   } else {
-    foundSolution = tsocs_instance.GetSolutionSet(&params_list);
+    foundSolution = tsocs_instance->GetSolutionSet(&params_list);
   }
   const SolutionParameters params_guess = params_list.at(0);
   params_stage1 = params_list.at(1);
@@ -1239,7 +1236,7 @@ bool VisualizeInterception(SoccerDebugMessage* message) {
   bool foundSolution;
   ball_params.isInitialized = false;
   if (new_interception) {
-    foundSolution = intercept.GetInterceptSolution(&ball_params);
+    foundSolution = intercept->GetInterceptSolution(&ball_params);
   } else {
     foundSolution =
         GetInterceptSolution(x0, v0, ball_pos, ball_vel, ball_accel,
@@ -1310,7 +1307,7 @@ void DrawInterceptionPath(SolutionParameters intercept_params, Color4f color,
     Eigen::Vector2d ball_xt;
     Eigen::Vector2d ball_vt;
     if (new_interception) {
-      intercept.GetState(&robot_xt, &robot_vt, &ball_xt, &ball_vt, time,
+      intercept->GetState(&robot_xt, &robot_vt, &ball_xt, &ball_vt, time,
                          intercept_params);
     } else {
       GetState(x0, v0, ball_pos, ball_vel, &robot_xt, &robot_vt, &ball_xt,
@@ -1363,7 +1360,7 @@ bool VisualizeIterativeNTOC(SoccerDebugMessage* message, ScopedFile* fid) {
   DrawLine(x2, xf, kLineColor, &drawings);
 
   std::vector<SolutionParameters> params_list;
-  bool foundSolution = tsocs_instance.GetSolutionSet(&params_list);
+  bool foundSolution = tsocs_instance->GetSolutionSet(&params_list);
   if (!foundSolution) {
     return false;
   }
@@ -1434,7 +1431,7 @@ bool VisualizeIterativeTSOCS(SoccerDebugMessage* message, ScopedFile* fid) {
   DrawLine(x2, xf, kLineColor, &drawings);
 
   std::vector<SolutionParameters> params_list;
-  bool foundSolution = tsocs_instance.GetSolutionSet(&params_list);
+  bool foundSolution = tsocs_instance->GetSolutionSet(&params_list);
   SolutionParameters params = params_list.at(2);
 
   const Color4f original_sol_color = Color4f(0, 0, 1, 1);
@@ -1453,7 +1450,7 @@ bool VisualizeIterativeTSOCS(SoccerDebugMessage* message, ScopedFile* fid) {
   double time_elapsed = 0.0;
 
   bool failed = !foundSolution;
-  bool finished = tsocs_instance.Finished(params);
+  bool finished = tsocs_instance->Finished(params);
   while (!finished) {
     if (foundSolution) {
       DrawPoint(xt, solution_color, &drawings);
@@ -1473,8 +1470,8 @@ bool VisualizeIterativeTSOCS(SoccerDebugMessage* message, ScopedFile* fid) {
     time_elapsed += dt;
     SolutionParameters params_save(params);
     if (!isOpenLoop) {
-      tsocs_instance = Tsocs(xdt, vdt, xf, vf, kDefaultRobotAcceleration);
-      foundSolution = tsocs_instance.GetSolution(&params);
+      *tsocs_instance = Tsocs(xdt, vdt, xf, vf, kDefaultRobotAcceleration);
+      foundSolution = tsocs_instance->GetSolution(&params);
     } else {
       foundSolution = false;
     }
@@ -1485,7 +1482,7 @@ bool VisualizeIterativeTSOCS(SoccerDebugMessage* message, ScopedFile* fid) {
     xt = xdt;
     vt = vdt;
 
-    finished = tsocs_instance.Finished(params);
+    finished = tsocs_instance->Finished(params);
   }
 
   sub_log.set_text(StringPrintf("Final Conditions"));
@@ -1536,10 +1533,10 @@ void GenerateFigure(SoccerDebugMessage* message, Viewer* viewer) {
   bad_guess.isInitialized = true;
 
   SolutionParameters naive_solution(bad_guess);
-  tsocs_instance.GetSolution(&naive_solution);
+  tsocs_instance->GetSolution(&naive_solution);
 
   vector<SolutionParameters> solution_set;
-  tsocs_instance.GetSolutionSet(&solution_set);
+  tsocs_instance->GetSolutionSet(&solution_set);
 
   SolutionParameters stage1_params = solution_set.at(1);
   SolutionParameters stage2_params = solution_set.at(2);
@@ -1676,6 +1673,22 @@ int main(int argc, char** argv) {
   QApplication app(argc, argv);
   logger::ReadLogger log("viewer_motion.log");
   generator.seed(rand_seed_);
+
+  // Read variables from the configuration reader
+  configuration_reader::LuaRead(
+      {"src/configuration_reader/config_triangle.cfg",
+        "src/constants/constants.cfg"
+      });
+  ReadConfigurationConstants();
+
+  // initialize these after constants have been read, to prevent it from
+  // accessing config values that the config reader has not initialized yet
+  tsocs_instance = new Tsocs(Vector2d(0, 0),
+                             Vector2d(0, 0),
+                             Vector2d(0, 0),
+                             Vector2d(0, 0),
+                             kDefaultRobotAcceleration);
+  intercept = new BallInterception();
   view = new Viewer(NULL, &log, false);
   MotionVisualizer visualizer(view);
   view->show();

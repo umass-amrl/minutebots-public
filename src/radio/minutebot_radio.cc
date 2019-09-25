@@ -1,4 +1,4 @@
-// Copyright 2017 - 2018 slane@cs.umass.edu, jaholtz@umass.edu
+// Copyright 2017 - 2019 slane@cs.umass.edu, jaholtz@umass.edu
 // College of Information and Computer Sciences,
 // University of Massachusetts Amherst
 //
@@ -24,8 +24,10 @@
 #include <cstdio>
 #include <iostream>
 #include <limits>
+#include <utility>
 #include <vector>
 #include "radio_protocol_wrapper.pb.h"
+#include "util/array_util.h"
 #include "util/pthread_utils.h"
 #include "util/timer.h"
 #include "yisibot_radio/crc.h"
@@ -65,7 +67,9 @@ bool MinutebotRadio::Init(const char* serial_device, unsigned int frequency) {
   }
 
   // Start a thread for radio transmission.
-  return (pthread_create(&transmit_thread_, NULL, TransmitThread,
+  return (pthread_create(&transmit_thread_,
+                         NULL,
+                         TransmitThread,
                          reinterpret_cast<void*>(this)) == 0);
 }
 
@@ -90,7 +94,8 @@ bool MinutebotRadio::Send(const RadioProtocolWrapper& message) {
 
   const unsigned int prev_num_commands_next = num_commands_next_;
   if (message.command_size() + prev_num_commands_next > kMaxRobotsPerPacket) {
-    fprintf(stderr, "ERRROR: Received commands for more than %d robots!\n",
+    fprintf(stderr,
+            "ERRROR: Received commands for more than %d robots!\n",
             kMaxRobotsPerPacket);
     num_commands_next_ = kMaxRobotsPerPacket;
   } else {
@@ -202,7 +207,8 @@ int8_t GetKickPower(
     const std::array<KickCurve, kNumSSLVisionIds>& kick_curves_) {
   if (kKickTune) {
     return static_cast<int8_t>(math_util::Clamp(
-        command.flat_kick(), 0.0f,
+        command.flat_kick(),
+        0.0f,
         static_cast<float>(std::numeric_limits<int8_t>::max())));
   }
   if (!kRadioUsePassedPower) {
@@ -210,6 +216,12 @@ int8_t GetKickPower(
   }
   return LearnedFlatKickPower(command, kick_curves_);
 }
+
+std::array<std::pair<Eigen::Vector2f, double>, kNumSSLVisionIds + 1>
+    previous_commands =
+        array_util::MakeArray<kNumSSLVisionIds + 1,
+                              std::pair<Eigen::Vector2f, double>>(
+            {{0.0, 0.0}, 0.0});
 
 void MinutebotRadio::Set(const RadioProtocolCommand& command,
                          RobotCommandPacket* cmd) {
@@ -242,22 +254,66 @@ void MinutebotRadio::Set(const RadioProtocolCommand& command,
   //   std::printf("Command_y_velocity %f\n", command_y_velocity);
   //   std::printf("Command_r_velocity %f\n", command_rotational_velocity);
 
-  constexpr float wheel_angles[] = {
-      DegToRad<float>(90 + 54), DegToRad<float>(90 + 135),
-      DegToRad<float>(90 - 135), DegToRad<float>(90 - 54)};
+  constexpr float wheel_angles[] = {DegToRad<float>(90 + 54),
+                                    DegToRad<float>(90 + 135),
+                                    DegToRad<float>(90 - 135),
+                                    DegToRad<float>(90 - 54)};
 
   if (kDebug) {
-    printf("Robot: %d Command x: %f, y: %f, theta: %f", command.robot_id(),
-           command_x_velocity, command_y_velocity, command_rotational_velocity);
+    printf("Robot: %d Command x: %f, y: %f, theta: %f",
+           command.robot_id(),
+           command_x_velocity,
+           command_y_velocity,
+           command_rotational_velocity);
     printf("Speed: %f",
            std::sqrt(Sq(command_x_velocity) + Sq(command_y_velocity)));
   }
 
   if (!kUseCmdCorrection) {
+    static constexpr bool kDebug = false;
     static constexpr float kCommandScalingConstant = 1.00;
     // Converting to a value range used for command output.
-    command_x_velocity *= (kCommandScalingConstant * (127.0f / 4.0f));
-    command_y_velocity *= (kCommandScalingConstant * (127.0f / 4.0f));
+    command_x_velocity *= kCommandScalingConstant;
+    command_y_velocity *= kCommandScalingConstant;
+    // Store velocities for accel calculation
+    const double time = GetMonotonicTime();
+    Eigen::Vector2f velocity(command_x_velocity, command_y_velocity);
+    if (command.robot_id() < static_cast<int>(kNumSSLVisionIds)) {
+      //       const double last_time =
+      //       previous_commands.at(command.robot_id()).second;
+      const double delta_t = kControlPeriodTranslation;
+      if (delta_t > 0) {
+        const Eigen::Vector2f last_velocity =
+            previous_commands.at(command.robot_id()).first;
+        const Eigen::Vector2f diff_vec = velocity - last_velocity;
+        const float accel = diff_vec.norm() / (delta_t);
+        if (accel * 1000 > kMaxRobotAcceleration) {
+          if (kDebug) {
+            LOG(ERROR) << "Previous Velocity: " << last_velocity.x() << ","
+                       << last_velocity.y();
+            LOG(ERROR) << "Current Velocity: " << velocity.x() << ","
+                       << velocity.y();
+            LOG(ERROR) << "Diff: " << diff_vec.x() << "," << diff_vec.y();
+            LOG(ERROR) << "Time Diff: " << (delta_t);
+            LOG(ERROR) << "Commanded Acceleration too high. Max Accel: "
+                       << kMaxRobotAcceleration << " Commanded: " << accel;
+          }
+          Eigen::Vector2f new_velocity = last_velocity +
+                                         diff_vec.normalized() *
+                                             (kMaxRobotAcceleration / 1000) *
+                                             (delta_t);
+          velocity = new_velocity;
+          cout << endl;
+        }
+      }
+      previous_commands.at(command.robot_id()) = {velocity, time};
+    }
+
+    command_x_velocity = velocity.x();
+    command_y_velocity = velocity.y();
+
+    command_x_velocity *= (127.0f / 4.0f);
+    command_y_velocity *= (127.0f / 4.0f);
     command_rotational_velocity *= (127.0f / 50.63f);
 
     // printf("%f %f %f\n", x_velocity, y_velocity, r_velocity);
@@ -314,10 +370,12 @@ void MinutebotRadio::Set(const RadioProtocolCommand& command,
 void PrintRadioCommands(const RadioCommandPacket& packet) {
   printf("Radio packets:\n");
   for (int i = 0; i < kMaxRobotsPerPacket; ++i) {
-    printf(
-        "%X: %d %d %d %d\n", packet.robots[i].flags,
-        packet.robots[i].wheel_velocity[0], packet.robots[i].wheel_velocity[1],
-        packet.robots[i].wheel_velocity[2], packet.robots[i].wheel_velocity[3]);
+    printf("%X: %d %d %d %d\n",
+           packet.robots[i].flags,
+           packet.robots[i].wheel_velocity[0],
+           packet.robots[i].wheel_velocity[1],
+           packet.robots[i].wheel_velocity[2],
+           packet.robots[i].wheel_velocity[3]);
   }
 }
 

@@ -1,4 +1,4 @@
-// Copyright 2011-2018 jaholtz@cs.umass.edu
+// Copyright 2011-2019 jaholtz@cs.umass.edu
 // College of Information and Computer Sciences,
 // University of Massachusetts Amherst
 //
@@ -351,6 +351,9 @@ class ReadLogger : public Logger {
   void WriteKickTuningData();
   void SetTransition(const int& index, const int& transition);
   void UnsetTransition(const int& index, const int& transition);
+  void ContinueTransition(const int& index, const int& transition);
+  void EndFile(const int& index);
+
   void AddIndexEntry(const int& file_index);
   void GoToIndex(const int& file_index);
 

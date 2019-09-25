@@ -1,4 +1,4 @@
-// Copyright 2017-2018 srabiee@cs.umass.edu, slane@cs.umass.edu
+// Copyright 2017-2019 srabiee@cs.umass.edu, slane@cs.umass.edu
 // College of Information and Computer Sciences,
 // University of Massachusetts Amherst
 //
@@ -59,6 +59,7 @@ class KFConstVel{
   void Reset(const Eigen::Vector2d& observation,
              double delta_t);
 
+  void SetState(const Vector6d& state);
   Vector6d GetCurrentState();
   Matrix6d GetCurrentCovariance();
 
