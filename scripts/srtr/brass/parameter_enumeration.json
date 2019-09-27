@@ -1,155 +1,28 @@
 [{
   "name": "angle",
-  "nominalValue": 2.0,
-  "minorDegrdation": {
-    "min": 1.0,
-    "max": 2.0
-  },
-  "majorDegrdation": {
-    "min": 0.0,
-    "max": 5.0
-  }
+  "nominalValue": 2.0
 }, {
   "name": "distance",
-  "nominalValue": 145.99998474121094,
-  "minorDegrdation": {
-    "min": 2.5,
-    "max": 5.5
-  },
-  "majorDegrdation": {
-    "min": 0,
-    "max": 9
-  }
+  "nominalValue": 145.99998474121094
 }, {
   "name": "y_prime_vel",
-  "nominalValue": 10.0,
-  "minorDegrdation": {
-    "min": 2.5,
-    "max": 5.5
-  },
-  "majorDegrdation": {
-    "min": 0,
-    "max": 9
-  }
+  "nominalValue": 10.0
 }, {
   "name": "relative_vel",
-  "nominalValue": 50.0,
-  "minorDegrdation": {
-    "min": 2.5,
-    "max": 5.5
-  },
-  "majorDegrdation": {
-    "min": 0,
-    "max": 9
-  }
+  "nominalValue": 50.0
 }, {
   "name": "align",
-  "nominalValue": 89.67739868164063,
-  "minorDegrdation": {
-    "min": 2.5,
-    "max": 5.5
-  },
-  "majorDegrdation": {
-    "min": 0,
-    "max": 9
-  }
+  "nominalValue": 89.67739868164063
 }, {
   "name": "angular_vel",
-  "nominalValue": 5.14187479019165,
-  "minorDegrdation": {
-    "min": 2.5,
-    "max": 5.5
-  },
-  "majorDegrdation": {
-    "min": 0,
-    "max": 9
-  }
-}, {
-  "name": "kick_timeout",
-  "nominalValue": 40,
-  "minorDegrdation": {
-    "min": 2.5,
-    "max": 5.5
-  },
-  "majorDegrdation": {
-    "min": 0,
-    "max": 9
-  }
+  "nominalValue": 5.14187479019165
 }, {
   "name": "catch_velocity",
-  "nominalValue": 868.8809204101563,
-  "minorDegrdation": {
-    "min": 2.5,
-    "max": 5.5
-  },
-  "majorDegrdation": {
-    "min": 0,
-    "max": 9
-  }
+  "nominalValue": 868.8809204101563
 }, {
-  "name": "could_score_speed",
-  "nominalValue": 1000,
-  "minorDegrdation": {
-    "min": 2.5,
-    "max": 5.5
-  },
-  "majorDegrdation": {
-    "min": 0,
-    "max": 9
-  }
-},  {
   "name": "ball_velocity",
-  "nominalValue": 100,
-  "minorDegrdation": {
-    "min": 2.5,
-    "max": 5.5
-  },
-  "majorDegrdation": {
-    "min": 0,
-    "max": 9
-  }
+  "nominalValue": 100
 },  {
   "name": "catch_radius",
-  "nominalValue": 400.0,
-  "minorDegrdation": {
-    "min": 2.5,
-    "max": 5.5
-  },
-  "majorDegrdation": {
-    "min": 0,
-    "max": 9
-  }
-},  {
-  "name": "kick_percent",
-  "nominalValue": 85,
-  "minorDegrdation": {
-    "min": 2.5,
-    "max": 5.5
-  },
-  "majorDegrdation": {
-    "min": 0,
-    "max": 9
-  }
-},  {
-  "name": "kick_speed",
-  "nominalValue": 1000,
-  "minorDegrdation": {
-    "min": 2.5,
-    "max": 5.5
-  },
-  "majorDegrdation": {
-    "min": 0,
-    "max": 9
-  }
-}, {
-  "name": "kick_follow_through",
-  "nominalValue": 10,
-  "minorDegrdation": {
-    "min": 11,
-    "max": 15
-  },
-  "majorDegrdation": {
-    "min": 20,
-    "max": 30
-  }
+  "nominalValue": 400.0
 }]

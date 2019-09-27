@@ -72,7 +72,7 @@ def RunTestScenario(state_name, scenario):
                   state_name])
   # Spawns two threads, so divide CPUs by two.
   count = (mp.cpu_count() // 2) - 1
-  pool = mp.Pool(processes=8)
+  pool = mp.Pool(processes=7)
   # Run the jobs in parallel!!!!
   exec_results = pool.map(exec_soccer, tasks)
   pool.close()
@@ -103,20 +103,24 @@ def AnalyzeResults(name, result, nominal_result, degraded_result):
   possible_fixes = 0
   total = 0
   adapted_success = 0
+  nominal_total = 0
   filtered_result = {}
   for key in nominal_result:
     total += 1
     filtered_result[key] = result[key]
     adapted_score = result[key]
     degraded_score = degraded_result[key]
-    if (adapted_score == 1):
-      adapted_success += 1
-    if (degraded_score == 0): # Degraded was broken
-      possible_fixes += 1
-      if (adapted_score == 1): # Either we fix it or not
-        reward += 1
-    elif (adapted_score == 0): # otherwise we could have broken it
-      penalty += 1
+    nominal_score = nominal_result[key]
+    nominal_total += nominal_score
+    if (nominal_score == 1):
+      if (adapted_score == 1):
+        adapted_success += 1
+      if (degraded_score == 0): # Degraded was broken
+        possible_fixes += 1
+        if (adapted_score == 1): # Either we fix it or not
+          reward += 1
+      elif (adapted_score == 0): # otherwise we could have broken it
+        penalty += 1
   fix_percentage = 0
   if (possible_fixes > 0):
     fix_percentage = reward / possible_fixes
@@ -124,16 +128,27 @@ def AnalyzeResults(name, result, nominal_result, degraded_result):
   # Generate a short summary
   entry = OrderedDict()
   entry["Name"] = name
-  entry["Nominal Successes"] = total
-  entry["Degraded Failures"] = possible_fixes
-  entry["Successfully Repaired"] = reward
+  entry["Nominal Successes"] = nominal_total
+  entry["Degraded Successes"] = nominal_total - possible_fixes
+  entry["Adaptation Successes"] = adapted_success
   entry["Added Failures"] = penalty
-  entry["Fix Percentage"] = fix_percentage 
-  entry["Adapted Success Rate"] = adapted_success / total
-  degraded_success_rate = (total - possible_fixes) / total
-  entry["Degraded Success Change"] = 1 - degraded_success_rate
+  entry["Repaired"] = reward
+  degraded_success_rate = (nominal_total - possible_fixes) / nominal_total
   entry["Degraded Success Rate"] = degraded_success_rate
-  entry["Change in Success Rate"] = (adapted_success / total) - degraded_success_rate
+  entry["Adapted Success Rate"] = adapted_success / nominal_total
+  score = (reward - penalty) / possible_fixes
+  entry["Score"] = score
+  label = ""
+  success_thresh = .25;
+  # inconclusive_thresh = 0.1
+  if (score >= success_thresh):
+    label = "PASS"
+  elif (score >= 0.0):
+    label = "INCONCLUSIVE"
+  else:
+    label = "FAIL"
+  entry["Result"] = label
+
   # Output Summary json to file
   # filename = 'scripts/srtr/brass/results/' + name + '_summary.json'
   # text_file = open(filename, "w")

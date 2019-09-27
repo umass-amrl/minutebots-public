@@ -55,7 +55,7 @@
     "perturbedValue": 20.0
   }]
 }, {
-  "name": "mixed-all-med,",
+  "name": "mixed-all-med",
   "numScenarios": 1000,
   "perturbations": [{
     "name": "align",
@@ -84,7 +84,7 @@
     "perturbedValue": 100.0
   }]
 }, {
-  "name": "mixed-all-small,",
+  "name": "mixed-all-small",
   "numScenarios": 1000,
   "perturbations": [{
     "name": "align",
@@ -113,7 +113,7 @@
     "perturbedValue": 185.0
   }]
 }, {
-  "name": "mixed-pair-1,",
+  "name": "mixed-pair-1",
   "numScenarios": 1000,
   "perturbations": [{
     "name": "align",
@@ -123,7 +123,7 @@
     "perturbedValue": 110.0
   }]
 }, {
-  "name": "mixed-pair-2,",
+  "name": "mixed-pair-2",
   "numScenarios": 1000,
   "perturbations": [{
     "name": "align",
@@ -133,7 +133,7 @@
     "perturbedValue": 1.0
   }]
 }, {
-  "name": "mixed-pair-3,",
+  "name": "mixed-pair-3",
   "numScenarios": 1000,
   "perturbations": [{
     "name": "align",
@@ -143,7 +143,7 @@
     "perturbedValue": 75.0
   }]
 }, {
-  "name": "mixed-pair-4,",
+  "name": "mixed-pair-4",
   "numScenarios": 1000,
   "perturbations": [{
     "name": "align",
@@ -153,7 +153,7 @@
     "perturbedValue": 5.0
   }]
 }, {
-  "name": "mixed-pair-5,",
+  "name": "mixed-pair-5",
   "numScenarios": 1000,
   "perturbations": [{
     "name": "align",
@@ -163,7 +163,7 @@
     "perturbedValue": 25.0
   }]
 }, {
-  "name": "mixed-pair-6,",
+  "name": "mixed-pair-6",
   "numScenarios": 1000,
   "perturbations": [{
     "name": "align",
@@ -173,7 +173,7 @@
     "perturbedValue": 1700.0
   }]
 }, {
-  "name": "mixed-pair-7,",
+  "name": "mixed-pair-7",
   "numScenarios": 1000,
   "perturbations": [{
     "name": "ball_velocity",
@@ -183,7 +183,7 @@
     "perturbedValue": 1.0
   }]
 }, {
-  "name": "mixed-pair-8,",
+  "name": "mixed-pair-8",
   "numScenarios": 1000,
   "perturbations": [{
     "name": "ball_velocity",
@@ -193,7 +193,7 @@
     "perturbedValue": 75.0
   }]
 }, {
-  "name": "mixed-pair-9,",
+  "name": "mixed-pair-9",
   "numScenarios": 1000,
   "perturbations": [{
     "name": "ball_velocity",
@@ -203,7 +203,7 @@
     "perturbedValue": 5.0
   }]
 }, {
-  "name": "mixed-pair-11,",
+  "name": "mixed-pair-11",
   "numScenarios": 1000,
   "perturbations": [{
     "name": "ball_velocity",
@@ -213,7 +213,7 @@
     "perturbedValue": 25.0
   }]
 }, {
-  "name": "mixed-pair-12,",
+  "name": "mixed-pair-12",
   "numScenarios": 1000,
   "perturbations": [{
     "name": "ball_velocity",
@@ -223,7 +223,7 @@
     "perturbedValue": 1700.0
   }]
 }, {
-  "name": "mixed-pair-13,",
+  "name": "mixed-pair-13",
   "numScenarios": 1000,
   "perturbations": [{
     "name": "ball_velocity",
@@ -233,7 +233,7 @@
     "perturbedValue": 100.0
   }]
 }, {
-  "name": "mixed-pair-14,",
+  "name": "mixed-pair-14",
   "numScenarios": 1000,
   "perturbations": [{
     "name": "distance",
@@ -243,7 +243,7 @@
     "perturbedValue": 1.0
   }]
 }, {
-  "name": "mixed-pair-15,",
+  "name": "mixed-pair-15",
   "numScenarios": 1000,
   "perturbations": [{
     "name": "y_prime_vel",
@@ -253,7 +253,7 @@
     "perturbedValue": 1.0
   }]
 }, {
-  "name": "mixed-pair-16,",
+  "name": "mixed-pair-16",
   "numScenarios": 1000,
   "perturbations": [{
     "name": "relative_vel",
@@ -263,7 +263,7 @@
     "perturbedValue": 1.0
   }]
 }, {
-  "name": "mixed-pair-17,",
+  "name": "mixed-pair-17",
   "numScenarios": 1000,
   "perturbations": [{
     "name": "catch_velocity",
@@ -273,7 +273,7 @@
     "perturbedValue": 1.0
   }]
 }, {
-  "name": "mixed-pair-18,",
+  "name": "mixed-pair-18",
   "numScenarios": 1000,
   "perturbations": [{
     "name": "catch_radius",
@@ -283,7 +283,7 @@
     "perturbedValue": 1.0
   }]
 }, {
-  "name": "mixed-pair-19,",
+  "name": "mixed-pair-19",
   "numScenarios": 1000,
   "perturbations": [{
     "name": "distance",
@@ -293,7 +293,7 @@
     "perturbedValue": 5.0
   }]
 }, {
-  "name": "mixed-pair-20,",
+  "name": "mixed-pair-20",
   "numScenarios": 1000,
   "perturbations": [{
     "name": "distance",
@@ -303,7 +303,7 @@
     "perturbedValue": 25.0
   }]
 }, {
-  "name": "mixed-pair-21,",
+  "name": "mixed-pair-21",
   "numScenarios": 1000,
   "perturbations": [{
     "name": "distance",
@@ -313,7 +313,7 @@
     "perturbedValue": 1700.0
   }]
 }, {
-  "name": "mixed-pair-22,",
+  "name": "mixed-pair-22",
   "numScenarios": 1000,
   "perturbations": [{
     "name": "distance",
@@ -323,7 +323,7 @@
     "perturbedValue": 100.0
   }]
 }, {
-  "name": "mixed-pair-23,",
+  "name": "mixed-pair-23",
   "numScenarios": 1000,
   "perturbations": [{
     "name": "relative_vel",
@@ -333,7 +333,7 @@
     "perturbedValue": 5.0
   }]
 }, {
-  "name": "mixed-pair-24,",
+  "name": "mixed-pair-24",
   "numScenarios": 1000,
   "perturbations": [{
     "name": "catch_radius",
@@ -343,7 +343,7 @@
     "perturbedValue": 5.0
   }]
 }, {
-  "name": "mixed-pair-25,",
+  "name": "mixed-pair-25",
   "numScenarios": 1000,
   "perturbations": [{
     "name": "catch_velocity",
@@ -353,7 +353,7 @@
     "perturbedValue": 5.0
   }]
 }, {
-  "name": "mixed-pair-26,",
+  "name": "mixed-pair-26",
   "numScenarios": 1000,
   "perturbations": [{
     "name": "relative_vel",
@@ -363,7 +363,7 @@
     "perturbedValue": 1700.0
   }]
 }, {
-  "name": "mixed-pair-27,",
+  "name": "mixed-pair-27",
   "numScenarios": 1000,
   "perturbations": [{
     "name": "relative_vel",
@@ -373,7 +373,7 @@
     "perturbedValue": 100.0
   }]
 }, {
-  "name": "mixed-pair-28,",
+  "name": "mixed-pair-28",
   "numScenarios": 1000,
   "perturbations": [{
     "name": "catch_velocity",
@@ -383,7 +383,7 @@
     "perturbedValue": 100.0
   }]
 }, {
-  "name": "align-medium,",
+  "name": "align-medium",
   "numScenarios": 1000,
   "perturbations": [{
     "name": "align",
