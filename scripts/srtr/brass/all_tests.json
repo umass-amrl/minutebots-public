@@ -1,62 +1,62 @@
 [{
   "name": "align-large",
-  "numScenarios": 1000,
+  "numScenarios": 500,
   "perturbations": [{
     "name": "align",
     "perturbedValue": 0.02
   }]
 }, {
   "name": "ballvelocity-large",
-  "numScenarios": 1000,
+  "numScenarios": 500,
   "perturbations": [{
     "name": "ball_velocity",
     "perturbedValue": 10000.0
   }]
 }, {
   "name": "angle-large",
-  "numScenarios": 1000,
+  "numScenarios": 500,
   "perturbations": [{
     "name": "angle",
     "perturbedValue": 0.02
   }]
 }, {
   "name": "distance-large",
-  "numScenarios": 1000,
+  "numScenarios": 500,
   "perturbations": [{
     "name": "distance",
     "perturbedValue": 10.0
   }]
 }, {
   "name": "yprimevel-large",
-  "numScenarios": 1000,
+  "numScenarios": 500,
   "perturbations": [{
     "name": "y_prime_vel",
     "perturbedValue": 1.0
   }]
 }, {
   "name": "relativevel-large",
-  "numScenarios": 1000,
+  "numScenarios": 500,
   "perturbations": [{
     "name": "relative_vel",
     "perturbedValue": 5.0
   }]
 }, {
   "name": "catchvel-large",
-  "numScenarios": 1000,
+  "numScenarios": 500,
   "perturbations": [{
     "name": "catch_velocity",
     "perturbedValue": 8000.0
   }]
 }, {
   "name": "catchradius-large",
-  "numScenarios": 1000,
+  "numScenarios": 500,
   "perturbations": [{
     "name": "catch_radius",
     "perturbedValue": 20.0
   }]
 }, {
   "name": "mixed-all-med",
-  "numScenarios": 1000,
+  "numScenarios": 500,
   "perturbations": [{
     "name": "align",
     "perturbedValue": 45.0
@@ -85,7 +85,7 @@
   }]
 }, {
   "name": "mixed-all-small",
-  "numScenarios": 1000,
+  "numScenarios": 500,
   "perturbations": [{
     "name": "align",
     "perturbedValue": 85.0
@@ -114,7 +114,7 @@
   }]
 }, {
   "name": "mixed-pair-1",
-  "numScenarios": 1000,
+  "numScenarios": 500,
   "perturbations": [{
     "name": "align",
     "perturbedValue": 85.0
@@ -124,7 +124,7 @@
   }]
 }, {
   "name": "mixed-pair-2",
-  "numScenarios": 1000,
+  "numScenarios": 500,
   "perturbations": [{
     "name": "align",
     "perturbedValue": 70.0
@@ -134,7 +134,7 @@
   }]
 }, {
   "name": "mixed-pair-3",
-  "numScenarios": 1000,
+  "numScenarios": 500,
   "perturbations": [{
     "name": "align",
     "perturbedValue": 70.0
@@ -144,7 +144,7 @@
   }]
 }, {
   "name": "mixed-pair-4",
-  "numScenarios": 1000,
+  "numScenarios": 500,
   "perturbations": [{
     "name": "align",
     "perturbedValue": 70.0
@@ -154,7 +154,7 @@
   }]
 }, {
   "name": "mixed-pair-5",
-  "numScenarios": 1000,
+  "numScenarios": 500,
   "perturbations": [{
     "name": "align",
     "perturbedValue": 70.0
@@ -164,7 +164,7 @@
   }]
 }, {
   "name": "mixed-pair-6",
-  "numScenarios": 1000,
+  "numScenarios": 500,
   "perturbations": [{
     "name": "align",
     "perturbedValue": 70.0
@@ -174,7 +174,7 @@
   }]
 }, {
   "name": "mixed-pair-7",
-  "numScenarios": 1000,
+  "numScenarios": 500,
   "perturbations": [{
     "name": "ball_velocity",
     "perturbedValue": 200.0
@@ -184,7 +184,7 @@
   }]
 }, {
   "name": "mixed-pair-8",
-  "numScenarios": 1000,
+  "numScenarios": 500,
   "perturbations": [{
     "name": "ball_velocity",
     "perturbedValue": 200.0
@@ -194,7 +194,7 @@
   }]
 }, {
   "name": "mixed-pair-9",
-  "numScenarios": 1000,
+  "numScenarios": 500,
   "perturbations": [{
     "name": "ball_velocity",
     "perturbedValue": 200.0
@@ -204,7 +204,7 @@
   }]
 }, {
   "name": "mixed-pair-11",
-  "numScenarios": 1000,
+  "numScenarios": 500,
   "perturbations": [{
     "name": "ball_velocity",
     "perturbedValue": 200.0
@@ -214,7 +214,7 @@
   }]
 }, {
   "name": "mixed-pair-12",
-  "numScenarios": 1000,
+  "numScenarios": 500,
   "perturbations": [{
     "name": "ball_velocity",
     "perturbedValue": 200.0
@@ -224,7 +224,7 @@
   }]
 }, {
   "name": "mixed-pair-13",
-  "numScenarios": 1000,
+  "numScenarios": 500,
   "perturbations": [{
     "name": "ball_velocity",
     "perturbedValue": 200.0
@@ -234,7 +234,7 @@
   }]
 }, {
   "name": "mixed-pair-14",
-  "numScenarios": 1000,
+  "numScenarios": 500,
   "perturbations": [{
     "name": "distance",
     "perturbedValue": 75.0
@@ -244,7 +244,7 @@
   }]
 }, {
   "name": "mixed-pair-15",
-  "numScenarios": 1000,
+  "numScenarios": 500,
   "perturbations": [{
     "name": "y_prime_vel",
     "perturbedValue": 5.0
@@ -254,7 +254,7 @@
   }]
 }, {
   "name": "mixed-pair-16",
-  "numScenarios": 1000,
+  "numScenarios": 500,
   "perturbations": [{
     "name": "relative_vel",
     "perturbedValue": 25.0
@@ -264,7 +264,7 @@
   }]
 }, {
   "name": "mixed-pair-17",
-  "numScenarios": 1000,
+  "numScenarios": 500,
   "perturbations": [{
     "name": "catch_velocity",
     "perturbedValue": 1700.0
@@ -274,7 +274,7 @@
   }]
 }, {
   "name": "mixed-pair-18",
-  "numScenarios": 1000,
+  "numScenarios": 500,
   "perturbations": [{
     "name": "catch_radius",
     "perturbedValue": 100.0
@@ -284,7 +284,7 @@
   }]
 }, {
   "name": "mixed-pair-19",
-  "numScenarios": 1000,
+  "numScenarios": 500,
   "perturbations": [{
     "name": "distance",
     "perturbedValue": 75.0
@@ -294,7 +294,7 @@
   }]
 }, {
   "name": "mixed-pair-20",
-  "numScenarios": 1000,
+  "numScenarios": 500,
   "perturbations": [{
     "name": "distance",
     "perturbedValue": 75.0
@@ -304,7 +304,7 @@
   }]
 }, {
   "name": "mixed-pair-21",
-  "numScenarios": 1000,
+  "numScenarios": 500,
   "perturbations": [{
     "name": "distance",
     "perturbedValue": 75.0
@@ -314,7 +314,7 @@
   }]
 }, {
   "name": "mixed-pair-22",
-  "numScenarios": 1000,
+  "numScenarios": 500,
   "perturbations": [{
     "name": "distance",
     "perturbedValue": 75.0
@@ -324,7 +324,7 @@
   }]
 }, {
   "name": "mixed-pair-23",
-  "numScenarios": 1000,
+  "numScenarios": 500,
   "perturbations": [{
     "name": "relative_vel",
     "perturbedValue": 25.0
@@ -334,7 +334,7 @@
   }]
 }, {
   "name": "mixed-pair-24",
-  "numScenarios": 1000,
+  "numScenarios": 500,
   "perturbations": [{
     "name": "catch_radius",
     "perturbedValue": 100.0
@@ -344,7 +344,7 @@
   }]
 }, {
   "name": "mixed-pair-25",
-  "numScenarios": 1000,
+  "numScenarios": 500,
   "perturbations": [{
     "name": "catch_velocity",
     "perturbedValue": 1700.0
@@ -354,7 +354,7 @@
   }]
 }, {
   "name": "mixed-pair-26",
-  "numScenarios": 1000,
+  "numScenarios": 500,
   "perturbations": [{
     "name": "relative_vel",
     "perturbedValue": 25.0
@@ -364,7 +364,7 @@
   }]
 }, {
   "name": "mixed-pair-27",
-  "numScenarios": 1000,
+  "numScenarios": 500,
   "perturbations": [{
     "name": "relative_vel",
     "perturbedValue": 25.0
@@ -374,7 +374,7 @@
   }]
 }, {
   "name": "mixed-pair-28",
-  "numScenarios": 1000,
+  "numScenarios": 500,
   "perturbations": [{
     "name": "catch_velocity",
     "perturbedValue": 1700.0
@@ -384,112 +384,112 @@
   }]
 }, {
   "name": "align-medium",
-  "numScenarios": 1000,
+  "numScenarios": 500,
   "perturbations": [{
     "name": "align",
     "perturbedValue": 45.0
   }]
 }, {
   "name": "ballvelocity-medium",
-  "numScenarios": 1000,
+  "numScenarios": 500,
   "perturbations": [{
     "name": "ball_velocity",
     "perturbedValue": 200.0
   }]
 }, {
   "name": "angle-medium",
-  "numScenarios": 1000,
+  "numScenarios": 500,
   "perturbations": [{
     "name": "angle",
     "perturbedValue": 1.0
   }]
 }, {
   "name": "distance-medium",
-  "numScenarios": 1000,
+  "numScenarios": 500,
   "perturbations": [{
     "name": "distance",
     "perturbedValue": 75.0
   }]
 }, {
   "name": "yprimevel-medium",
-  "numScenarios": 1000,
+  "numScenarios": 500,
   "perturbations": [{
     "name": "y_prime_vel",
     "perturbedValue": 5.0
   }]
 }, {
   "name": "relativevel-medium",
-  "numScenarios": 1000,
+  "numScenarios": 500,
   "perturbations": [{
     "name": "relative_vel",
     "perturbedValue": 25.0
   }]
 }, {
   "name": "catchvel-medium",
-  "numScenarios": 1000,
+  "numScenarios": 500,
   "perturbations": [{
     "name": "catch_velocity",
     "perturbedValue": 1700.0
   }]
 }, {
   "name": "catchradius-medium",
-  "numScenarios": 1000,
+  "numScenarios": 500,
   "perturbations": [{
     "name": "catch_radius",
     "perturbedValue": 100.0
   }]
 }, {
   "name": "align-small",
-  "numScenarios": 1000,
+  "numScenarios": 500,
   "perturbations": [{
     "name": "align",
     "perturbedValue": 85.0
   }]
 }, {
   "name": "ballvelocity-small",
-  "numScenarios": 1000,
+  "numScenarios": 500,
   "perturbations": [{
     "name": "ball_velocity",
     "perturbedValue": 110.0
   }]
 }, {
   "name": "angle-small",
-  "numScenarios": 1000,
+  "numScenarios": 500,
   "perturbations": [{
     "name": "angle",
     "perturbedValue": 1.8
   }]
 }, {
   "name": "distance-small",
-  "numScenarios": 1000,
+  "numScenarios": 500,
   "perturbations": [{
     "name": "distance",
     "perturbedValue": 127.5
   }]
 }, {
   "name": "yprimevel-small",
-  "numScenarios": 1000,
+  "numScenarios": 500,
   "perturbations": [{
     "name": "y_prime_vel",
     "perturbedValue": 8.5
   }]
 }, {
   "name": "relativevel-small",
-  "numScenarios": 1000,
+  "numScenarios": 500,
   "perturbations": [{
     "name": "relative_vel",
     "perturbedValue": 42.5
   }]
 }, {
   "name": "catchvel-small",
-  "numScenarios": 1000,
+  "numScenarios": 500,
   "perturbations": [{
     "name": "catch_velocity",
     "perturbedValue": 1000.0
   }]
 }, {
   "name": "catchradius-small",
-  "numScenarios": 1000,
+  "numScenarios": 500,
   "perturbations": [{
     "name": "catch_radius",
     "perturbedValue": 185.0
