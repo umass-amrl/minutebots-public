@@ -20,13 +20,6 @@
     "perturbedValue": 0.02
   }]
 }, {
-  "name": "distance-large",
-  "numScenarios": 500,
-  "perturbations": [{
-    "name": "distance",
-    "perturbedValue": 10.0
-  }]
-}, {
   "name": "yprimevel-large",
   "numScenarios": 500,
   "perturbations": [{
@@ -39,20 +32,6 @@
   "perturbations": [{
     "name": "relative_vel",
     "perturbedValue": 5.0
-  }]
-}, {
-  "name": "catchvel-large",
-  "numScenarios": 500,
-  "perturbations": [{
-    "name": "catch_velocity",
-    "perturbedValue": 8000.0
-  }]
-}, {
-  "name": "catchradius-large",
-  "numScenarios": 500,
-  "perturbations": [{
-    "name": "catch_radius",
-    "perturbedValue": 20.0
   }]
 }, {
   "name": "mixed-all-med",
@@ -113,16 +92,6 @@
     "perturbedValue": 185.0
   }]
 }, {
-  "name": "mixed-pair-1",
-  "numScenarios": 500,
-  "perturbations": [{
-    "name": "align",
-    "perturbedValue": 85.0
-  }, {
-    "name": "ball_velocity",
-    "perturbedValue": 110.0
-  }]
-}, {
   "name": "mixed-pair-2",
   "numScenarios": 500,
   "perturbations": [{
@@ -131,16 +100,6 @@
   }, {
     "name": "angle",
     "perturbedValue": 1.0
-  }]
-}, {
-  "name": "mixed-pair-3",
-  "numScenarios": 500,
-  "perturbations": [{
-    "name": "align",
-    "perturbedValue": 70.0
-  }, {
-    "name": "distance",
-    "perturbedValue": 75.0
   }]
 }, {
   "name": "mixed-pair-4",
@@ -163,16 +122,6 @@
     "perturbedValue": 25.0
   }]
 }, {
-  "name": "mixed-pair-6",
-  "numScenarios": 500,
-  "perturbations": [{
-    "name": "align",
-    "perturbedValue": 70.0
-  }, {
-    "name": "catch_velocity",
-    "perturbedValue": 1700.0
-  }]
-}, {
   "name": "mixed-pair-7",
   "numScenarios": 500,
   "perturbations": [{
@@ -181,16 +130,6 @@
   }, {
     "name": "angle",
     "perturbedValue": 1.0
-  }]
-}, {
-  "name": "mixed-pair-8",
-  "numScenarios": 500,
-  "perturbations": [{
-    "name": "ball_velocity",
-    "perturbedValue": 200.0
-  }, {
-    "name": "distance",
-    "perturbedValue": 75.0
   }]
 }, {
   "name": "mixed-pair-9",
@@ -211,16 +150,6 @@
   }, {
     "name": "relative_vel",
     "perturbedValue": 25.0
-  }]
-}, {
-  "name": "mixed-pair-12",
-  "numScenarios": 500,
-  "perturbations": [{
-    "name": "ball_velocity",
-    "perturbedValue": 200.0
-  }, {
-    "name": "catch_velocity",
-    "perturbedValue": 1700.0
   }]
 }, {
   "name": "mixed-pair-13",
@@ -263,16 +192,6 @@
     "perturbedValue": 1.0
   }]
 }, {
-  "name": "mixed-pair-17",
-  "numScenarios": 500,
-  "perturbations": [{
-    "name": "catch_velocity",
-    "perturbedValue": 1700.0
-  }, {
-    "name": "angle",
-    "perturbedValue": 1.0
-  }]
-}, {
   "name": "mixed-pair-18",
   "numScenarios": 500,
   "perturbations": [{
@@ -301,26 +220,6 @@
   }, {
     "name": "relative_vel",
     "perturbedValue": 25.0
-  }]
-}, {
-  "name": "mixed-pair-21",
-  "numScenarios": 500,
-  "perturbations": [{
-    "name": "distance",
-    "perturbedValue": 75.0
-  }, {
-    "name": "catch_velocity",
-    "perturbedValue": 1700.0
-  }]
-}, {
-  "name": "mixed-pair-22",
-  "numScenarios": 500,
-  "perturbations": [{
-    "name": "distance",
-    "perturbedValue": 75.0
-  }, {
-    "name": "catch_radius",
-    "perturbedValue": 100.0
   }]
 }, {
   "name": "mixed-pair-23",
@@ -373,42 +272,11 @@
     "perturbedValue": 100.0
   }]
 }, {
-  "name": "mixed-pair-28",
-  "numScenarios": 500,
-  "perturbations": [{
-    "name": "catch_velocity",
-    "perturbedValue": 1700.0
-  }, {
-    "name": "catch_radius",
-    "perturbedValue": 100.0
-  }]
-}, {
-  "name": "align-medium",
-  "numScenarios": 500,
-  "perturbations": [{
-    "name": "align",
-    "perturbedValue": 45.0
-  }]
-}, {
-  "name": "ballvelocity-medium",
-  "numScenarios": 500,
-  "perturbations": [{
-    "name": "ball_velocity",
-    "perturbedValue": 200.0
-  }]
-}, {
   "name": "angle-medium",
   "numScenarios": 500,
   "perturbations": [{
     "name": "angle",
     "perturbedValue": 1.0
-  }]
-}, {
-  "name": "distance-medium",
-  "numScenarios": 500,
-  "perturbations": [{
-    "name": "distance",
-    "perturbedValue": 75.0
   }]
 }, {
   "name": "yprimevel-medium",
@@ -439,25 +307,11 @@
     "perturbedValue": 100.0
   }]
 }, {
-  "name": "align-small",
-  "numScenarios": 500,
-  "perturbations": [{
-    "name": "align",
-    "perturbedValue": 85.0
-  }]
-}, {
   "name": "ballvelocity-small",
   "numScenarios": 500,
   "perturbations": [{
     "name": "ball_velocity",
     "perturbedValue": 110.0
-  }]
-}, {
-  "name": "angle-small",
-  "numScenarios": 500,
-  "perturbations": [{
-    "name": "angle",
-    "perturbedValue": 1.8
   }]
 }, {
   "name": "distance-small",
@@ -481,17 +335,842 @@
     "perturbedValue": 42.5
   }]
 }, {
-  "name": "catchvel-small",
-  "numScenarios": 500,
-  "perturbations": [{
-    "name": "catch_velocity",
-    "perturbedValue": 1000.0
+    "name": "random-0", 
+    "numScenarios": 500, 
+    "perturbations": [
+      {
+        "name": "angle", 
+        "perturbedValue": 9.702299790406316
+      }, 
+      {
+        "name": "distance", 
+        "perturbedValue": 104.36728466917455
+      }, 
+      {
+        "name": "y_prime_vel", 
+        "perturbedValue": 43.39955417461556
+      }, 
+      {
+        "name": "relative_vel", 
+        "perturbedValue": 161.58850203707865
+      }, 
+      {
+        "name": "align", 
+        "perturbedValue": 174.54253790956577
+      }, 
+      {
+        "name": "angular_vel", 
+        "perturbedValue": 3.75344014351044
+      }, 
+      {
+        "name": "catch_velocity", 
+        "perturbedValue": 626.7377891411238
+      }, 
+      {
+        "name": "ball_velocity", 
+        "perturbedValue": 4672.912613290494
+      }, 
+      {
+        "name": "catch_radius", 
+        "perturbedValue": 646.2090443788271
+      }
+    ]
+  }, 
+  {
+    "name": "random-1", 
+    "numScenarios": 500, 
+    "perturbations": [
+      {
+        "name": "angle", 
+        "perturbedValue": 9.875407673938701
+      }, 
+      {
+        "name": "distance", 
+        "perturbedValue": 221.1597118620178
+      }, 
+      {
+        "name": "y_prime_vel", 
+        "perturbedValue": 106.20389279848223
+      }, 
+      {
+        "name": "relative_vel", 
+        "perturbedValue": 178.3139780687645
+      }, 
+      {
+        "name": "align", 
+        "perturbedValue": 114.97884231271655
+      }, 
+      {
+        "name": "angular_vel", 
+        "perturbedValue": 2.6160614660668102
+      }, 
+      {
+        "name": "catch_velocity", 
+        "perturbedValue": 711.8988228321091
+      }, 
+      {
+        "name": "ball_velocity", 
+        "perturbedValue": 6778.328772444642
+      }, 
+      {
+        "name": "catch_radius", 
+        "perturbedValue": 628.2976118229673
+      }
+    ]
+  }, 
+  {
+    "name": "random-2", 
+    "numScenarios": 500, 
+    "perturbations": [
+      {
+        "name": "angle", 
+        "perturbedValue": 4.3161503374396055
+      }, 
+      {
+        "name": "distance", 
+        "perturbedValue": 136.14357192119863
+      }, 
+      {
+        "name": "y_prime_vel", 
+        "perturbedValue": 11.678879240536437
+      }, 
+      {
+        "name": "relative_vel", 
+        "perturbedValue": 12.380825672323788
+      }, 
+      {
+        "name": "align", 
+        "perturbedValue": 58.9934747239574
+      }, 
+      {
+        "name": "angular_vel", 
+        "perturbedValue": 6.589095264902997
+      }, 
+      {
+        "name": "catch_velocity", 
+        "perturbedValue": 536.3147974207568
+      }, 
+      {
+        "name": "ball_velocity", 
+        "perturbedValue": 9996.270179590096
+      }, 
+      {
+        "name": "catch_radius", 
+        "perturbedValue": 754.114066951745
+      }
+    ]
+  }, 
+  {
+    "name": "random-3", 
+    "numScenarios": 500, 
+    "perturbations": [
+      {
+        "name": "angle", 
+        "perturbedValue": 4.5592929653950955
+      }, 
+      {
+        "name": "distance", 
+        "perturbedValue": 27.761054587520718
+      }, 
+      {
+        "name": "y_prime_vel", 
+        "perturbedValue": 41.528952016731765
+      }, 
+      {
+        "name": "relative_vel", 
+        "perturbedValue": 226.18360928326473
+      }, 
+      {
+        "name": "align", 
+        "perturbedValue": 103.52265521859044
+      }, 
+      {
+        "name": "angular_vel", 
+        "perturbedValue": 7.7123656997127545
+      }, 
+      {
+        "name": "catch_velocity", 
+        "perturbedValue": 362.1469317129873
+      }, 
+      {
+        "name": "ball_velocity", 
+        "perturbedValue": 3683.9138530997716
+      }, 
+      {
+        "name": "catch_radius", 
+        "perturbedValue": 121.4534830878404
+      }
+    ]
+  }, 
+  {
+    "name": "random-4", 
+    "numScenarios": 500, 
+    "perturbations": [
+      {
+        "name": "angle", 
+        "perturbedValue": 5.801260184188674
+      }, 
+      {
+        "name": "distance", 
+        "perturbedValue": 113.65563338268072
+      }, 
+      {
+        "name": "y_prime_vel", 
+        "perturbedValue": 144.30143543643476
+      }, 
+      {
+        "name": "relative_vel", 
+        "perturbedValue": 266.5893732685971
+      }, 
+      {
+        "name": "align", 
+        "perturbedValue": 10.909728715168757
+      }, 
+      {
+        "name": "angular_vel", 
+        "perturbedValue": 5.098465758164079
+      }, 
+      {
+        "name": "catch_velocity", 
+        "perturbedValue": 288.64975508654646
+      }, 
+      {
+        "name": "ball_velocity", 
+        "perturbedValue": 6927.9664259257515
+      }, 
+      {
+        "name": "catch_radius", 
+        "perturbedValue": 623.4760709436755
+      }
+    ]
+  }, 
+  {
+    "name": "random-5", 
+    "numScenarios": 500, 
+    "perturbations": [
+      {
+        "name": "angle", 
+        "perturbedValue": 7.048958635960977
+      }, 
+      {
+        "name": "distance", 
+        "perturbedValue": 122.1814337353811
+      }, 
+      {
+        "name": "y_prime_vel", 
+        "perturbedValue": 74.44741052781269
+      }, 
+      {
+        "name": "relative_vel", 
+        "perturbedValue": 229.98541975069617
+      }, 
+      {
+        "name": "align", 
+        "perturbedValue": 60.967630655849455
+      }, 
+      {
+        "name": "angular_vel", 
+        "perturbedValue": 4.372785609687779
+      }, 
+      {
+        "name": "catch_velocity", 
+        "perturbedValue": 743.0897410870499
+      }, 
+      {
+        "name": "ball_velocity", 
+        "perturbedValue": 9411.876958057555
+      }, 
+      {
+        "name": "catch_radius", 
+        "perturbedValue": 20.876399855595423
+      }
+    ]
+  }, 
+  {
+    "name": "random-6", 
+    "numScenarios": 500, 
+    "perturbations": [
+      {
+        "name": "angle", 
+        "perturbedValue": 5.123524788191628
+      }, 
+      {
+        "name": "distance", 
+        "perturbedValue": 27.38573203616931
+      }, 
+      {
+        "name": "y_prime_vel", 
+        "perturbedValue": 19.244439829518377
+      }, 
+      {
+        "name": "relative_vel", 
+        "perturbedValue": 165.69277161905808
+      }, 
+      {
+        "name": "align", 
+        "perturbedValue": 66.39692985869004
+      }, 
+      {
+        "name": "angular_vel", 
+        "perturbedValue": 5.353159423441352
+      }, 
+      {
+        "name": "catch_velocity", 
+        "perturbedValue": 541.341123068289
+      }, 
+      {
+        "name": "ball_velocity", 
+        "perturbedValue": 9024.751681925578
+      }, 
+      {
+        "name": "catch_radius", 
+        "perturbedValue": 573.1140958177184
+      }
+    ]
+  }, 
+  {
+    "name": "random-7", 
+    "numScenarios": 500, 
+    "perturbations": [
+      {
+        "name": "angle", 
+        "perturbedValue": 6.373147979857351
+      }, 
+      {
+        "name": "distance", 
+        "perturbedValue": 199.54694950525547
+      }, 
+      {
+        "name": "y_prime_vel", 
+        "perturbedValue": 114.83786086589943
+      }, 
+      {
+        "name": "relative_vel", 
+        "perturbedValue": 156.54499891642794
+      }, 
+      {
+        "name": "align", 
+        "perturbedValue": 104.39768474501173
+      }, 
+      {
+        "name": "angular_vel", 
+        "perturbedValue": 2.849958792280178
+      }, 
+      {
+        "name": "catch_velocity", 
+        "perturbedValue": 844.723714088788
+      }, 
+      {
+        "name": "ball_velocity", 
+        "perturbedValue": 8468.79388555853
+      }, 
+      {
+        "name": "catch_radius", 
+        "perturbedValue": 700.2672267688047
+      }
+    ]
+  }, 
+  {
+    "name": "random-8", 
+    "numScenarios": 500, 
+    "perturbations": [
+      {
+        "name": "angle", 
+        "perturbedValue": 2.7892852482715362
+      }, 
+      {
+        "name": "distance", 
+        "perturbedValue": 236.4215047409067
+      }, 
+      {
+        "name": "y_prime_vel", 
+        "perturbedValue": 45.87068989762411
+      }, 
+      {
+        "name": "relative_vel", 
+        "perturbedValue": 78.80163288982439
+      }, 
+      {
+        "name": "align", 
+        "perturbedValue": 11.143935678095966
+      }, 
+      {
+        "name": "angular_vel", 
+        "perturbedValue": 5.111211191024258
+      }, 
+      {
+        "name": "catch_velocity", 
+        "perturbedValue": 349.8110516551438
+      }, 
+      {
+        "name": "ball_velocity", 
+        "perturbedValue": 2201.5871188534807
+      }, 
+      {
+        "name": "catch_radius", 
+        "perturbedValue": 787.8466494841579
+      }
+    ]
+  }, 
+  {
+    "name": "random-9", 
+    "numScenarios": 500, 
+    "perturbations": [
+      {
+        "name": "angle", 
+        "perturbedValue": 4.950030054757643
+      }, 
+      {
+        "name": "distance", 
+        "perturbedValue": 129.26586738098726
+      }, 
+      {
+        "name": "y_prime_vel", 
+        "perturbedValue": 57.35779906545703
+      }, 
+      {
+        "name": "relative_vel", 
+        "perturbedValue": 250.75095451476224
+      }, 
+      {
+        "name": "align", 
+        "perturbedValue": 60.251419378734674
+      }, 
+      {
+        "name": "angular_vel", 
+        "perturbedValue": 4.9695552468368644
+      }, 
+      {
+        "name": "catch_velocity", 
+        "perturbedValue": 141.86006781610533
+      }, 
+      {
+        "name": "ball_velocity", 
+        "perturbedValue": 9472.87977570394
+      }, 
+      {
+        "name": "catch_radius", 
+        "perturbedValue": 278.0614471267358
+      }
+    ]
+  }, 
+  {
+    "name": "random-10", 
+    "numScenarios": 500, 
+    "perturbations": [
+      {
+        "name": "angle", 
+        "perturbedValue": 5.020445659115717
+      }, 
+      {
+        "name": "distance", 
+        "perturbedValue": 214.97510818282012
+      }, 
+      {
+        "name": "y_prime_vel", 
+        "perturbedValue": 43.158403872502646
+      }, 
+      {
+        "name": "relative_vel", 
+        "perturbedValue": 275.56687976297815
+      }, 
+      {
+        "name": "align", 
+        "perturbedValue": 91.191446810133
+      }, 
+      {
+        "name": "angular_vel", 
+        "perturbedValue": 7.893744355941133
+      }, 
+      {
+        "name": "catch_velocity", 
+        "perturbedValue": 61.91775504781033
+      }, 
+      {
+        "name": "ball_velocity", 
+        "perturbedValue": 1573.846992624074
+      }, 
+      {
+        "name": "catch_radius", 
+        "perturbedValue": 659.4585737370202
+      }
+    ]
+  }, 
+  {
+    "name": "random-11", 
+    "numScenarios": 500, 
+    "perturbations": [
+      {
+        "name": "angle", 
+        "perturbedValue": 2.2174879317441745
+      }, 
+      {
+        "name": "distance", 
+        "perturbedValue": 173.69828658628674
+      }, 
+      {
+        "name": "y_prime_vel", 
+        "perturbedValue": 165.75161537427056
+      }, 
+      {
+        "name": "relative_vel", 
+        "perturbedValue": 56.7713943146287
+      }, 
+      {
+        "name": "align", 
+        "perturbedValue": 167.6273222936665
+      }, 
+      {
+        "name": "angular_vel", 
+        "perturbedValue": 2.114996903515602
+      }, 
+      {
+        "name": "catch_velocity", 
+        "perturbedValue": 179.37401894260296
+      }, 
+      {
+        "name": "ball_velocity", 
+        "perturbedValue": 8560.508395487132
+      }, 
+      {
+        "name": "catch_radius", 
+        "perturbedValue": 333.37769472403363
+      }
+    ]
+  }, 
+  {
+    "name": "random-12", 
+    "numScenarios": 500, 
+    "perturbations": [
+      {
+        "name": "angle", 
+        "perturbedValue": 0.39920790442690074
+      }, 
+      {
+        "name": "distance", 
+        "perturbedValue": 13.408049229270624
+      }, 
+      {
+        "name": "y_prime_vel", 
+        "perturbedValue": 51.668818973619985
+      }, 
+      {
+        "name": "relative_vel", 
+        "perturbedValue": 252.914312140839
+      }, 
+      {
+        "name": "align", 
+        "perturbedValue": 21.502054286828685
+      }, 
+      {
+        "name": "angular_vel", 
+        "perturbedValue": 9.408304773396884
+      }, 
+      {
+        "name": "catch_velocity", 
+        "perturbedValue": 764.0417304976298
+      }, 
+      {
+        "name": "ball_velocity", 
+        "perturbedValue": 3309.9719173507438
+      }, 
+      {
+        "name": "catch_radius", 
+        "perturbedValue": 247.0143040625722
+      }
+    ]
+  }, 
+  {
+    "name": "random-13", 
+    "numScenarios": 500, 
+    "perturbations": [
+      {
+        "name": "angle", 
+        "perturbedValue": 7.50760770290315
+      }, 
+      {
+        "name": "distance", 
+        "perturbedValue": 117.0431662779243
+      }, 
+      {
+        "name": "y_prime_vel", 
+        "perturbedValue": 30.456796399090635
+      }, 
+      {
+        "name": "relative_vel", 
+        "perturbedValue": 318.545398131964
+      }, 
+      {
+        "name": "align", 
+        "perturbedValue": 21.2115511865827
+      }, 
+      {
+        "name": "angular_vel", 
+        "perturbedValue": 7.5959308006339
+      }, 
+      {
+        "name": "catch_velocity", 
+        "perturbedValue": 233.805544130887
+      }, 
+      {
+        "name": "ball_velocity", 
+        "perturbedValue": 6116.887417346673
+      }, 
+      {
+        "name": "catch_radius", 
+        "perturbedValue": 515.9958961116595
+      }
+    ]
+  }, 
+  {
+    "name": "random-14", 
+    "numScenarios": 500, 
+    "perturbations": [
+      {
+        "name": "angle", 
+        "perturbedValue": 5.44339480060334
+      }, 
+      {
+        "name": "distance", 
+        "perturbedValue": 247.99717703959857
+      }, 
+      {
+        "name": "y_prime_vel", 
+        "perturbedValue": 169.61392215943383
+      }, 
+      {
+        "name": "relative_vel", 
+        "perturbedValue": 69.48777446613767
+      }, 
+      {
+        "name": "align", 
+        "perturbedValue": 92.65904635665127
+      }, 
+      {
+        "name": "angular_vel", 
+        "perturbedValue": 4.529650407057897
+      }, 
+      {
+        "name": "catch_velocity", 
+        "perturbedValue": 954.283889660824
+      }, 
+      {
+        "name": "ball_velocity", 
+        "perturbedValue": 2809.5699626402247
+      }, 
+      {
+        "name": "catch_radius", 
+        "perturbedValue": 587.1273025371645
+      }
+    ]
+  }, 
+  {
+    "name": "random-15", 
+    "numScenarios": 500, 
+    "perturbations": [
+      {
+        "name": "angle", 
+        "perturbedValue": 9.893212863454153
+      }, 
+      {
+        "name": "distance", 
+        "perturbedValue": 13.417962274343578
+      }, 
+      {
+        "name": "y_prime_vel", 
+        "perturbedValue": 118.46008739600425
+      }, 
+      {
+        "name": "relative_vel", 
+        "perturbedValue": 10.505140811576604
+      }, 
+      {
+        "name": "align", 
+        "perturbedValue": 23.218405321962834
+      }, 
+      {
+        "name": "angular_vel", 
+        "perturbedValue": 7.749498598754898
+      }, 
+      {
+        "name": "catch_velocity", 
+        "perturbedValue": 348.30499894443534
+      }, 
+      {
+        "name": "ball_velocity", 
+        "perturbedValue": 3823.791676906615
+      }, 
+      {
+        "name": "catch_radius", 
+        "perturbedValue": 57.74614923942984
+      }
+    ]
+  }, 
+  {
+    "name": "random-16", 
+    "numScenarios": 500, 
+    "perturbations": [
+      {
+        "name": "angle", 
+        "perturbedValue": 6.968231826454397
+      }, 
+      {
+        "name": "distance", 
+        "perturbedValue": 106.34432266146037
+      }, 
+      {
+        "name": "y_prime_vel", 
+        "perturbedValue": 5.051629285710561
+      }, 
+      {
+        "name": "relative_vel", 
+        "perturbedValue": 172.86484386653504
+      }, 
+      {
+        "name": "align", 
+        "perturbedValue": 175.2348831027995
+      }, 
+      {
+        "name": "angular_vel", 
+        "perturbedValue": 2.6506348307936447
+      }, 
+      {
+        "name": "catch_velocity", 
+        "perturbedValue": 541.4002610920377
+      }, 
+      {
+        "name": "ball_velocity", 
+        "perturbedValue": 7802.910528044442
+      }, 
+      {
+        "name": "catch_radius", 
+        "perturbedValue": 19.678598379282175
+      }
+    ]
+  }, 
+  {
+    "name": "random-17", 
+    "numScenarios": 500, 
+    "perturbations": [
+      {
+        "name": "angle", 
+        "perturbedValue": 6.97511192405529
+      }, 
+      {
+        "name": "distance", 
+        "perturbedValue": 286.45863204734707
+      }, 
+      {
+        "name": "y_prime_vel", 
+        "perturbedValue": 60.93052294040369
+      }, 
+      {
+        "name": "relative_vel", 
+        "perturbedValue": 233.7473508453273
+      }, 
+      {
+        "name": "align", 
+        "perturbedValue": 81.97716537555387
+      }, 
+      {
+        "name": "angular_vel", 
+        "perturbedValue": 2.42665678149241
+      }, 
+      {
+        "name": "catch_velocity", 
+        "perturbedValue": 55.513335527981525
+      }, 
+      {
+        "name": "ball_velocity", 
+        "perturbedValue": 9978.918303132548
+      }, 
+      {
+        "name": "catch_radius", 
+        "perturbedValue": 676.648538002348
+      }
+    ]
+  }, 
+  {
+    "name": "random-18", 
+    "numScenarios": 500, 
+    "perturbations": [
+      {
+        "name": "angle", 
+        "perturbedValue": 6.462202567931161
+      }, 
+      {
+        "name": "distance", 
+        "perturbedValue": 255.3183091182274
+      }, 
+      {
+        "name": "y_prime_vel", 
+        "perturbedValue": 49.79649295378291
+      }, 
+      {
+        "name": "relative_vel", 
+        "perturbedValue": 242.88307338569464
+      }, 
+      {
+        "name": "align", 
+        "perturbedValue": 70.82047000386738
+      }, 
+      {
+        "name": "angular_vel", 
+        "perturbedValue": 6.86046250615772
+      }, 
+      {
+        "name": "catch_velocity", 
+        "perturbedValue": 979.7128627013964
+      }, 
+      {
+        "name": "ball_velocity", 
+        "perturbedValue": 4721.82751136519
+      }, 
+      {
+        "name": "catch_radius", 
+        "perturbedValue": 363.87791265920634
+      }
+    ]
+  }, 
+  {
+    "name": "random-19", 
+    "numScenarios": 500, 
+    "perturbations": [
+      {
+        "name": "angle", 
+        "perturbedValue": 5.970391553670786
+      }, 
+      {
+        "name": "distance", 
+        "perturbedValue": 196.29605172227303
+      }, 
+      {
+        "name": "y_prime_vel", 
+        "perturbedValue": 96.18851638124377
+      }, 
+      {
+        "name": "relative_vel", 
+        "perturbedValue": 331.43351876508405
+      }, 
+      {
+        "name": "align", 
+        "perturbedValue": 165.05744989373702
+      }, 
+      {
+        "name": "angular_vel", 
+        "perturbedValue": 7.750454914060848
+      }, 
+      {
+        "name": "catch_velocity", 
+        "perturbedValue": 769.9176364542852
+      }, 
+      {
+        "name": "ball_velocity", 
+        "perturbedValue": 987.5532907758936
+      }, 
+      {
+        "name": "catch_radius", 
+        "perturbedValue": 793.2861280508771
+      }
+    ]
   }]
-}, {
-  "name": "catchradius-small",
-  "numScenarios": 500,
-  "perturbations": [{
-    "name": "catch_radius",
-    "perturbedValue": 185.0
-  }]
-}]
