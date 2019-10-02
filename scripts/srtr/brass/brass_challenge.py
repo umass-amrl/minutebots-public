@@ -58,24 +58,38 @@ with open(sys.argv[1]) as test_file:
 
 # Continue adapting until performance is sufficiently high or some cutoff
 while (iterations < 1):
-  os.mkdir("scripts/srtr/brass/results/adapted_traces")
-  os.mkdir("scripts/srtr/brass/results/adapted_traces_starved")
   os.mkdir("scripts/srtr/brass/results/nominal_traces")
   os.mkdir("scripts/srtr/brass/results/degraded_traces")
   # First run for nominal and degraded results
   RunSetupTests()
+
   # Generate the corrections
   command = "scripts/srtr/brass/get_all_corrections.py"
   result = subprocess.call(command, shell=True)
+
+  # Try to zip the traces to reduce file bloat
+  folder = "scripts/srtr/brass/results/traces/trace_" + str(iterations) + "/"
+  os.mkdir(folder)
+  command = "mv scripts/srtr/brass/results/*_traces* " + folder
+  result = subprocess.call(command, shell=True)
+  command = "tar -czvf scripts/srtr/brass/results/training_traces.tar.gz -C scripts/srtr/brass/results/traces . --remove-files"
+  result = subprocess.call(command, shell=True)
+
+  os.mkdir("scripts/srtr/brass/results/traces")
+  os.mkdir("scripts/srtr/brass/results/adapted_traces")
+  os.mkdir("scripts/srtr/brass/results/adapted_traces_starved")
   # Generate the adapted results
   fix_percentage = RunAdaptedTests(False)
   # Generate the starved adaptation results
   RunAdaptedTests(True);
 
+
   # Save the traces from the current iteration
   folder = "scripts/srtr/brass/results/traces/trace_" + str(iterations) + "/"
   os.mkdir(folder)
   command = "mv scripts/srtr/brass/results/*_traces* " + folder
+  result = subprocess.call(command, shell=True)
+  command = "tar -czvf scripts/srtr/brass/results/traces.tar.gz -C scripts/srtr/brass/results/traces . --remove-files"
   result = subprocess.call(command, shell=True)
 
   iterations += 1
