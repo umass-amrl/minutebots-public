@@ -339,7 +339,7 @@ bool PrimaryAttacker::ShouldCatch(logger::Logger* the_logger,
   float attacker_dist =
       EuclideanDistance(intersect_point, robot_translation);
   if (!intersects) {
-    attacker_dist = FLT_MAX;
+    attacker_dist = kFieldLength;
   }
   const float kTooCloseDist = 1000.0 * 1000.0;
   const bool towards_robot = attacker_dist < thresholds_catch_radius_;
